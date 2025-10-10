@@ -1002,6 +1002,209 @@ async def init_sample_data():
         await db.services.insert_many(sample_services)
         logger.info(f"Inserted {len(sample_services)} sample services")
 
+# Image Upload Helper Functions
+async def create_thumbnail(image_path: Path, thumbnail_path: Path):
+    """Create a thumbnail from an image"""
+    try:
+        with Image.open(image_path) as img:
+            img.thumbnail(THUMBNAIL_SIZE, Image.Resampling.LANCZOS)
+            img.save(thumbnail_path, optimize=True, quality=85)
+        return True
+    except Exception as e:
+        logger.error(f"Error creating thumbnail: {e}")
+        return False
+
+def validate_image_file(file: UploadFile) -> tuple[bool, str]:
+    """Validate uploaded image file"""
+    # Check file size
+    if file.size and file.size > MAX_FILE_SIZE:
+        return False, f"File size {file.size / 1024 / 1024:.1f}MB exceeds {MAX_FILE_SIZE / 1024 / 1024}MB limit"
+    
+    # Check mime type
+    if file.content_type not in ALLOWED_IMAGE_TYPES:
+        return False, f"File type {file.content_type} not supported. Allowed: {', '.join(ALLOWED_IMAGE_TYPES)}"
+    
+    return True, ""
+
+# Image Upload Routes
+@api_router.post("/upload/images", response_model=Dict[str, Any])
+async def upload_images(
+    files: List[UploadFile] = File(...),
+    entity_type: str = Form(...),  # 'property', 'service', 'profile', 'chat'
+    entity_id: Optional[str] = Form(None),
+    user: User = Depends(get_current_user)
+):
+    """Upload multiple images with automatic thumbnail generation"""
+    try:
+        if len(files) > 10:  # Max 10 files at once
+            raise HTTPException(status_code=400, detail="Maximum 10 files allowed per upload")
+        
+        uploaded_images = []
+        
+        for file in files:
+            # Validate file
+            is_valid, error_message = validate_image_file(file)
+            if not is_valid:
+                raise HTTPException(status_code=400, detail=f"{file.filename}: {error_message}")
+            
+            # Generate unique filename
+            file_ext = Path(file.filename).suffix.lower()
+            if not file_ext:
+                file_ext = mimetypes.guess_extension(file.content_type) or '.jpg'
+            
+            unique_filename = f"{uuid.uuid4()}{file_ext}"
+            
+            # Determine upload path based on entity type
+            entity_dir = UPLOAD_DIR / entity_type.lower()
+            file_path = entity_dir / unique_filename
+            thumbnail_path = UPLOAD_DIR / "thumbnails" / f"thumb_{unique_filename}"
+            
+            # Save original file
+            async with aiofiles.open(file_path, 'wb') as f:
+                content = await file.read()
+                await f.write(content)
+            
+            # Create thumbnail
+            await create_thumbnail(file_path, thumbnail_path)
+            
+            # Create image record
+            image_data = {
+                "id": str(uuid.uuid4()),
+                "filename": unique_filename,
+                "original_filename": file.filename,
+                "file_path": str(file_path.relative_to(ROOT_DIR)),
+                "thumbnail_path": str(thumbnail_path.relative_to(ROOT_DIR)),
+                "file_size": file.size or len(content),
+                "mime_type": file.content_type,
+                "uploaded_by": user.id,
+                "entity_type": entity_type.lower(),
+                "entity_id": entity_id,
+                "is_primary": False,
+                "created_at": datetime.now(timezone.utc)
+            }
+            
+            # Save to database
+            result = await db.images.insert_one(image_data)
+            image_data["_id"] = str(result.inserted_id)
+            
+            uploaded_images.append({
+                "id": image_data["id"],
+                "filename": image_data["filename"],
+                "original_filename": image_data["original_filename"],
+                "url": f"/uploads/{entity_type.lower()}/{unique_filename}",
+                "thumbnail_url": f"/uploads/thumbnails/thumb_{unique_filename}",
+                "file_size": image_data["file_size"],
+                "mime_type": image_data["mime_type"]
+            })
+        
+        return {
+            "success": True,
+            "message": f"Successfully uploaded {len(uploaded_images)} images",
+            "images": uploaded_images
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error uploading images: {e}")
+        raise HTTPException(status_code=500, detail="Failed to upload images")
+
+@api_router.get("/images/{entity_type}/{entity_id}", response_model=List[Dict[str, Any]])
+async def get_entity_images(entity_type: str, entity_id: str):
+    """Get all images for a specific entity"""
+    try:
+        images = await db.images.find({
+            "entity_type": entity_type.lower(),
+            "entity_id": entity_id
+        }).sort("created_at", 1).to_list(length=None)
+        
+        return [{
+            "id": img["id"],
+            "filename": img["filename"],
+            "original_filename": img["original_filename"],
+            "url": f"/uploads/{entity_type.lower()}/{img['filename']}",
+            "thumbnail_url": f"/uploads/thumbnails/thumb_{img['filename']}",
+            "is_primary": img.get("is_primary", False),
+            "alt_text": img.get("alt_text"),
+            "created_at": img["created_at"].isoformat()
+        } for img in images]
+        
+    except Exception as e:
+        logger.error(f"Error fetching images: {e}")
+        raise HTTPException(status_code=500, detail="Failed to fetch images")
+
+@api_router.put("/images/{image_id}/primary")
+async def set_primary_image(image_id: str, user: User = Depends(get_current_user)):
+    """Set an image as primary for its entity"""
+    try:
+        # Get the image
+        image = await db.images.find_one({"id": image_id})
+        if not image:
+            raise HTTPException(status_code=404, detail="Image not found")
+        
+        # Check ownership or admin
+        if image["uploaded_by"] != user.id and user.role != "admin":
+            raise HTTPException(status_code=403, detail="Not authorized")
+        
+        # Remove primary status from other images of the same entity
+        await db.images.update_many(
+            {
+                "entity_type": image["entity_type"],
+                "entity_id": image["entity_id"]
+            },
+            {"$set": {"is_primary": False}}
+        )
+        
+        # Set this image as primary
+        await db.images.update_one(
+            {"id": image_id},
+            {"$set": {"is_primary": True}}
+        )
+        
+        return {"success": True, "message": "Primary image updated"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error setting primary image: {e}")
+        raise HTTPException(status_code=500, detail="Failed to update primary image")
+
+@api_router.delete("/images/{image_id}")
+async def delete_image(image_id: str, user: User = Depends(get_current_user)):
+    """Delete an uploaded image"""
+    try:
+        # Get the image
+        image = await db.images.find_one({"id": image_id})
+        if not image:
+            raise HTTPException(status_code=404, detail="Image not found")
+        
+        # Check ownership or admin
+        if image["uploaded_by"] != user.id and user.role != "admin":
+            raise HTTPException(status_code=403, detail="Not authorized")
+        
+        # Delete physical files
+        file_path = ROOT_DIR / image["file_path"]
+        thumbnail_path = ROOT_DIR / image.get("thumbnail_path", "")
+        
+        try:
+            if file_path.exists():
+                file_path.unlink()
+            if thumbnail_path.exists():
+                thumbnail_path.unlink()
+        except Exception as e:
+            logger.warning(f"Error deleting physical files: {e}")
+        
+        # Delete database record
+        await db.images.delete_one({"id": image_id})
+        
+        return {"success": True, "message": "Image deleted successfully"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting image: {e}")
+        raise HTTPException(status_code=500, detail="Failed to delete image")
+
 # Utility Routes
 @api_router.get("/")
 async def root():
