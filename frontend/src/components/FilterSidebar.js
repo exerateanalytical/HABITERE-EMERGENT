@@ -270,31 +270,54 @@ const FilterSidebar = ({
             </div>
           </FilterSection>
 
-          {/* Location */}
+          {/* Enhanced Location */}
           <FilterSection
-            title="Location"
+            title="📍 Location & Area"
             isExpanded={expandedSections.location}
             onToggle={() => toggleSection('location')}
           >
-            <div className="space-y-2">
-              {locations.map((location) => (
-                <label key={location.value} className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors duration-200">
-                  <div className="flex items-center space-x-3">
-                    <input
-                      type="radio"
-                      name="location"
-                      value={location.value}
-                      checked={filters.location === location.value}
-                      onChange={(e) => handleFilterChange('location', e.target.value)}
-                      className="w-4 h-4 text-blue-600 focus:ring-blue-500"
-                    />
-                    <span className="text-gray-700 font-medium">{location.label}</span>
-                  </div>
-                  <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-                    {location.count}
-                  </span>
-                </label>
-              ))}
+            <div className="space-y-3">
+              {/* Location search */}
+              <div className="relative">
+                <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search location..."
+                  className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                />
+              </div>
+              
+              <div className="space-y-2 max-h-48 overflow-y-auto">
+                {locations.map((location) => (
+                  <label key={location.value} className="group flex items-center justify-between p-3 rounded-xl hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 cursor-pointer transition-all duration-200 border border-transparent hover:border-blue-100">
+                    <div className="flex items-center space-x-3">
+                      <div className="relative">
+                        <input
+                          type="radio"
+                          name="location"
+                          value={location.value}
+                          checked={filters.location === location.value}
+                          onChange={(e) => handleFilterChange('location', e.target.value)}
+                          className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-2 border-gray-300"
+                        />
+                        {filters.location === location.value && (
+                          <div className="absolute inset-0 bg-blue-500 rounded-full animate-pulse opacity-20"></div>
+                        )}
+                      </div>
+                      <div>
+                        <span className="text-gray-900 font-semibold group-hover:text-blue-700 transition-colors duration-200">{location.label}</span>
+                        <div className="text-xs text-gray-500">Region</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <span className="text-xs font-semibold text-gray-500 bg-gray-100 group-hover:bg-blue-100 group-hover:text-blue-700 px-3 py-1 rounded-full transition-colors duration-200">
+                        {location.count}
+                      </span>
+                      <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                    </div>
+                  </label>
+                ))}
+              </div>
             </div>
           </FilterSection>
 
