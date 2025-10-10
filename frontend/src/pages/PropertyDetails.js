@@ -423,6 +423,15 @@ const PropertyDetails = () => {
           </div>
         </div>
 
+        {/* Professional Services Carousel */}
+        <div className="mt-12">
+          <ServicesCarousel 
+            title="Professional Services for Your Property" 
+            limit={8}
+            showAll={true}
+          />
+        </div>
+
         {/* Similar Properties */}
         <div className="mt-12">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Similar Properties</h2>
