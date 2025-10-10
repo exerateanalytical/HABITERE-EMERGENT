@@ -341,83 +341,137 @@ const EnhancedServiceCard = ({ service }) => {
   const categoryInfo = serviceCategories.find(cat => cat.value === service.category) || 
                       { label: service.category, icon: Wrench };
   const Icon = categoryInfo.icon;
+  const [imageLoaded, setImageLoaded] = React.useState(false);
 
   return (
-    <div className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-purple-200 transform hover:-translate-y-1" data-testid={`service-card-${service.id}`}>
-      <div className="relative overflow-hidden h-56">
-        <img
-          src={service.images?.[0] || 'https://images.unsplash.com/photo-1505798577917-a65157d3320a?w=600&q=80'}
-          alt={service.title}
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-        />
+    <div className="group bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 hover:border-purple-300 transform hover:-translate-y-3 hover:rotate-1" data-testid={`service-card-${service.id}`}>
+      <div className="relative overflow-hidden h-64">
+        {/* Professional image with loading state */}
+        <div className={`w-full h-full bg-gradient-to-br from-purple-200 to-indigo-300 ${!imageLoaded ? 'animate-pulse' : ''}`}>
+          <img
+            src={service.images?.[0] || 'https://images.unsplash.com/photo-1505798577917-a65157d3320a?w=800&q=80'}
+            alt={service.title}
+            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+            onLoad={() => setImageLoaded(true)}
+          />
+        </div>
         
-        {/* Overlay gradient */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        {/* Enhanced overlay gradient */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
         
+        {/* Top badges */}
         <div className="absolute top-4 left-4 flex flex-wrap gap-2">
-          <span className="px-3 py-1 rounded-full text-xs font-semibold bg-purple-500/90 text-white shadow-lg backdrop-blur-sm flex items-center">
+          <span className="px-3 py-2 rounded-2xl text-xs font-bold bg-purple-600/95 text-white shadow-xl backdrop-blur-md border border-white/20 flex items-center">
             <Icon className="w-3 h-3 mr-1" />
             {categoryInfo.label}
           </span>
           {service.verified && (
-            <span className="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/90 text-white shadow-lg backdrop-blur-sm flex items-center">
+            <span className="px-3 py-2 rounded-2xl text-xs font-bold bg-emerald-600/95 text-white shadow-xl backdrop-blur-md border border-white/20 flex items-center animate-pulse">
               <Shield className="w-3 h-3 mr-1" />
-              Verified
+              ✓ Verified Pro
+            </span>
+          )}
+          {service.top_rated && (
+            <span className="px-3 py-2 rounded-2xl text-xs font-bold bg-yellow-500/95 text-white shadow-xl backdrop-blur-md border border-white/20 flex items-center">
+              👑 Top Rated
             </span>
           )}
         </div>
+        
+        {/* Online status indicator */}
+        <div className="absolute top-4 right-4 flex items-center space-x-2">
+          <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse shadow-lg"></div>
+          <span className="text-xs font-bold text-white bg-black/50 backdrop-blur-md px-2 py-1 rounded-full">Online</span>
+        </div>
 
-        {/* Rating overlay */}
-        <div className="absolute bottom-4 left-4 flex items-center bg-white/90 backdrop-blur-sm rounded-lg px-2 py-1 shadow-lg">
-          <Star className="w-4 h-4 text-yellow-400 fill-current mr-1" />
-          <span className="text-sm font-semibold text-gray-900">4.8</span>
-          <span className="text-xs text-gray-600 ml-1">(24)</span>
+        {/* Rating and response time */}
+        <div className="absolute bottom-4 left-4 flex items-center space-x-2">
+          <div className="flex items-center bg-white/95 backdrop-blur-md rounded-xl px-3 py-2 shadow-lg border border-white/20">
+            <Star className="w-4 h-4 text-yellow-400 fill-current mr-1" />
+            <span className="text-sm font-bold text-gray-900">{service.rating || '4.9'}</span>
+            <span className="text-xs text-gray-600 ml-1">({service.reviews || '47'})</span>
+          </div>
+          <div className="bg-blue-500/95 backdrop-blur-md rounded-xl px-3 py-2 shadow-lg border border-white/20">
+            <span className="text-xs font-bold text-white">⚡ Responds in 1hr</span>
+          </div>
+        </div>
+
+        {/* Price badge */}
+        <div className="absolute bottom-4 right-4 bg-gradient-to-r from-purple-600 to-indigo-600 backdrop-blur-md rounded-xl px-4 py-2 shadow-lg border border-white/20">
+          <div className="text-sm font-bold text-white">
+            {service.price_range || 'From 25,000 XAF'}
+          </div>
         </div>
       </div>
 
-      <div className="p-6">
-        <div className="mb-4">
-          <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-purple-600 transition-colors duration-200">
+      <div className="p-6 space-y-4">
+        {/* Professional info */}
+        <div>
+          <h3 className="text-xl font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-purple-600 transition-colors duration-300">
             {service.title}
           </h3>
-          <div className="flex items-center text-gray-500 text-sm mb-2">
-            <MapPin className="w-4 h-4 mr-2 text-purple-500" />
-            <span className="font-medium">{service.location}</span>
+          <div className="flex items-center justify-between text-sm mb-2">
+            <div className="flex items-center text-gray-500">
+              <MapPin className="w-4 h-4 mr-2 text-purple-500" />
+              <span className="font-semibold">{service.location}</span>
+            </div>
+            <span className="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-xs font-bold">
+              {service.experience || '5+ Years'}
+            </span>
           </div>
-          <p className="text-gray-600 text-sm line-clamp-2">
+          <p className="text-gray-600 text-sm line-clamp-2 leading-relaxed">
             {service.description}
           </p>
         </div>
 
-        <div className="flex items-center justify-between mb-4 py-3 bg-gray-50 rounded-xl px-4">
-          <div className="flex items-center">
-            <Users className="w-4 h-4 text-purple-500 mr-1" />
-            <span className="text-xs font-semibold text-gray-700">15 Projects</span>
+        {/* Professional stats */}
+        <div className="grid grid-cols-3 gap-3 py-4 bg-gradient-to-br from-purple-50 to-indigo-50 rounded-2xl">
+          <div className="text-center">
+            <div className="w-8 h-8 bg-purple-100 rounded-xl flex items-center justify-center mx-auto mb-2">
+              <Users className="w-4 h-4 text-purple-600" />
+            </div>
+            <div className="text-sm font-bold text-gray-900">{service.completed_projects || '24'}</div>
+            <div className="text-xs text-gray-500">Projects</div>
           </div>
-          <div className="flex items-center">
-            <Award className="w-4 h-4 text-purple-500 mr-1" />
-            <span className="text-xs font-semibold text-gray-700">Expert</span>
+          <div className="text-center">
+            <div className="w-8 h-8 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-2">
+              <Award className="w-4 h-4 text-blue-600" />
+            </div>
+            <div className="text-sm font-bold text-gray-900">{service.certifications || '3'}</div>
+            <div className="text-xs text-gray-500">Certified</div>
+          </div>
+          <div className="text-center">
+            <div className="w-8 h-8 bg-green-100 rounded-xl flex items-center justify-center mx-auto mb-2">
+              <Shield className="w-4 h-4 text-green-600" />
+            </div>
+            <div className="text-sm font-bold text-gray-900">100%</div>
+            <div className="text-xs text-gray-500">Success</div>
           </div>
         </div>
 
-        {service.price_range && (
-          <div className="mb-4">
-            <div className="text-lg font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-              {service.price_range}
-            </div>
-          </div>
-        )}
+        {/* Skills/Specialties */}
+        <div className="flex flex-wrap gap-2">
+          {(service.skills || ['Licensed', 'Insured', 'Same Day']).slice(0, 3).map((skill, index) => (
+            <span key={index} className="px-3 py-1 bg-gradient-to-r from-purple-100 to-indigo-100 text-purple-700 text-xs rounded-full font-semibold border border-purple-200">
+              {skill}
+            </span>
+          ))}
+        </div>
 
-        <div className="flex items-center space-x-2 mb-4">
-          <button className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold px-4 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center group-hover:scale-105">
-            <Eye className="w-4 h-4 mr-2" />
-            View Details
+        {/* Action buttons */}
+        <div className="flex items-center space-x-3">
+          <Link
+            to={`/services/${service.id}`}
+            className="flex-1 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold px-6 py-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center group-hover:scale-105"
+          >
+            <Eye className="w-5 h-5 mr-2" />
+            View Profile
+          </Link>
+          <button className="p-4 bg-gray-100 hover:bg-purple-100 rounded-2xl transition-colors duration-200 group-hover:scale-105">
+            <Phone className="w-5 h-5 text-gray-600 hover:text-purple-600" />
           </button>
-          <button className="p-3 bg-gray-100 hover:bg-purple-100 rounded-xl transition-colors duration-200">
-            <Phone className="w-4 h-4 text-gray-600 hover:text-purple-600" />
-          </button>
-          <button className="p-3 bg-gray-100 hover:bg-purple-100 rounded-xl transition-colors duration-200">
-            <Mail className="w-4 h-4 text-gray-600 hover:text-purple-600" />
+          <button className="p-4 bg-gray-100 hover:bg-purple-100 rounded-2xl transition-colors duration-200 group-hover:scale-105">
+            <Mail className="w-5 h-5 text-gray-600 hover:text-purple-600" />
           </button>
         </div>
       </div>
