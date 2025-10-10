@@ -186,57 +186,72 @@ const Services = () => {
               </div>
             </div>
 
-            {/* Controls */}
-            <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4">
-              {/* Mobile Filter Button */}
-              <button
-                onClick={() => setSidebarOpen(true)}
-                className="lg:hidden w-full sm:w-auto bg-white border border-gray-200 px-4 py-3 rounded-xl flex items-center justify-center space-x-2 hover:bg-gray-50 transition-colors duration-200"
-              >
-                <SlidersHorizontal className="w-5 h-5 text-gray-600" />
-                <span className="font-medium text-gray-700">Filters</span>
-              </button>
-
-              {/* Sort Dropdown */}
-              <div className="relative w-full sm:w-auto">
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                  className="w-full sm:w-auto bg-white border border-gray-200 px-4 py-3 rounded-xl appearance-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 font-medium text-gray-700"
-                >
-                  <option value="newest">Newest First</option>
-                  <option value="rating">Highest Rated</option>
-                  <option value="popular">Most Popular</option>
-                  <option value="price_low">Price: Low to High</option>
-                  <option value="price_high">Price: High to Low</option>
-                </select>
-                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+            {/* Enhanced Controls */}
+            <div className="lg:text-right space-y-4">
+              {/* Quick Search */}
+              <div className="relative max-w-md lg:ml-auto">
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search services..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-12 pr-4 py-3 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-2xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-gray-900 placeholder-gray-500 shadow-lg"
+                />
               </div>
+              
+              <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4">
+                {/* Mobile Filter Button */}
+                <button
+                  onClick={() => setSidebarOpen(true)}
+                  className="lg:hidden w-full sm:w-auto bg-white/90 backdrop-blur-sm border border-gray-200 px-6 py-3 rounded-2xl flex items-center justify-center space-x-2 hover:bg-white hover:shadow-lg transition-all duration-200 shadow-lg"
+                >
+                  <SlidersHorizontal className="w-5 h-5 text-gray-600" />
+                  <span className="font-semibold text-gray-700">Smart Filters</span>
+                </button>
 
-              {/* View Toggle */}
-              <div className="flex items-center bg-white border border-gray-200 rounded-xl p-1">
-                <button
-                  onClick={() => setViewMode('grid')}
-                  className={`p-2 rounded-lg transition-all duration-200 ${
-                    viewMode === 'grid' 
-                      ? 'bg-purple-500 text-white shadow-md' 
-                      : 'text-gray-500 hover:text-gray-700'
-                  }`}
-                  data-testid="grid-view-btn"
-                >
-                  <Grid3x3 className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => setViewMode('list')}
-                  className={`p-2 rounded-lg transition-all duration-200 ${
-                    viewMode === 'list' 
-                      ? 'bg-purple-500 text-white shadow-md' 
-                      : 'text-gray-500 hover:text-gray-700'
-                  }`}
-                  data-testid="list-view-btn"
-                >
-                  <List className="w-4 h-4" />
-                </button>
+                {/* Sort Dropdown */}
+                <div className="relative w-full sm:w-auto">
+                  <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                    className="w-full sm:w-auto bg-white/90 backdrop-blur-sm border border-gray-200 px-6 py-3 rounded-2xl appearance-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 font-semibold text-gray-700 shadow-lg pr-12"
+                  >
+                    <option value="newest">🕐 Newest Professionals</option>
+                    <option value="rating">⭐ Highest Rated</option>
+                    <option value="popular">🔥 Most Popular</option>
+                    <option value="price_low">💰 Most Affordable</option>
+                    <option value="price_high">💎 Premium Services</option>
+                    <option value="experience">👨‍💼 Most Experienced</option>
+                  </select>
+                  <ChevronDown className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                </div>
+
+                {/* View Toggle */}
+                <div className="flex items-center bg-white/90 backdrop-blur-sm border border-gray-200 rounded-2xl p-1 shadow-lg">
+                  <button
+                    onClick={() => setViewMode('grid')}
+                    className={`p-3 rounded-xl transition-all duration-200 ${
+                      viewMode === 'grid' 
+                        ? 'bg-gradient-to-r from-purple-500 to-indigo-500 text-white shadow-lg' 
+                        : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                    }`}
+                    data-testid="grid-view-btn"
+                  >
+                    <Grid3x3 className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={() => setViewMode('list')}
+                    className={`p-3 rounded-xl transition-all duration-200 ${
+                      viewMode === 'list' 
+                        ? 'bg-gradient-to-r from-purple-500 to-indigo-500 text-white shadow-lg' 
+                        : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                    }`}
+                    data-testid="list-view-btn"
+                  >
+                    <List className="w-5 h-5" />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
