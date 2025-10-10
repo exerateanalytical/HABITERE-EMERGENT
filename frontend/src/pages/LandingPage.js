@@ -1,6 +1,7 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
 import ServicesCarousel from '../components/ServicesCarousel';
+import FeaturedProperties from '../components/FeaturedProperties';
 import { 
   Search, 
   MapPin, 
