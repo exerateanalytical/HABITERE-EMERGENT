@@ -1,4 +1,6 @@
 import React from 'react';
+import SEOHead from '../components/SEOHead';
+import { generateSEOData, generateStructuredData } from '../utils/seoData';
 import { useAuth } from '../context/AuthContext';
 import ServicesCarousel from '../components/ServicesCarousel';
 import FeaturedProperties from '../components/FeaturedProperties';
