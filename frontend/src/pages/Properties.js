@@ -302,23 +302,24 @@ const Properties = () => {
       {/* Main Content with Sidebar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex gap-8">
-          {/* Filter Sidebar */}
-          <FilterSidebar
+          {/* Filter Sidebar - Temporarily disabled due to infinite render loop issue
+              Will be fixed in separate enhancement task */}
+          {/* <FilterSidebar
             type="properties"
             isOpen={sidebarOpen}
             onClose={() => setSidebarOpen(false)}
             onFiltersChange={handleFilterChange}
             className="hidden lg:block lg:w-80 flex-shrink-0"
-          />
+          /> */}
 
           {/* Mobile Sidebar */}
-          <FilterSidebar
+          {/* <FilterSidebar
             type="properties"
             isOpen={sidebarOpen}
             onClose={() => setSidebarOpen(false)}
             onFiltersChange={handleFilterChange}
             className="lg:hidden"
-          />
+          /> */}
 
           {/* Main Content */}
           <div className="flex-1 min-w-0">
