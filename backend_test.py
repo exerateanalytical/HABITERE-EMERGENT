@@ -272,6 +272,281 @@ class HabitereAPITester:
             self.log_test("Bookings Endpoint", False, f"Exception: {str(e)}")
             return False
 
+    def create_test_image(self, width=100, height=100, format='JPEG'):
+        """Create a test image in memory"""
+        img = Image.new('RGB', (width, height), color='red')
+        img_bytes = io.BytesIO()
+        img.save(img_bytes, format=format)
+        img_bytes.seek(0)
+        return img_bytes
+
+    def test_image_upload_no_auth(self):
+        """Test image upload endpoint without authentication (should fail)"""
+        try:
+            # Create a test image
+            test_image = self.create_test_image()
+            
+            files = {
+                'files': ('test_image.jpg', test_image, 'image/jpeg')
+            }
+            data = {
+                'entity_type': 'property',
+                'entity_id': 'test-property-id'
+            }
+            
+            # Remove Content-Type header for multipart form data
+            headers = {k: v for k, v in self.session.headers.items() if k.lower() != 'content-type'}
+            
+            response = requests.post(
+                f"{self.api_url}/upload/images",
+                files=files,
+                data=data,
+                headers=headers
+            )
+            
+            expected_failure = response.status_code == 401  # Should fail without auth
+            details = f"Status: {response.status_code} (expected 401 without auth)"
+            
+            self.log_test("Image Upload (No Auth)", expected_failure, details)
+            return expected_failure
+        except Exception as e:
+            self.log_test("Image Upload (No Auth)", False, f"Exception: {str(e)}")
+            return False
+
+    def test_image_upload_invalid_file(self):
+        """Test image upload with invalid file type (should fail)"""
+        try:
+            # Create a text file instead of image
+            text_content = b"This is not an image file"
+            
+            files = {
+                'files': ('test_file.txt', io.BytesIO(text_content), 'text/plain')
+            }
+            data = {
+                'entity_type': 'property',
+                'entity_id': 'test-property-id'
+            }
+            
+            headers = {k: v for k, v in self.session.headers.items() if k.lower() != 'content-type'}
+            
+            response = requests.post(
+                f"{self.api_url}/upload/images",
+                files=files,
+                data=data,
+                headers=headers
+            )
+            
+            expected_failure = response.status_code in [400, 401]  # Should fail due to invalid file type or no auth
+            details = f"Status: {response.status_code} (expected 400/401 for invalid file)"
+            
+            self.log_test("Image Upload (Invalid File)", expected_failure, details)
+            return expected_failure
+        except Exception as e:
+            self.log_test("Image Upload (Invalid File)", False, f"Exception: {str(e)}")
+            return False
+
+    def test_image_upload_large_file(self):
+        """Test image upload with oversized file (should fail)"""
+        try:
+            # Create a large test image (simulate > 5MB)
+            test_image = self.create_test_image(width=3000, height=3000)
+            
+            files = {
+                'files': ('large_image.jpg', test_image, 'image/jpeg')
+            }
+            data = {
+                'entity_type': 'property',
+                'entity_id': 'test-property-id'
+            }
+            
+            headers = {k: v for k, v in self.session.headers.items() if k.lower() != 'content-type'}
+            
+            response = requests.post(
+                f"{self.api_url}/upload/images",
+                files=files,
+                data=data,
+                headers=headers
+            )
+            
+            expected_failure = response.status_code in [400, 401]  # Should fail due to size or no auth
+            details = f"Status: {response.status_code} (expected 400/401 for large file)"
+            
+            self.log_test("Image Upload (Large File)", expected_failure, details)
+            return expected_failure
+        except Exception as e:
+            self.log_test("Image Upload (Large File)", False, f"Exception: {str(e)}")
+            return False
+
+    def test_get_entity_images(self):
+        """Test getting images for an entity"""
+        try:
+            # Test with a sample entity
+            response = self.session.get(f"{self.api_url}/images/property/sample-property-id")
+            success = response.status_code == 200
+            details = f"Status: {response.status_code}"
+            
+            if success:
+                data = response.json()
+                images_count = len(data) if isinstance(data, list) else 0
+                details += f", Images found: {images_count}"
+            else:
+                details += f", Error: {response.text[:100]}"
+                
+            self.log_test("Get Entity Images", success, details, response.json() if success else None)
+            return success
+        except Exception as e:
+            self.log_test("Get Entity Images", False, f"Exception: {str(e)}")
+            return False
+
+    def test_mtn_momo_payment_no_auth(self):
+        """Test MTN MoMo payment endpoint without authentication (should fail)"""
+        try:
+            payment_data = {
+                "amount": "1000",
+                "currency": "EUR",
+                "external_id": "test-payment-123",
+                "payer_message": "Test payment",
+                "payee_note": "Test transaction",
+                "phone": "237123456789"
+            }
+            
+            response = self.session.post(
+                f"{self.api_url}/payments/mtn-momo",
+                json=payment_data
+            )
+            
+            expected_failure = response.status_code == 401  # Should fail without auth
+            details = f"Status: {response.status_code} (expected 401 without auth)"
+            
+            self.log_test("MTN MoMo Payment (No Auth)", expected_failure, details)
+            return expected_failure
+        except Exception as e:
+            self.log_test("MTN MoMo Payment (No Auth)", False, f"Exception: {str(e)}")
+            return False
+
+    def test_mtn_momo_payment_invalid_data(self):
+        """Test MTN MoMo payment with invalid data (should fail)"""
+        try:
+            # Missing required fields
+            payment_data = {
+                "amount": "invalid_amount",
+                "currency": "INVALID"
+            }
+            
+            response = self.session.post(
+                f"{self.api_url}/payments/mtn-momo",
+                json=payment_data
+            )
+            
+            expected_failure = response.status_code in [400, 401, 422]  # Should fail due to validation or no auth
+            details = f"Status: {response.status_code} (expected 400/401/422 for invalid data)"
+            
+            self.log_test("MTN MoMo Payment (Invalid Data)", expected_failure, details)
+            return expected_failure
+        except Exception as e:
+            self.log_test("MTN MoMo Payment (Invalid Data)", False, f"Exception: {str(e)}")
+            return False
+
+    def test_mtn_momo_status_check(self):
+        """Test MTN MoMo payment status check endpoint"""
+        try:
+            # Test with a sample reference ID
+            reference_id = "sample-reference-id-123"
+            response = self.session.get(f"{self.api_url}/payments/mtn-momo/status/{reference_id}")
+            
+            expected_failure = response.status_code == 401  # Should fail without auth
+            details = f"Status: {response.status_code} (expected 401 without auth)"
+            
+            self.log_test("MTN MoMo Status Check (No Auth)", expected_failure, details)
+            return expected_failure
+        except Exception as e:
+            self.log_test("MTN MoMo Status Check", False, f"Exception: {str(e)}")
+            return False
+
+    def test_mtn_momo_callback(self):
+        """Test MTN MoMo callback endpoint"""
+        try:
+            callback_data = {
+                "referenceId": "test-reference-123",
+                "status": "SUCCESSFUL",
+                "financialTransactionId": "test-transaction-456"
+            }
+            
+            response = self.session.post(
+                f"{self.api_url}/payments/mtn-momo/callback",
+                json=callback_data
+            )
+            
+            # Callback endpoint might accept requests without auth for webhook purposes
+            success = response.status_code in [200, 400, 404]  # Various acceptable responses
+            details = f"Status: {response.status_code}"
+            
+            if response.status_code == 200:
+                try:
+                    data = response.json()
+                    details += f", Response: {data}"
+                except:
+                    details += ", Response: Non-JSON"
+            else:
+                details += f", Error: {response.text[:100]}"
+                
+            self.log_test("MTN MoMo Callback", success, details)
+            return success
+        except Exception as e:
+            self.log_test("MTN MoMo Callback", False, f"Exception: {str(e)}")
+            return False
+
+    def test_payment_status_endpoint(self):
+        """Test general payment status endpoint"""
+        try:
+            # Test with a sample payment ID
+            payment_id = "sample-payment-id-123"
+            response = self.session.get(f"{self.api_url}/payments/{payment_id}/status")
+            
+            expected_failure = response.status_code == 401  # Should fail without auth
+            details = f"Status: {response.status_code} (expected 401 without auth)"
+            
+            self.log_test("Payment Status (No Auth)", expected_failure, details)
+            return expected_failure
+        except Exception as e:
+            self.log_test("Payment Status", False, f"Exception: {str(e)}")
+            return False
+
+    def test_mtn_momo_configuration(self):
+        """Test if MTN MoMo configuration is properly set up"""
+        try:
+            # This is an indirect test - we'll check if the payment endpoint gives proper error messages
+            payment_data = {
+                "amount": "100",
+                "currency": "EUR",
+                "external_id": "config-test-123",
+                "payer_message": "Configuration test",
+                "payee_note": "Test config",
+                "phone": "237123456789"
+            }
+            
+            response = self.session.post(
+                f"{self.api_url}/payments/mtn-momo",
+                json=payment_data
+            )
+            
+            # We expect 401 (no auth) rather than 500 (config error)
+            config_ok = response.status_code == 401
+            details = f"Status: {response.status_code}"
+            
+            if response.status_code == 500:
+                details += " - Possible MTN MoMo configuration issue"
+            elif response.status_code == 401:
+                details += " - Auth required (config appears OK)"
+            else:
+                details += f" - Unexpected response: {response.text[:100]}"
+                
+            self.log_test("MTN MoMo Configuration Check", config_ok, details)
+            return config_ok
+        except Exception as e:
+            self.log_test("MTN MoMo Configuration Check", False, f"Exception: {str(e)}")
+            return False
+
     def run_all_tests(self):
         """Run all API tests"""
         print("🚀 Starting Habitere API Tests...")
