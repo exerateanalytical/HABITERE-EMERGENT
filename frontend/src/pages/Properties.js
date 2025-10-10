@@ -37,9 +37,10 @@ const Properties = () => {
     bedrooms: ''
   });
   const [searchQuery, setSearchQuery] = useState('');
-  const [showFilters, setShowFilters] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'list'
   const [favorites, setFavorites] = useState(new Set());
+  const [sortBy, setSortBy] = useState('newest');
 
   useEffect(() => {
     fetchProperties();
