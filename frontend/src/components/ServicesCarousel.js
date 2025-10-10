@@ -118,6 +118,27 @@ const ServicesCarousel = ({ title = "Professional Services", showAll = true, lim
     setCurrentIndex(prev => (prev <= 0 ? maxIndex : prev - 1));
   };
 
+  // Touch/Mouse drag handlers for mobile
+  const handleStart = (e) => {
+    setIsDragging(true);
+    const clientX = e.type === 'mousedown' ? e.clientX : e.touches[0].clientX;
+    setStartX(clientX - carouselRef.current.offsetLeft);
+    setScrollLeft(carouselRef.current.scrollLeft);
+  };
+
+  const handleMove = (e) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const clientX = e.type === 'mousemove' ? e.clientX : e.touches[0].clientX;
+    const x = clientX - carouselRef.current.offsetLeft;
+    const walk = (x - startX) * 2;
+    carouselRef.current.scrollLeft = scrollLeft - walk;
+  };
+
+  const handleEnd = () => {
+    setIsDragging(false);
+  };
+
   const handleMouseEnter = () => {
     setIsAutoPlaying(false);
   };
