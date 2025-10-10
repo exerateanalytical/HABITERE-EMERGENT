@@ -572,6 +572,26 @@ class HabitereAPITester:
         self.test_messages_endpoint()
         self.test_bookings_endpoint()
         
+        print("\n🖼️  Testing Image Upload System...")
+        print("-" * 40)
+        
+        # Image upload tests
+        self.test_image_upload_no_auth()
+        self.test_image_upload_invalid_file()
+        self.test_image_upload_large_file()
+        self.test_get_entity_images()
+        
+        print("\n💳 Testing MTN Mobile Money Integration...")
+        print("-" * 40)
+        
+        # MTN MoMo tests
+        self.test_mtn_momo_configuration()
+        self.test_mtn_momo_payment_no_auth()
+        self.test_mtn_momo_payment_invalid_data()
+        self.test_mtn_momo_status_check()
+        self.test_mtn_momo_callback()
+        self.test_payment_status_endpoint()
+        
         # Print summary
         print("=" * 60)
         print(f"📊 Test Summary:")
@@ -580,6 +600,19 @@ class HabitereAPITester:
         print(f"   Failed: {self.tests_run - self.tests_passed}")
         print(f"   Success rate: {(self.tests_passed/self.tests_run)*100:.1f}%")
         
+        # Analyze critical failures
+        critical_failures = []
+        for result in self.test_results:
+            if not result["success"]:
+                test_name = result["test_name"]
+                if any(keyword in test_name.lower() for keyword in ["health", "root", "properties", "services"]):
+                    critical_failures.append(test_name)
+        
+        if critical_failures:
+            print(f"\n⚠️  Critical Failures Detected:")
+            for failure in critical_failures:
+                print(f"   - {failure}")
+        
         # Save detailed results
         results = {
             "summary": {
@@ -587,6 +620,7 @@ class HabitereAPITester:
                 "passed_tests": self.tests_passed,
                 "failed_tests": self.tests_run - self.tests_passed,
                 "success_rate": (self.tests_passed/self.tests_run)*100,
+                "critical_failures": critical_failures,
                 "timestamp": datetime.now().isoformat()
             },
             "test_results": self.test_results
