@@ -54,8 +54,9 @@ const Services = () => {
     location: ''
   });
   const [searchQuery, setSearchQuery] = useState('');
-  const [showFilters, setShowFilters] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [viewMode, setViewMode] = useState('grid');
+  const [sortBy, setSortBy] = useState('newest');
 
   useEffect(() => {
     fetchServices();
