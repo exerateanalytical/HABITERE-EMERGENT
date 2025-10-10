@@ -951,6 +951,12 @@ async def init_sample_data():
         }
     ]
     
+    # Check if properties already exist
+    existing_properties = await db.properties.count_documents({})
+    if existing_properties == 0:
+        await db.properties.insert_many(sample_properties)
+        logger.info(f"Inserted {len(sample_properties)} sample properties")
+    
     # Check if services already exist
     existing_services = await db.services.count_documents({})
     if existing_services == 0:
