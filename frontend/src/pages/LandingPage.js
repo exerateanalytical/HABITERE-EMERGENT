@@ -121,6 +121,10 @@ const LandingPage = () => {
 
   return (
     <div className="min-h-screen bg-white" data-testid="landing-page">
+      <SEOHead 
+        seoData={seoData} 
+        structuredData={structuredData} 
+      />
       {/* Hero Section - Premium Mobile-First Design */}
       <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-8 sm:py-12 md:py-20 lg:py-24 safe-area-top">
         {/* Background decorative elements */}
