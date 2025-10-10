@@ -142,6 +142,21 @@ class Message(BaseModel):
     timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     is_read: bool = False
 
+class ImageUpload(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    filename: str
+    original_filename: str
+    file_path: str
+    file_size: int
+    mime_type: str
+    uploaded_by: str
+    entity_type: str  # 'property', 'service', 'profile', 'chat'
+    entity_id: Optional[str] = None
+    is_primary: bool = False
+    alt_text: Optional[str] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
 # Request Models
 class UserCreate(BaseModel):
     email: str
