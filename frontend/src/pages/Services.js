@@ -59,6 +59,17 @@ const Services = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [viewMode, setViewMode] = useState('grid');
   const [sortBy, setSortBy] = useState('newest');
+  
+  // Generate dynamic SEO data for services page
+  const seoData = generateSEOData('services', {
+    location: searchQuery || 'Cameroon',
+    count: filteredServices.length
+  });
+  
+  const structuredData = generateStructuredData('RealEstateAgent', {
+    location: searchQuery || 'Cameroon',
+    region: 'Centre'
+  });
 
   useEffect(() => {
     fetchServices();
