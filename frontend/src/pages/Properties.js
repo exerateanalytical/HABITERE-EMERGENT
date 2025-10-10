@@ -119,6 +119,18 @@ const Properties = () => {
     property.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  // Generate dynamic SEO data based on current filters and location
+  const seoData = generateSEOData('properties', {
+    location: searchQuery || 'Cameroon',
+    count: filteredProperties.length,
+    propertyType: 'Properties'
+  });
+  
+  const structuredData = generateStructuredData('RealEstateAgent', {
+    location: searchQuery || 'Cameroon',
+    region: 'Centre'
+  });
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 py-8">
