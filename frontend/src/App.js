@@ -86,6 +86,24 @@ function AppContent() {
         
         <Route path="/auth/callback" element={<AuthCallback />} />
         
+        {/* Authentication Routes */}
+        <Route 
+          path="/login" 
+          element={
+            <PublicRoute>
+              <LoginPage />
+            </PublicRoute>
+          } 
+        />
+        <Route 
+          path="/register" 
+          element={
+            <PublicRoute>
+              <RegisterPage />
+            </PublicRoute>
+          } 
+        />
+        
         {/* Property browsing - available to all */}
         <Route path="/properties" element={<Properties />} />
         <Route path="/properties/:id" element={<PropertyDetails />} />
