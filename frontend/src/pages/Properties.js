@@ -70,7 +70,7 @@ const Properties = () => {
     }
   };
 
-  const handleFilterChange = (newFilters) => {
+  const handleFilterChange = useCallback((newFilters) => {
     // Transform FilterSidebar filters to match backend API expectations
     const transformedFilters = {
       property_type: newFilters.propertyType || '',
@@ -82,7 +82,7 @@ const Properties = () => {
     };
     setFilters(transformedFilters);
     setSearchQuery(newFilters.search || '');
-  };
+  }, []);
 
   const handleSearch = (searchFilters) => {
     setFilters(searchFilters);
