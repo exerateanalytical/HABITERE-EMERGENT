@@ -104,7 +104,7 @@ const FilterSidebar = ({
 
   useEffect(() => {
     onFiltersChange?.(filters);
-  }, [filters, onFiltersChange]);
+  }, [filters]);
 
   const handleFilterChange = (key, value) => {
     setFilters(prev => ({
