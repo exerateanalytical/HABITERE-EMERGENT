@@ -411,10 +411,21 @@ const Dashboard = () => {
           </div>
         </div>
 
+        {/* Featured Properties Carousel - for property seekers */}
+        {user?.role === 'property_seeker' && (
+          <div className="mt-8">
+            <FeaturedProperties 
+              title="Recommended Properties for You" 
+              limit={6}
+              showAll={true}
+            />
+          </div>
+        )}
+
         {/* Professional Services Carousel */}
         <div className="mt-8">
           <ServicesCarousel 
-            title="Recommended Professional Services" 
+            title={user?.role === 'property_seeker' ? "Professional Services You Might Need" : "Recommended Professional Services"}
             limit={10}
             showAll={true}
           />
