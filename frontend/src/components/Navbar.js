@@ -213,15 +213,22 @@ const Navbar = () => {
                     </button>
                   </div>
                 ) : (
-                  <button
-                    onClick={() => {
-                      handleLogin();
-                      setIsOpen(false);
-                    }}
-                    className="w-full btn-primary text-left justify-center"
-                  >
-                    Login with Google
-                  </button>
+                  <div className="space-y-3">
+                    <Link
+                      to="/login"
+                      className="block w-full text-center px-4 py-3 border border-gray-200 rounded-2xl font-medium text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      Sign In
+                    </Link>
+                    <Link
+                      to="/register"
+                      className="block w-full btn-primary text-center"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      Get Started Free
+                    </Link>
+                  </div>
                 )}
               </div>
             </div>
