@@ -143,23 +143,52 @@ const Properties = () => {
   return (
     <div className="min-h-screen bg-gray-50" data-testid="properties-page">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">Properties</h1>
-              <p className="text-gray-600 mt-1">
-                Discover {filteredProperties.length} properties available in Cameroon
+      <div className="bg-gradient-to-br from-white via-blue-50/30 to-purple-50/30 shadow-sm border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-6 lg:space-y-0">
+            <div className="text-center lg:text-left">
+              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+                Properties in Cameroon
+              </h1>
+              <p className="text-lg text-gray-600">
+                Discover <span className="font-semibold text-blue-600">{filteredProperties.length}</span> verified properties across all regions
               </p>
             </div>
 
-            {/* View toggle */}
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center bg-gray-100 rounded-lg p-1">
+            {/* Controls */}
+            <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4">
+              {/* Mobile Filter Button */}
+              <button
+                onClick={() => setSidebarOpen(true)}
+                className="lg:hidden w-full sm:w-auto bg-white border border-gray-200 px-4 py-3 rounded-xl flex items-center justify-center space-x-2 hover:bg-gray-50 transition-colors duration-200"
+              >
+                <SlidersHorizontal className="w-5 h-5 text-gray-600" />
+                <span className="font-medium text-gray-700">Filters</span>
+              </button>
+
+              {/* Sort Dropdown */}
+              <div className="relative w-full sm:w-auto">
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="w-full sm:w-auto bg-white border border-gray-200 px-4 py-3 rounded-xl appearance-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-medium text-gray-700"
+                >
+                  <option value="newest">Newest First</option>
+                  <option value="price_low">Price: Low to High</option>
+                  <option value="price_high">Price: High to Low</option>
+                  <option value="rating">Highest Rated</option>
+                </select>
+                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+              </div>
+
+              {/* View Toggle */}
+              <div className="flex items-center bg-white border border-gray-200 rounded-xl p-1">
                 <button
                   onClick={() => setViewMode('grid')}
-                  className={`p-2 rounded-md transition-colors ${
-                    viewMode === 'grid' ? 'bg-white shadow text-blue-600' : 'text-gray-500'
+                  className={`p-2 rounded-lg transition-all duration-200 ${
+                    viewMode === 'grid' 
+                      ? 'bg-blue-500 text-white shadow-md' 
+                      : 'text-gray-500 hover:text-gray-700'
                   }`}
                   data-testid="grid-view-btn"
                 >
@@ -167,8 +196,10 @@ const Properties = () => {
                 </button>
                 <button
                   onClick={() => setViewMode('list')}
-                  className={`p-2 rounded-md transition-colors ${
-                    viewMode === 'list' ? 'bg-white shadow text-blue-600' : 'text-gray-500'
+                  className={`p-2 rounded-lg transition-all duration-200 ${
+                    viewMode === 'list' 
+                      ? 'bg-blue-500 text-white shadow-md' 
+                      : 'text-gray-500 hover:text-gray-700'
                   }`}
                   data-testid="list-view-btn"
                 >
@@ -177,29 +208,40 @@ const Properties = () => {
               </div>
             </div>
           </div>
-
-          {/* Enhanced Search and Filters */}
-          <div className="mt-6">
-            <SearchFilters
-              type="property"
-              onSearch={handleSearch}
-              onFilterChange={handleFilterChange}
-              showAdvanced={showFilters}
-            />
-          </div>
         </div>
       </div>
 
-      {/* Results */}
+      {/* Main Content with Sidebar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Professional Services Carousel */}
-        <div className="mb-8">
-          <ServicesCarousel 
-            title="Find Property Services" 
-            limit={8}
-            showAll={true}
+        <div className="flex gap-8">
+          {/* Filter Sidebar */}
+          <FilterSidebar
+            type="properties"
+            isOpen={sidebarOpen}
+            onClose={() => setSidebarOpen(false)}
+            onFiltersChange={handleFilterChange}
+            className="hidden lg:block lg:w-80 flex-shrink-0"
           />
-        </div>
+
+          {/* Mobile Sidebar */}
+          <FilterSidebar
+            type="properties"
+            isOpen={sidebarOpen}
+            onClose={() => setSidebarOpen(false)}
+            onFiltersChange={handleFilterChange}
+            className="lg:hidden"
+          />
+
+          {/* Main Content */}
+          <div className="flex-1 min-w-0">
+            {/* Professional Services Carousel */}
+            <div className="mb-8">
+              <ServicesCarousel 
+                title="Find Property Services" 
+                limit={8}
+                showAll={true}
+              />
+            </div>
 
         {error && (
           <div className="bg-red-50 border border-red-200 rounded-xl p-6 mb-6" data-testid="error-message">
