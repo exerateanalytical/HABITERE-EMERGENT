@@ -41,6 +41,9 @@ const ServicesCarousel = ({ title = "Professional Services", showAll = true, lim
   const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
   const carouselRef = useRef(null);
   const intervalRef = useRef(null);
 
