@@ -1,0 +1,207 @@
+{
+  "summary": {
+    "total_tests": 12,
+    "passed_tests": 11,
+    "failed_tests": 1,
+    "success_rate": 91.66666666666666,
+    "timestamp": "2025-10-10T03:33:06.841992"
+  },
+  "test_results": [
+    {
+      "test_name": "Sample Data Initialization",
+      "success": true,
+      "details": "Status: 200, Message: Sample data initialized",
+      "response_data": {
+        "message": "Sample data initialized"
+      },
+      "timestamp": "2025-10-10T03:33:06.531073"
+    },
+    {
+      "test_name": "API Health Check",
+      "success": true,
+      "details": "Status: 200, Response: {'status': 'healthy', 'timestamp': '2025-10-10T03:33:06.535770+00:00'}",
+      "response_data": {
+        "status": "healthy",
+        "timestamp": "2025-10-10T03:33:06.535770+00:00"
+      },
+      "timestamp": "2025-10-10T03:33:06.581026"
+    },
+    {
+      "test_name": "API Root Endpoint",
+      "success": true,
+      "details": "Status: 200, Message: Habitere API - Real Estate and Home Services Platform",
+      "response_data": {
+        "message": "Habitere API - Real Estate and Home Services Platform"
+      },
+      "timestamp": "2025-10-10T03:33:06.591947"
+    },
+    {
+      "test_name": "Properties Listing",
+      "success": true,
+      "details": "Status: 200, Properties found: 0, Filtered request: OK",
+      "response_data": [],
+      "timestamp": "2025-10-10T03:33:06.656186"
+    },
+    {
+      "test_name": "Services Listing",
+      "success": true,
+      "details": "Status: 200, Services found: 6, Category filter: OK",
+      "response_data": [
+        {
+          "id": "d08e7999-a734-44a2-b9e4-573b45e373a0",
+          "provider_id": "sample-provider-1",
+          "category": "plumbing",
+          "title": "Expert Plumbing Services",
+          "description": "Professional plumbing installation, repair, and maintenance services for residential and commercial properties.",
+          "price_range": "15,000 - 75,000 XAF",
+          "location": "Douala, Littoral",
+          "images": [
+            "https://images.unsplash.com/photo-1621905252507-b35492cc74b4"
+          ],
+          "available": true,
+          "verified": true,
+          "created_at": "2025-10-10T03:26:34.431000"
+        },
+        {
+          "id": "affcb0c6-9ac4-45f7-9514-60b691db1fbc",
+          "provider_id": "sample-provider-2",
+          "category": "electrical",
+          "title": "Licensed Electrician Services",
+          "description": "Certified electrical installations, repairs, and safety inspections for homes and businesses.",
+          "price_range": "20,000 - 100,000 XAF",
+          "location": "Yaound\u00e9, Centre",
+          "images": [
+            "https://images.unsplash.com/photo-1621905251918-48416bd8575a"
+          ],
+          "available": true,
+          "verified": true,
+          "created_at": "2025-10-10T03:26:34.431000"
+        },
+        {
+          "id": "92db5637-3184-4364-bb58-91dbc06209f4",
+          "provider_id": "sample-provider-3",
+          "category": "construction",
+          "title": "Premium Construction Company",
+          "description": "Full-service construction company specializing in residential and commercial building projects.",
+          "price_range": "Contact for quote",
+          "location": "Bafoussam, Ouest",
+          "images": [
+            "https://images.unsplash.com/photo-1504307651254-35680f356dfd"
+          ],
+          "available": true,
+          "verified": true,
+          "created_at": "2025-10-10T03:26:34.431000"
+        },
+        {
+          "id": "02c29f90-4e87-49d0-8fa0-5b50e84e7e2a",
+          "provider_id": "sample-provider-4",
+          "category": "interior_design",
+          "title": "Modern Interior Design Studio",
+          "description": "Creative interior design solutions for homes, offices, and commercial spaces with modern aesthetics.",
+          "price_range": "50,000 - 500,000 XAF",
+          "location": "Douala, Littoral",
+          "images": [
+            "https://images.unsplash.com/photo-1586023492125-27b2c045efd7"
+          ],
+          "available": true,
+          "verified": true,
+          "created_at": "2025-10-10T03:26:34.431000"
+        },
+        {
+          "id": "4d6caabc-66f4-45fe-b03d-11878837127b",
+          "provider_id": "sample-provider-5",
+          "category": "painting",
+          "title": "Professional Painting Services",
+          "description": "High-quality interior and exterior painting services for residential and commercial properties.",
+          "price_range": "25,000 - 150,000 XAF",
+          "location": "Bamenda, Nord-Ouest",
+          "images": [
+            "https://images.unsplash.com/photo-1562259949-e8e7689d7828"
+          ],
+          "available": true,
+          "verified": true,
+          "created_at": "2025-10-10T03:26:34.431000"
+        },
+        {
+          "id": "972584fd-db47-49f4-ba0d-deed44847c8c",
+          "provider_id": "sample-provider-6",
+          "category": "carpentry",
+          "title": "Custom Carpentry & Woodwork",
+          "description": "Skilled carpentry services including custom furniture, cabinets, and wooden structures.",
+          "price_range": "30,000 - 200,000 XAF",
+          "location": "Garoua, Nord",
+          "images": [
+            "https://images.unsplash.com/photo-1503387762-592deb58ef4e"
+          ],
+          "available": true,
+          "verified": true,
+          "created_at": "2025-10-10T03:26:34.431000"
+        }
+      ],
+      "timestamp": "2025-10-10T03:33:06.677775"
+    },
+    {
+      "test_name": "Property Detail",
+      "success": false,
+      "details": "No properties available for testing",
+      "response_data": null,
+      "timestamp": "2025-10-10T03:33:06.693431"
+    },
+    {
+      "test_name": "Service Detail",
+      "success": true,
+      "details": "Status: 200, Service ID: d08e7999-a734-44a2-b9e4-573b45e373a0, Title: Expert Plumbing Services",
+      "response_data": {
+        "id": "d08e7999-a734-44a2-b9e4-573b45e373a0",
+        "provider_id": "sample-provider-1",
+        "category": "plumbing",
+        "title": "Expert Plumbing Services",
+        "description": "Professional plumbing installation, repair, and maintenance services for residential and commercial properties.",
+        "price_range": "15,000 - 75,000 XAF",
+        "location": "Douala, Littoral",
+        "images": [
+          "https://images.unsplash.com/photo-1621905252507-b35492cc74b4"
+        ],
+        "available": true,
+        "verified": true,
+        "created_at": "2025-10-10T03:26:34.431000"
+      },
+      "timestamp": "2025-10-10T03:33:06.716254"
+    },
+    {
+      "test_name": "Reviews Listing",
+      "success": true,
+      "details": "Status: 200, Reviews found: 0",
+      "response_data": [],
+      "timestamp": "2025-10-10T03:33:06.724994"
+    },
+    {
+      "test_name": "Auth Session Data (No Session)",
+      "success": true,
+      "details": "Session data endpoint status: 400 (expected 400)",
+      "response_data": null,
+      "timestamp": "2025-10-10T03:33:06.733544"
+    },
+    {
+      "test_name": "Auth Me (No Auth)",
+      "success": true,
+      "details": "Auth me endpoint status: 401 (expected 401)",
+      "response_data": null,
+      "timestamp": "2025-10-10T03:33:06.783414"
+    },
+    {
+      "test_name": "Messages Endpoint (No Auth)",
+      "success": true,
+      "details": "Status: 401 (expected 401 without auth)",
+      "response_data": null,
+      "timestamp": "2025-10-10T03:33:06.833283"
+    },
+    {
+      "test_name": "Bookings Endpoint (No Auth)",
+      "success": true,
+      "details": "Status: 401 (expected 401 without auth)",
+      "response_data": null,
+      "timestamp": "2025-10-10T03:33:06.841961"
+    }
+  ]
+}
