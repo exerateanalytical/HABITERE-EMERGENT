@@ -22,6 +22,35 @@ import {
 const LandingPage = () => {
   const { login } = useAuth();
 
+  // Generate SEO data for landing page
+  const seoData = generateSEOData({
+    title: 'Habitere - Find Your Perfect Home & Services in Cameroon',
+    description: 'Cameroon\'s most trusted platform for real estate and home services. Discover verified properties, connect with certified professionals, and make secure payments with MTN MoMo.',
+    keywords: 'real estate Cameroon, property rental Douala, houses for sale Yaoundé, home services Cameroon, MTN Mobile Money payments, verified properties, construction services',
+    url: window.location.href,
+    image: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&q=80',
+    type: 'website'
+  });
+
+  const structuredData = generateStructuredData({
+    type: 'RealEstateAgent',
+    name: 'Habitere',
+    description: 'Cameroon\'s most trusted platform for real estate and home services',
+    url: window.location.origin,
+    logo: `${window.location.origin}/logo.png`,
+    address: {
+      streetAddress: 'Douala',
+      addressLocality: 'Douala',
+      addressCountry: 'CM'
+    },
+    contactPoint: {
+      telephone: '+27675668211',
+      contactType: 'customer service'
+    },
+    areaServed: ['Douala', 'Yaoundé', 'Bafoussam', 'Bamenda', 'Garoua', 'Maroua'],
+    priceRange: '$$'
+  });
+
   const handleGetStarted = () => {
     const redirectUrl = `${window.location.origin}/auth/callback`;
     login(redirectUrl);
