@@ -156,6 +156,15 @@ const Properties = () => {
 
   return (
     <div className="min-h-screen bg-gray-50" data-testid="properties-page">
+      <SEOHead
+        title={seoData.title}
+        description={seoData.description}
+        keywords={seoData.keywords}
+        focusKeyword={seoData.focusKeyword}
+        structuredData={structuredData}
+        ogImage="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1200&q=80"
+        location={searchQuery || 'Cameroon'}
+      />
       {/* Enhanced Header */}
       <div className="relative bg-gradient-to-br from-white via-blue-50/40 to-purple-50/40 shadow-lg border-b border-gray-200 overflow-hidden">
         {/* Background pattern */}
