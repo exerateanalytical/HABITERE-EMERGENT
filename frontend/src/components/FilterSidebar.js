@@ -233,21 +233,40 @@ const FilterSidebar = ({
 
         {/* Filters content */}
         <div className="flex-1 overflow-y-auto p-6 space-y-1">
-          {/* Search */}
+          {/* Enhanced Search */}
           <FilterSection
-            title="Search"
+            title="🔍 Smart Search"
             isExpanded={true}
             onToggle={() => {}}
           >
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder={`Search ${type}...`}
-                value={filters.search}
-                onChange={(e) => handleFilterChange('search', e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
-              />
+            <div className="space-y-3">
+              <div className="relative">
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder={`Search ${type} by name, location, features...`}
+                  value={filters.search}
+                  onChange={(e) => handleFilterChange('search', e.target.value)}
+                  className="w-full pl-12 pr-4 py-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-gradient-to-r from-white to-blue-50/30 text-base"
+                />
+              </div>
+              
+              {/* Quick search suggestions */}
+              <div className="flex flex-wrap gap-2">
+                {type === 'properties' ? (
+                  <>
+                    <button className="px-3 py-1 bg-blue-100 hover:bg-blue-200 text-blue-700 text-xs rounded-full transition-colors duration-200">Modern House</button>
+                    <button className="px-3 py-1 bg-purple-100 hover:bg-purple-200 text-purple-700 text-xs rounded-full transition-colors duration-200">Luxury Apartment</button>
+                    <button className="px-3 py-1 bg-green-100 hover:bg-green-200 text-green-700 text-xs rounded-full transition-colors duration-200">Commercial Space</button>
+                  </>
+                ) : (
+                  <>
+                    <button className="px-3 py-1 bg-blue-100 hover:bg-blue-200 text-blue-700 text-xs rounded-full transition-colors duration-200">Expert Plumber</button>
+                    <button className="px-3 py-1 bg-purple-100 hover:bg-purple-200 text-purple-700 text-xs rounded-full transition-colors duration-200">Interior Design</button>
+                    <button className="px-3 py-1 bg-green-100 hover:bg-green-200 text-green-700 text-xs rounded-full transition-colors duration-200">Construction</button>
+                  </>
+                )}
+              </div>
             </div>
           </FilterSection>
 
