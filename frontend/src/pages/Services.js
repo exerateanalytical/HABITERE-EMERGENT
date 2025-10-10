@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import ServiceCard from '../components/ServiceCard';
+import SearchFilters from '../components/SearchFilters';
 import { 
   Search, 
   Filter, 
