@@ -28,9 +28,28 @@ mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
+# Image upload configuration
+UPLOAD_DIR = ROOT_DIR / "uploads"
+UPLOAD_DIR.mkdir(exist_ok=True)
+
+# Create subdirectories for different image types
+(UPLOAD_DIR / "properties").mkdir(exist_ok=True)
+(UPLOAD_DIR / "services").mkdir(exist_ok=True)
+(UPLOAD_DIR / "profiles").mkdir(exist_ok=True)
+(UPLOAD_DIR / "chat").mkdir(exist_ok=True)
+(UPLOAD_DIR / "thumbnails").mkdir(exist_ok=True)
+
+# Image upload settings
+MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB
+ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/jpg", "image/png", "image/webp"}
+THUMBNAIL_SIZE = (300, 300)
+
 # Create the main app
 app = FastAPI(title="Habitere API", description="Real Estate and Home Services Platform for Cameroon")
 api_router = APIRouter(prefix="/api")
+
+# Mount static files for serving uploaded images
+app.mount("/uploads", StaticFiles(directory=str(UPLOAD_DIR)), name="uploads")
 
 # Security scheme
 security = HTTPBearer(auto_error=False)
