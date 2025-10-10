@@ -234,44 +234,46 @@ const Services = () => {
                 </p>
               </div>
             </div>
-        {error && (
-          <div className="bg-red-50 border border-red-200 rounded-xl p-6 mb-6" data-testid="error-message">
-            <p className="text-red-700">{error}</p>
-          </div>
-        )}
+            {error && (
+              <div className="bg-red-50 border border-red-200 rounded-xl p-6 mb-6" data-testid="error-message">
+                <p className="text-red-700">{error}</p>
+              </div>
+            )}
 
-        {filteredServices.length === 0 && !loading && (
-          <div className="text-center py-12" data-testid="no-services">
-            <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Wrench className="w-12 h-12 text-gray-400" />
-            </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">No Services Found</h3>
-            <p className="text-gray-600 mb-4">
-              Try adjusting your search criteria or clearing the filters
-            </p>
-            <button
-              onClick={clearFilters}
-              className="btn-primary"
-            >
-              Clear Filters
-            </button>
-          </div>
-        )}
+            {filteredServices.length === 0 && !loading && (
+              <div className="text-center py-12 bg-white rounded-2xl shadow-sm border border-gray-100" data-testid="no-services">
+                <div className="w-24 h-24 bg-gradient-to-br from-purple-100 to-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Wrench className="w-12 h-12 text-purple-500" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-3">No Services Found</h3>
+                <p className="text-gray-600 mb-6 max-w-md mx-auto">
+                  We couldn't find any services matching your criteria. Try adjusting your filters or search terms.
+                </p>
+                <button
+                  onClick={clearFilters}
+                  className="btn-primary"
+                >
+                  Clear All Filters
+                </button>
+              </div>
+            )}
 
-        {/* Services grid/list */}
-        {viewMode === 'grid' ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" data-testid="services-grid">
-            {filteredServices.map((service) => (
-              <ServiceCard key={service.id} service={service} />
-            ))}
+            {/* Services grid/list */}
+            {viewMode === 'grid' ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" data-testid="services-grid">
+                {filteredServices.map((service) => (
+                  <EnhancedServiceCard key={service.id} service={service} />
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-6" data-testid="services-list">
+                {filteredServices.map((service) => (
+                  <ServiceListItem key={service.id} service={service} />
+                ))}
+              </div>
+            )}
           </div>
-        ) : (
-          <div className="space-y-4" data-testid="services-list">
-            {filteredServices.map((service) => (
-              <ServiceListItem key={service.id} service={service} />
-            ))}
-          </div>
-        )}
+        </div>
       </div>
     </div>
   );
