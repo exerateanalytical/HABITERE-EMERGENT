@@ -135,18 +135,164 @@ body {
   @apply animate-spin rounded-full border-4 border-gray-300 border-t-blue-600;
 }
 
-/* Mobile-first responsive design */
-@media (max-width: 640px) {
-  .btn-primary, .btn-secondary, .btn-outline {
-    @apply px-4 py-2 text-sm;
+/* Mobile-first responsive design - Enhanced for 200% native feel */
+/* Base mobile styles (default) */
+.btn-primary, .btn-secondary, .btn-outline {
+  @apply px-5 py-3 text-base min-h-12 touch-manipulation;
+  /* Touch-friendly button sizing */
+  min-height: 44px; /* iOS human interface guidelines minimum touch target */
+}
+
+.card-body {
+  @apply p-4;
+}
+
+.property-image, .service-image {
+  @apply h-40;
+}
+
+/* Mobile navigation enhancements */
+.mobile-nav-item {
+  @apply py-4 px-6 text-lg border-b border-gray-100 last:border-b-0;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+}
+
+/* Mobile form optimizations */
+.form-input, .form-select, .form-textarea {
+  @apply text-base py-4 px-4;
+  min-height: 48px; /* Prevent zoom on iOS */
+  font-size: 16px; /* Prevent zoom on iOS */
+}
+
+/* Mobile search and filters */
+.mobile-search-bar {
+  @apply sticky top-16 z-40 bg-white shadow-sm p-4;
+}
+
+/* Mobile carousel controls */
+.carousel-mobile {
+  @apply overflow-x-auto scrollbar-hide snap-x snap-mandatory;
+}
+
+.carousel-item-mobile {
+  @apply snap-start flex-none;
+  min-width: 280px;
+}
+
+/* Mobile property cards */
+.property-card-mobile, .service-card-mobile {
+  @apply w-full max-w-none;
+}
+
+/* Mobile hero section */
+.hero-mobile {
+  @apply py-12 px-4;
+}
+
+.hero-title-mobile {
+  @apply text-2xl font-bold leading-tight mb-4;
+}
+
+/* Mobile stats section */
+.stats-mobile {
+  @apply grid-cols-3 gap-2 text-center;
+}
+
+.stat-mobile {
+  @apply py-3;
+}
+
+.stat-number-mobile {
+  @apply text-lg font-bold;
+}
+
+.stat-label-mobile {
+  @apply text-xs;
+}
+
+/* Touch gestures and interactions */
+.swipe-indicator {
+  @apply w-8 h-1 bg-gray-300 rounded-full mx-auto my-2;
+}
+
+/* Mobile bottom navigation */
+.mobile-bottom-nav {
+  @apply fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.mobile-bottom-nav-item {
+  @apply flex-1 flex flex-col items-center justify-center py-2 px-1 text-xs;
+  min-height: 60px;
+}
+
+/* Mobile header optimization */
+.mobile-header {
+  @apply sticky top-0 z-50 bg-white border-b border-gray-200;
+  padding-top: env(safe-area-inset-top);
+}
+
+/* Small screens (phones in portrait) */
+@media (max-width: 480px) {
+  .container-mobile {
+    @apply px-4;
   }
   
-  .card-body {
-    @apply p-4;
+  .grid-mobile-1 {
+    @apply grid-cols-1 gap-4;
   }
   
-  .property-image, .service-image {
-    @apply h-32;
+  .text-mobile-sm {
+    @apply text-sm;
+  }
+  
+  .text-mobile-base {
+    @apply text-base;
+  }
+  
+  .text-mobile-lg {
+    @apply text-lg;
+  }
+  
+  .p-mobile {
+    @apply p-3;
+  }
+  
+  .py-mobile {
+    @apply py-8;
+  }
+  
+  /* Reduced spacing for small screens */
+  .hero-mobile {
+    @apply py-8 px-3;
+  }
+  
+  .section-mobile {
+    @apply py-8;
+  }
+}
+
+/* Medium screens (phones in landscape, small tablets) */
+@media (min-width: 481px) and (max-width: 768px) {
+  .grid-mobile-2 {
+    @apply grid-cols-2 gap-4;
+  }
+  
+  .carousel-item-mobile {
+    min-width: 320px;
+  }
+}
+
+/* Large screens (tablets, small desktops) */
+@media (min-width: 769px) {
+  .mobile-bottom-nav {
+    @apply hidden;
+  }
+  
+  .desktop-nav {
+    @apply block;
   }
 }
 
