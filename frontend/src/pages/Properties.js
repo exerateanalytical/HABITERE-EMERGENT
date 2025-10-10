@@ -142,17 +142,49 @@ const Properties = () => {
 
   return (
     <div className="min-h-screen bg-gray-50" data-testid="properties-page">
-      {/* Header */}
-      <div className="bg-gradient-to-br from-white via-blue-50/30 to-purple-50/30 shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Enhanced Header */}
+      <div className="relative bg-gradient-to-br from-white via-blue-50/40 to-purple-50/40 shadow-lg border-b border-gray-200 overflow-hidden">
+        {/* Background pattern */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+          }}></div>
+        </div>
+        
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-6 lg:space-y-0">
             <div className="text-center lg:text-left">
-              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
-                Properties in Cameroon
-              </h1>
-              <p className="text-lg text-gray-600">
-                Discover <span className="font-semibold text-blue-600">{filteredProperties.length}</span> verified properties across all regions
-              </p>
+              <div className="flex flex-col lg:flex-row lg:items-center space-y-4 lg:space-y-0 lg:space-x-6 mb-4">
+                <div>
+                  <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-2">
+                    Properties in 
+                    <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"> Cameroon</span>
+                  </h1>
+                  <p className="text-lg md:text-xl text-gray-600">
+                    Discover <span className="font-bold text-blue-600">{filteredProperties.length}</span> verified properties across all regions
+                  </p>
+                </div>
+              </div>
+              
+              {/* Quick stats */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto lg:mx-0">
+                <div className="bg-white/70 backdrop-blur-sm rounded-xl p-3 text-center shadow-lg border border-white/20">
+                  <div className="text-lg font-bold text-blue-600">1000+</div>
+                  <div className="text-xs text-gray-600">Total Properties</div>
+                </div>
+                <div className="bg-white/70 backdrop-blur-sm rounded-xl p-3 text-center shadow-lg border border-white/20">
+                  <div className="text-lg font-bold text-green-600">245</div>
+                  <div className="text-xs text-gray-600">For Sale</div>
+                </div>
+                <div className="bg-white/70 backdrop-blur-sm rounded-xl p-3 text-center shadow-lg border border-white/20">
+                  <div className="text-lg font-bold text-purple-600">387</div>
+                  <div className="text-xs text-gray-600">For Rent</div>
+                </div>
+                <div className="bg-white/70 backdrop-blur-sm rounded-xl p-3 text-center shadow-lg border border-white/20">
+                  <div className="text-lg font-bold text-orange-600">156</div>
+                  <div className="text-xs text-gray-600">New This Week</div>
+                </div>
+              </div>
             </div>
 
             {/* Controls */}
