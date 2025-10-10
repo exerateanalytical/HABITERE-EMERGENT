@@ -89,57 +89,75 @@ const LandingPage = () => {
 
   return (
     <div className="min-h-screen bg-white" data-testid="landing-page">
-      {/* Hero Section - Mobile Optimized */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-100 py-12 md:py-20 safe-area-top">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-            <div className="space-y-6 md:space-y-8 text-center lg:text-left">
-              <div className="space-y-3 md:space-y-4">
-                <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-gray-900 leading-tight">
+      {/* Hero Section - Premium Mobile-First Design */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-8 sm:py-12 md:py-20 lg:py-24 safe-area-top">
+        {/* Background decorative elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-200/30 to-purple-200/30 rounded-full blur-3xl"></div>
+          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-indigo-200/30 to-blue-200/30 rounded-full blur-3xl"></div>
+        </div>
+        
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+            <div className="space-y-6 md:space-y-8 text-center lg:text-left fade-in">
+              {/* Trust badge */}
+              <div className="inline-flex items-center px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full shadow-lg border border-white/20">
+                <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
+                <span className="text-sm font-medium text-gray-700">#1 Platform in Cameroon</span>
+              </div>
+              
+              <div className="space-y-4 md:space-y-6">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-extrabold text-gray-900 leading-[1.1] tracking-tight">
                   Find Your Perfect
-                  <span className="text-blue-600"> Home</span> and
-                  <span className="text-blue-600"> Services</span>
-                  <span className="block mt-1 text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl">
+                  <span className="block mt-2">
+                    <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-700 bg-clip-text text-transparent"> Home</span> and
+                    <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-700 bg-clip-text text-transparent"> Services</span>
+                  </span>
+                  <span className="block mt-2 text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-semibold text-gray-700">
                     in Cameroon
                   </span>
                 </h1>
-                <p className="text-base sm:text-lg md:text-xl text-gray-600 leading-relaxed max-w-2xl mx-auto lg:mx-0">
-                  Habitere is Cameroon's leading platform for real estate and home services. 
-                  Discover properties, connect with professionals, and make secure payments all in one place.
+                <p className="text-base sm:text-lg md:text-xl text-gray-600 leading-relaxed max-w-2xl mx-auto lg:mx-0 font-medium">
+                  Cameroon's most trusted platform for real estate and home services. 
+                  Discover verified properties, connect with certified professionals, and make secure payments with MTN MoMo.
                 </p>
               </div>
               
               <div className="flex flex-col sm:flex-row gap-3 md:gap-4 max-w-lg mx-auto lg:mx-0">
                 <button
                   onClick={handleGetStarted}
-                  className="btn-primary btn-mobile-full sm:btn-primary text-base md:text-lg px-6 md:px-8 py-3 md:py-4 touch-action-manipulation"
+                  className="group relative overflow-hidden bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold px-8 py-4 rounded-2xl shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 text-base md:text-lg touch-action-manipulation"
                   data-testid="get-started-btn"
                 >
-                  Get Started
-                  <ArrowRight className="ml-2 w-4 md:w-5 h-4 md:h-5" />
+                  <span className="relative z-10 flex items-center justify-center">
+                    Get Started Free
+                    <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
+                  </span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </button>
                 <a 
                   href="/properties" 
-                  className="btn-outline btn-mobile-full sm:btn-outline text-base md:text-lg px-6 md:px-8 py-3 md:py-4 touch-action-manipulation"
+                  className="group bg-white/90 backdrop-blur-sm hover:bg-white border-2 border-gray-200 hover:border-blue-300 text-gray-700 hover:text-blue-700 font-semibold px-8 py-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 text-base md:text-lg touch-action-manipulation flex items-center justify-center"
                   data-testid="browse-properties-btn"
                 >
                   Browse Properties
+                  <Home className="ml-2 w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
                 </a>
               </div>
 
-              {/* Mobile-optimized stats */}
-              <div className="grid grid-cols-3 gap-2 sm:gap-4 md:gap-8 pt-4 max-w-sm mx-auto lg:mx-0 lg:flex lg:max-w-none lg:justify-start">
-                <div className="text-center lg:text-left">
-                  <div className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900">1000+</div>
-                  <div className="text-xs sm:text-sm text-gray-600">Properties Listed</div>
+              {/* Enhanced mobile-optimized stats */}
+              <div className="grid grid-cols-3 gap-4 sm:gap-6 md:gap-8 pt-6 max-w-md mx-auto lg:mx-0">
+                <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-4 text-center shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300">
+                  <div className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">1000+</div>
+                  <div className="text-xs sm:text-sm text-gray-600 font-medium mt-1">Properties</div>
                 </div>
-                <div className="text-center lg:text-left">
-                  <div className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900">500+</div>
-                  <div className="text-xs sm:text-sm text-gray-600">Service Providers</div>
+                <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-4 text-center shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300">
+                  <div className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">500+</div>
+                  <div className="text-xs sm:text-sm text-gray-600 font-medium mt-1">Professionals</div>
                 </div>
-                <div className="text-center lg:text-left">
-                  <div className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900">10,000+</div>
-                  <div className="text-xs sm:text-sm text-gray-600">Happy Users</div>
+                <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-4 text-center shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300">
+                  <div className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">10K+</div>
+                  <div className="text-xs sm:text-sm text-gray-600 font-medium mt-1">Happy Users</div>
                 </div>
               </div>
             </div>
