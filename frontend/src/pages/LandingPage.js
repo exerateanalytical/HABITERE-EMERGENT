@@ -162,39 +162,74 @@ const LandingPage = () => {
               </div>
             </div>
 
-            <div className="relative">
-              <div className="grid grid-cols-2 gap-4">
-                <img 
-                  src="https://images.unsplash.com/photo-1560518883-ce09059eeffa"
-                  alt="Modern house with keys"
-                  className="rounded-2xl shadow-lg object-cover h-64 w-full hover-lift"
-                />
+            <div className="relative slide-up">
+              <div className="grid grid-cols-2 gap-4 md:gap-6">
                 <div className="space-y-4">
-                  <img 
-                    src="https://images.unsplash.com/photo-1605146769289-440113cc3d00"
-                    alt="Residential houses"
-                    className="rounded-2xl shadow-lg object-cover h-32 w-full hover-lift"
-                  />
-                  <img 
-                    src="https://images.unsplash.com/photo-1580587771525-78b9dba3b914"
-                    alt="Luxury house with pool"
-                    className="rounded-2xl shadow-lg object-cover h-28 w-full hover-lift"
-                  />
+                  <div className="relative group overflow-hidden rounded-3xl shadow-2xl">
+                    <img 
+                      src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&q=80"
+                      alt="Modern house with keys"
+                      className="object-cover h-48 sm:h-56 md:h-64 w-full transform group-hover:scale-105 transition-transform duration-700"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+                  </div>
+                  <div className="relative group overflow-hidden rounded-2xl shadow-xl">
+                    <img 
+                      src="https://images.unsplash.com/photo-1605146769289-440113cc3d00?w=600&q=80"
+                      alt="Residential houses"
+                      className="object-cover h-32 sm:h-36 w-full transform group-hover:scale-105 transition-transform duration-700"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+                  </div>
+                </div>
+                <div className="space-y-4 pt-8">
+                  <div className="relative group overflow-hidden rounded-2xl shadow-xl">
+                    <img 
+                      src="https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=600&q=80"
+                      alt="Luxury house with pool"
+                      className="object-cover h-32 sm:h-36 w-full transform group-hover:scale-105 transition-transform duration-700"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+                  </div>
+                  <div className="relative group overflow-hidden rounded-3xl shadow-2xl">
+                    <img 
+                      src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&q=80"
+                      alt="Modern apartment building"
+                      className="object-cover h-48 sm:h-56 md:h-64 w-full transform group-hover:scale-105 transition-transform duration-700"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+                  </div>
                 </div>
               </div>
               
-              {/* Floating cards */}
-              <div className="absolute -top-4 -left-4 bg-white rounded-xl shadow-lg p-4 border border-gray-100">
+              {/* Enhanced floating cards */}
+              <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-3 border border-white/20 hover:shadow-3xl transition-all duration-300 zoom-in">
                 <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                  <span className="text-sm font-medium text-gray-900">Available Now</span>
+                  <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                  <span className="text-sm font-semibold text-gray-900">Available Now</span>
                 </div>
               </div>
               
-              <div className="absolute -bottom-4 -right-4 bg-white rounded-xl shadow-lg p-4 border border-gray-100">
+              <div className="absolute bottom-4 right-4 bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-3 border border-white/20 hover:shadow-3xl transition-all duration-300 zoom-in">
                 <div className="flex items-center space-x-2">
-                  <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                  <span className="text-sm font-medium text-gray-900">4.9 Rating</span>
+                  <div className="flex items-center">
+                    <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                    <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                    <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                    <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                    <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                  </div>
+                  <span className="text-sm font-semibold text-gray-900">4.9 Rating</span>
+                </div>
+              </div>
+              
+              {/* Mobile money badge */}
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-xl shadow-2xl border-2 border-white/20 zoom-in">
+                <div className="flex items-center space-x-2">
+                  <div className="w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center">
+                    <span className="text-xs font-bold text-gray-900">M</span>
+                  </div>
+                  <span className="text-sm font-semibold">MTN MoMo</span>
                 </div>
               </div>
             </div>
