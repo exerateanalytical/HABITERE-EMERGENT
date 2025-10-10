@@ -545,33 +545,102 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-blue-600 to-indigo-700">
-        <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-            Ready to Find Your Perfect Home or Service?
-          </h2>
-          <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-            Join Habitere today and discover the easiest way to buy, rent, or sell properties, 
-            and connect with trusted professionals across Cameroon.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button
-              onClick={handleGetStarted}
-              className="inline-flex items-center px-8 py-4 border border-transparent text-lg font-medium rounded-full text-blue-700 bg-white hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 shadow-lg hover:shadow-xl"
-              data-testid="cta-get-started-btn"
-            >
-              Get Started for Free
-              <ArrowRight className="ml-2 w-5 h-5" />
-            </button>
-            <a
-              href="/properties"
-              className="inline-flex items-center px-8 py-4 border-2 border-white text-lg font-medium rounded-full text-white bg-transparent hover:bg-white hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white transition-all duration-200"
-              data-testid="cta-browse-properties-btn"
-            >
-              Browse Properties
-            </a>
+      {/* Premium CTA Section */}
+      <section className="relative py-20 md:py-28 overflow-hidden">
+        {/* Dynamic gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900"></div>
+        <div className="absolute inset-0 bg-gradient-to-tr from-blue-600/20 to-purple-600/20"></div>
+        
+        {/* Animated background elements */}
+        <div className="absolute top-0 left-0 w-full h-full overflow-hidden">
+          <div className="absolute top-20 left-20 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-20 right-20 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl animate-pulse delay-2000"></div>
+        </div>
+        
+        <div className="relative max-w-6xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+          <div className="fade-in">
+            <div className="inline-block px-6 py-3 bg-white/10 backdrop-blur-sm rounded-full mb-8 border border-white/20">
+              <span className="text-sm font-semibold text-white">🚀 Join 10,000+ Happy Users</span>
+            </div>
+            
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-8 leading-tight">
+              Ready to Find Your Perfect
+              <span className="block bg-gradient-to-r from-yellow-400 via-orange-400 to-yellow-500 bg-clip-text text-transparent">
+                Home or Service?
+              </span>
+            </h2>
+            
+            <p className="text-lg md:text-xl lg:text-2xl text-blue-100 mb-12 max-w-4xl mx-auto leading-relaxed font-medium">
+              Join Cameroon's most trusted platform today. Discover verified properties, 
+              connect with certified professionals, and make secure payments with MTN Mobile Money.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-6 justify-center max-w-2xl mx-auto">
+              <button
+                onClick={handleGetStarted}
+                className="group relative overflow-hidden bg-gradient-to-r from-yellow-400 via-orange-500 to-yellow-500 hover:from-yellow-500 hover:via-orange-600 hover:to-yellow-600 text-gray-900 font-bold px-10 py-5 rounded-2xl shadow-2xl hover:shadow-3xl transform hover:-translate-y-2 transition-all duration-300 text-lg md:text-xl"
+                data-testid="cta-get-started-btn"
+              >
+                <span className="relative z-10 flex items-center justify-center">
+                  🎉 Get Started FREE Today
+                  <ArrowRight className="ml-3 w-6 h-6 group-hover:translate-x-2 transition-transform duration-300" />
+                </span>
+                <div className="absolute inset-0 bg-gradient-to-r from-orange-500 via-yellow-500 to-orange-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              </button>
+              
+              <a
+                href="/properties"
+                className="group bg-white/10 backdrop-blur-sm hover:bg-white/20 border-2 border-white/30 hover:border-white/50 text-white font-semibold px-10 py-5 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 text-lg md:text-xl flex items-center justify-center"
+                data-testid="cta-browse-properties-btn"
+              >
+                <Building className="mr-3 w-6 h-6 group-hover:scale-110 transition-transform duration-300" />
+                Browse Properties
+              </a>
+            </div>
+            
+            {/* Trust badges */}
+            <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
+              <div className="flex flex-col items-center space-y-3">
+                <div className="w-16 h-16 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-white/20">
+                  <Shield className="w-8 h-8 text-green-400" />
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-white">100%</div>
+                  <div className="text-sm text-blue-200">Secure</div>
+                </div>
+              </div>
+              
+              <div className="flex flex-col items-center space-y-3">
+                <div className="w-16 h-16 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-white/20">
+                  <CheckCircle className="w-8 h-8 text-blue-400" />
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-white">Verified</div>
+                  <div className="text-sm text-blue-200">Properties</div>
+                </div>
+              </div>
+              
+              <div className="flex flex-col items-center space-y-3">
+                <div className="w-16 h-16 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-white/20">
+                  <Users className="w-8 h-8 text-purple-400" />
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-white">500+</div>
+                  <div className="text-sm text-blue-200">Professionals</div>
+                </div>
+              </div>
+              
+              <div className="flex flex-col items-center space-y-3">
+                <div className="w-16 h-16 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-white/20">
+                  <Star className="w-8 h-8 text-yellow-400 fill-current" />
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-white">4.9★</div>
+                  <div className="text-sm text-blue-200">Rating</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
