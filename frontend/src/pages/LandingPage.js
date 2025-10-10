@@ -305,38 +305,91 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Features Section - Mobile Optimized */}
-      <section className="py-12 md:py-20 bg-gray-50">
+      {/* Premium Features Section */}
+      <section className="py-16 md:py-24 bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-8 md:mb-16">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 md:mb-4">
-              Why Choose Habitere?
+          <div className="text-center mb-12 md:mb-20 fade-in">
+            <div className="inline-block px-4 py-2 bg-gradient-to-r from-blue-100 to-purple-100 rounded-full mb-6">
+              <span className="text-sm font-semibold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Why Choose Habitere?</span>
+            </div>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
+              The Most Trusted Platform
+              <span className="block bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                in Cameroon
+              </span>
             </h2>
-            <p className="text-base md:text-lg text-gray-600 max-w-2xl mx-auto px-4">
+            <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
               We're committed to making real estate and home services accessible, 
-              secure, and convenient for everyone in Cameroon.
+              secure, and convenient for everyone across all regions of Cameroon.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
             {features.map((feature, index) => {
               const Icon = feature.icon;
+              const colors = [
+                'from-blue-500 to-blue-600',
+                'from-purple-500 to-purple-600', 
+                'from-green-500 to-green-600',
+                'from-orange-500 to-orange-600'
+              ];
+              const bgColors = [
+                'from-blue-50 to-blue-100',
+                'from-purple-50 to-purple-100',
+                'from-green-50 to-green-100', 
+                'from-orange-50 to-orange-100'
+              ];
+              
               return (
-                <div key={index} className="card hover-lift text-center card-mobile-elevated" data-testid={`feature-${index}`}>
-                  <div className="card-body p-4 md:p-6">
-                    <div className="w-10 md:w-12 h-10 md:h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-3 md:mb-4">
-                      <Icon className="w-5 md:w-6 h-5 md:h-6 text-blue-600" />
+                <div key={index} className={`group relative bg-gradient-to-br ${bgColors[index % 4]} rounded-3xl p-6 md:p-8 shadow-xl hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-500 border border-white/20 hover:border-white/40`} data-testid={`feature-${index}`}>
+                  <div className="relative z-10">
+                    <div className={`w-16 md:w-20 h-16 md:h-20 bg-gradient-to-br ${colors[index % 4]} rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300`}>
+                      <Icon className="w-8 md:w-10 h-8 md:h-10 text-white" />
                     </div>
-                    <h3 className="text-lg md:text-xl font-semibold text-gray-900 mb-2">
+                    <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-4 group-hover:text-gray-800 transition-colors duration-300">
                       {feature.title}
                     </h3>
-                    <p className="text-sm md:text-base text-gray-600 leading-relaxed">
+                    <p className="text-base md:text-lg text-gray-700 leading-relaxed group-hover:text-gray-600 transition-colors duration-300">
                       {feature.description}
                     </p>
                   </div>
+                  
+                  {/* Decorative elements */}
+                  <div className="absolute top-4 right-4 w-8 h-8 bg-white/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="absolute bottom-4 left-4 w-6 h-6 bg-white/10 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100"></div>
                 </div>
               );
             })}
+          </div>
+          
+          {/* Trust indicators */}
+          <div className="mt-16 text-center">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
+              <div className="flex flex-col items-center space-y-2">
+                <div className="w-12 h-12 bg-green-100 rounded-2xl flex items-center justify-center">
+                  <CheckCircle className="w-6 h-6 text-green-600" />
+                </div>
+                <span className="text-sm font-semibold text-gray-700">Verified Properties</span>
+              </div>
+              <div className="flex flex-col items-center space-y-2">
+                <div className="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center">
+                  <Shield className="w-6 h-6 text-blue-600" />
+                </div>
+                <span className="text-sm font-semibold text-gray-700">Secure Payments</span>
+              </div>
+              <div className="flex flex-col items-center space-y-2">
+                <div className="w-12 h-12 bg-purple-100 rounded-2xl flex items-center justify-center">
+                  <Users className="w-6 h-6 text-purple-600" />
+                </div>
+                <span className="text-sm font-semibold text-gray-700">Trusted Professionals</span>
+              </div>
+              <div className="flex flex-col items-center space-y-2">
+                <div className="w-12 h-12 bg-orange-100 rounded-2xl flex items-center justify-center">
+                  <Clock className="w-6 h-6 text-orange-600" />
+                </div>
+                <span className="text-sm font-semibold text-gray-700">24/7 Support</span>
+              </div>
+            </div>
           </div>
         </div>
       </section>
