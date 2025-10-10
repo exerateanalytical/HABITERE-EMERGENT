@@ -243,56 +243,70 @@ const Properties = () => {
               />
             </div>
 
-        {error && (
-          <div className="bg-red-50 border border-red-200 rounded-xl p-6 mb-6" data-testid="error-message">
-            <p className="text-red-700">{error}</p>
-          </div>
-        )}
-
-        {filteredProperties.length === 0 && !loading && (
-          <div className="text-center py-12" data-testid="no-properties">
-            <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Search className="w-12 h-12 text-gray-400" />
+            {/* Results Header */}
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-xl font-semibold text-gray-900">
+                  {filteredProperties.length} Properties Found
+                </h2>
+                <p className="text-sm text-gray-600 mt-1">
+                  Showing the best matches for your criteria
+                </p>
+              </div>
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">No Properties Found</h3>
-            <p className="text-gray-600 mb-4">
-              Try adjusting your search criteria or clearing the filters
-            </p>
-            <button
-              onClick={clearFilters}
-              className="btn-primary"
-            >
-              Clear Filters
-            </button>
-          </div>
-        )}
 
-        {/* Properties grid/list */}
-        {viewMode === 'grid' ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" data-testid="properties-grid">
-            {filteredProperties.map((property) => (
-              <PropertyCard 
-                key={property.id} 
-                property={property} 
-                isFavorite={favorites.has(property.id)}
-                onToggleFavorite={toggleFavorite}
-                formatPrice={formatPrice}
-              />
-            ))}
+            {error && (
+              <div className="bg-red-50 border border-red-200 rounded-xl p-6 mb-6" data-testid="error-message">
+                <p className="text-red-700">{error}</p>
+              </div>
+            )}
+
+            {filteredProperties.length === 0 && !loading && (
+              <div className="text-center py-12 bg-white rounded-2xl shadow-sm border border-gray-100" data-testid="no-properties">
+                <div className="w-24 h-24 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Search className="w-12 h-12 text-blue-500" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-3">No Properties Found</h3>
+                <p className="text-gray-600 mb-6 max-w-md mx-auto">
+                  We couldn't find any properties matching your criteria. Try adjusting your filters or search terms.
+                </p>
+                <button
+                  onClick={clearFilters}
+                  className="btn-primary"
+                >
+                  Clear All Filters
+                </button>
+              </div>
+            )}
+
+            {/* Properties grid/list */}
+            {viewMode === 'grid' ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" data-testid="properties-grid">
+                {filteredProperties.map((property) => (
+                  <PropertyCard 
+                    key={property.id} 
+                    property={property} 
+                    isFavorite={favorites.has(property.id)}
+                    onToggleFavorite={toggleFavorite}
+                    formatPrice={formatPrice}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-6" data-testid="properties-list">
+                {filteredProperties.map((property) => (
+                  <PropertyListItem 
+                    key={property.id} 
+                    property={property} 
+                    isFavorite={favorites.has(property.id)}
+                    onToggleFavorite={toggleFavorite}
+                    formatPrice={formatPrice}
+                  />
+                ))}
+              </div>
+            )}
           </div>
-        ) : (
-          <div className="space-y-4" data-testid="properties-list">
-            {filteredProperties.map((property) => (
-              <PropertyListItem 
-                key={property.id} 
-                property={property} 
-                isFavorite={favorites.has(property.id)}
-                onToggleFavorite={toggleFavorite}
-                formatPrice={formatPrice}
-              />
-            ))}
-          </div>
-        )}
+        </div>
       </div>
     </div>
   );
