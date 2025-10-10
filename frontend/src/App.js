@@ -15,6 +15,8 @@ import ServiceDetails from './pages/ServiceDetails';
 import BookingPage from './pages/BookingPage';
 import Messages from './pages/Messages';
 import Profile from './pages/Profile';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 import AuthCallback from './components/AuthCallback';
 
 // Context
