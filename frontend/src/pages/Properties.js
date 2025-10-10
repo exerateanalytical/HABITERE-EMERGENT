@@ -43,6 +43,18 @@ const Properties = () => {
   const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'list'
   const [favorites, setFavorites] = useState(new Set());
   const [sortBy, setSortBy] = useState('newest');
+  
+  // Generate dynamic SEO data based on current filters and location
+  const seoData = generateSEOData('properties', {
+    location: searchQuery || 'Cameroon',
+    count: filteredProperties.length,
+    propertyType: 'Properties'
+  });
+  
+  const structuredData = generateStructuredData('RealEstateAgent', {
+    location: searchQuery || 'Cameroon',
+    region: 'Centre'
+  });
 
   useEffect(() => {
     fetchProperties();
