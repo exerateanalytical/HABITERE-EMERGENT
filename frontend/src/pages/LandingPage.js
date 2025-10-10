@@ -307,6 +307,17 @@ const LandingPage = () => {
         </div>
       </section>
 
+      {/* Professional Services Carousel */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <ServicesCarousel 
+            title="Connect with Trusted Professionals" 
+            limit={12}
+            showAll={true}
+          />
+        </div>
+      </section>
+
       {/* Testimonials Section */}
       <section className="py-20 bg-blue-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
