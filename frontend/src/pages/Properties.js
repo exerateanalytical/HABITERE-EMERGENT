@@ -52,19 +52,26 @@ const Properties = () => {
   const fetchProperties = async () => {
     try {
       setLoading(true);
+      setError('');
       const params = new URLSearchParams();
       
       Object.entries(filters).forEach(([key, value]) => {
-        if (value) {
+        if (value && value !== '') {
           params.append(key, value);
         }
       });
 
-      const response = await axios.get(`${API}/properties?${params.toString()}`);
+      const queryString = params.toString();
+      const url = queryString ? `${API}/properties?${queryString}` : `${API}/properties`;
+      
+      console.log('Fetching properties from:', url);
+      const response = await axios.get(url);
+      console.log('Properties received:', response.data?.length || 0);
       setProperties(response.data || []);
     } catch (err) {
       console.error('Error fetching properties:', err);
-      setError('Failed to load properties');
+      setError('Failed to load properties. Please try again.');
+      setProperties([]);
     } finally {
       setLoading(false);
     }
