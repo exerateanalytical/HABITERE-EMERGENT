@@ -13,7 +13,8 @@ import {
   Building, 
   Wrench, 
   Home,
-  CheckCircle
+  CheckCircle,
+  Phone
 } from 'lucide-react';
 
 const LandingPage = () => {
