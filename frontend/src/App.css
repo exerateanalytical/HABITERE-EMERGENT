@@ -462,3 +462,204 @@ html {
 .toast-info {
   @apply border-blue-200 bg-blue-50;
 }
+
+/* Mobile-specific utilities */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Safari and Chrome */
+}
+
+/* Safe area support for iOS devices */
+.safe-area-top {
+  padding-top: env(safe-area-inset-top);
+}
+
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.safe-area-left {
+  padding-left: env(safe-area-inset-left);
+}
+
+.safe-area-right {
+  padding-right: env(safe-area-inset-right);
+}
+
+/* Improve touch interactions */
+.touch-action-manipulation {
+  touch-action: manipulation;
+}
+
+.touch-action-pan-x {
+  touch-action: pan-x;
+}
+
+.touch-action-pan-y {
+  touch-action: pan-y;
+}
+
+/* Mobile image optimization */
+.image-mobile-responsive {
+  @apply w-full h-auto max-w-full;
+  object-fit: cover;
+}
+
+/* Mobile modal styles */
+.modal-mobile {
+  @apply fixed inset-0 z-50 overflow-y-auto bg-white;
+}
+
+.modal-mobile-header {
+  @apply flex items-center justify-between p-4 border-b border-gray-200 sticky top-0 bg-white z-10;
+}
+
+.modal-mobile-content {
+  @apply p-4 pb-20;
+}
+
+/* Pull to refresh indicator */
+.pull-to-refresh {
+  @apply flex items-center justify-center py-4 text-gray-500;
+  min-height: 60px;
+}
+
+/* Mobile loading states */
+.loading-mobile {
+  @apply flex items-center justify-center py-8;
+}
+
+.skeleton-mobile {
+  @apply animate-pulse bg-gray-200 rounded-lg;
+}
+
+/* Mobile-optimized spacing system */
+.space-mobile-xs {
+  @apply space-y-2;
+}
+
+.space-mobile-sm {
+  @apply space-y-3;
+}
+
+.space-mobile-md {
+  @apply space-y-4;
+}
+
+.space-mobile-lg {
+  @apply space-y-6;
+}
+
+.space-mobile-xl {
+  @apply space-y-8;
+}
+
+/* Mobile typography scale */
+.text-mobile-xs {
+  @apply text-xs leading-relaxed;
+}
+
+.text-mobile-sm {
+  @apply text-sm leading-relaxed;
+}
+
+.text-mobile-base {
+  @apply text-base leading-relaxed;
+}
+
+.text-mobile-lg {
+  @apply text-lg leading-relaxed;
+}
+
+.text-mobile-xl {
+  @apply text-xl leading-tight;
+}
+
+.text-mobile-2xl {
+  @apply text-2xl leading-tight font-semibold;
+}
+
+/* Mobile card variations */
+.card-mobile-flat {
+  @apply bg-white border border-gray-100 rounded-lg p-4;
+  box-shadow: none;
+}
+
+.card-mobile-elevated {
+  @apply bg-white rounded-xl p-4 shadow-lg;
+}
+
+/* Mobile input groups */
+.input-group-mobile {
+  @apply space-y-3;
+}
+
+.input-label-mobile {
+  @apply text-sm font-medium text-gray-700 mb-2 block;
+}
+
+/* Mobile button variations */
+.btn-mobile-full {
+  @apply w-full justify-center py-4 text-lg font-semibold rounded-xl;
+}
+
+.btn-mobile-icon {
+  @apply p-3 rounded-full;
+  min-width: 48px;
+  min-height: 48px;
+}
+
+/* Mobile grid system */
+.grid-mobile-auto {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+}
+
+.grid-mobile-fill {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+/* Mobile flexbox utilities */
+.flex-mobile-wrap {
+  @apply flex flex-wrap gap-2;
+}
+
+.flex-mobile-center {
+  @apply flex items-center justify-center;
+}
+
+.flex-mobile-between {
+  @apply flex items-center justify-between;
+}
+
+/* Mobile visibility utilities */
+@media (max-width: 768px) {
+  .hidden-mobile {
+    @apply hidden;
+  }
+  
+  .block-mobile {
+    @apply block;
+  }
+  
+  .flex-mobile {
+    @apply flex;
+  }
+}
+
+@media (min-width: 769px) {
+  .hidden-desktop {
+    @apply hidden;
+  }
+  
+  .block-desktop {
+    @apply block;
+  }
+}
