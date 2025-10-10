@@ -279,7 +279,93 @@ const Services = () => {
   );
 };
 
-// ServiceCard component is imported from ../components/ServiceCard
+const EnhancedServiceCard = ({ service }) => {
+  const categoryInfo = serviceCategories.find(cat => cat.value === service.category) || 
+                      { label: service.category, icon: Wrench };
+  const Icon = categoryInfo.icon;
+
+  return (
+    <div className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-purple-200 transform hover:-translate-y-1" data-testid={`service-card-${service.id}`}>
+      <div className="relative overflow-hidden h-56">
+        <img
+          src={service.images?.[0] || 'https://images.unsplash.com/photo-1505798577917-a65157d3320a?w=600&q=80'}
+          alt={service.title}
+          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+        />
+        
+        {/* Overlay gradient */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        
+        <div className="absolute top-4 left-4 flex flex-wrap gap-2">
+          <span className="px-3 py-1 rounded-full text-xs font-semibold bg-purple-500/90 text-white shadow-lg backdrop-blur-sm flex items-center">
+            <Icon className="w-3 h-3 mr-1" />
+            {categoryInfo.label}
+          </span>
+          {service.verified && (
+            <span className="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/90 text-white shadow-lg backdrop-blur-sm flex items-center">
+              <Shield className="w-3 h-3 mr-1" />
+              Verified
+            </span>
+          )}
+        </div>
+
+        {/* Rating overlay */}
+        <div className="absolute bottom-4 left-4 flex items-center bg-white/90 backdrop-blur-sm rounded-lg px-2 py-1 shadow-lg">
+          <Star className="w-4 h-4 text-yellow-400 fill-current mr-1" />
+          <span className="text-sm font-semibold text-gray-900">4.8</span>
+          <span className="text-xs text-gray-600 ml-1">(24)</span>
+        </div>
+      </div>
+
+      <div className="p-6">
+        <div className="mb-4">
+          <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-purple-600 transition-colors duration-200">
+            {service.title}
+          </h3>
+          <div className="flex items-center text-gray-500 text-sm mb-2">
+            <MapPin className="w-4 h-4 mr-2 text-purple-500" />
+            <span className="font-medium">{service.location}</span>
+          </div>
+          <p className="text-gray-600 text-sm line-clamp-2">
+            {service.description}
+          </p>
+        </div>
+
+        <div className="flex items-center justify-between mb-4 py-3 bg-gray-50 rounded-xl px-4">
+          <div className="flex items-center">
+            <Users className="w-4 h-4 text-purple-500 mr-1" />
+            <span className="text-xs font-semibold text-gray-700">15 Projects</span>
+          </div>
+          <div className="flex items-center">
+            <Award className="w-4 h-4 text-purple-500 mr-1" />
+            <span className="text-xs font-semibold text-gray-700">Expert</span>
+          </div>
+        </div>
+
+        {service.price_range && (
+          <div className="mb-4">
+            <div className="text-lg font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+              {service.price_range}
+            </div>
+          </div>
+        )}
+
+        <div className="flex items-center space-x-2 mb-4">
+          <button className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold px-4 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center group-hover:scale-105">
+            <Eye className="w-4 h-4 mr-2" />
+            View Details
+          </button>
+          <button className="p-3 bg-gray-100 hover:bg-purple-100 rounded-xl transition-colors duration-200">
+            <Phone className="w-4 h-4 text-gray-600 hover:text-purple-600" />
+          </button>
+          <button className="p-3 bg-gray-100 hover:bg-purple-100 rounded-xl transition-colors duration-200">
+            <Mail className="w-4 h-4 text-gray-600 hover:text-purple-600" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const ServiceListItem = ({ service }) => {
   const categoryInfo = serviceCategories.find(cat => cat.value === service.category) || 
