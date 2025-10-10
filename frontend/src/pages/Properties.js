@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import SEOHead from '../components/SEOHead';
+import { generateSEOData, generateStructuredData } from '../utils/seoData';
 import ServicesCarousel from '../components/ServicesCarousel';
 import FilterSidebar from '../components/FilterSidebar';
 import { 
