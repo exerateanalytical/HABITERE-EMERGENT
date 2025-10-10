@@ -787,6 +787,96 @@ async def send_message(
     await db.messages.insert_one(message_doc)
     return serialize_doc(message_doc)
 
+# Sample data initialization
+async def init_sample_data():
+    """Initialize sample services for demonstration"""
+    sample_services = [
+        {
+            "id": str(uuid.uuid4()),
+            "provider_id": "sample-provider-1",
+            "category": "plumbing",
+            "title": "Expert Plumbing Services",
+            "description": "Professional plumbing installation, repair, and maintenance services for residential and commercial properties.",
+            "price_range": "15,000 - 75,000 XAF",
+            "location": "Douala, Littoral",
+            "images": ["https://images.unsplash.com/photo-1621905252507-b35492cc74b4"],
+            "available": True,
+            "verified": True,
+            "created_at": datetime.now(timezone.utc)
+        },
+        {
+            "id": str(uuid.uuid4()),
+            "provider_id": "sample-provider-2", 
+            "category": "electrical",
+            "title": "Licensed Electrician Services",
+            "description": "Certified electrical installations, repairs, and safety inspections for homes and businesses.",
+            "price_range": "20,000 - 100,000 XAF",
+            "location": "Yaoundé, Centre",
+            "images": ["https://images.unsplash.com/photo-1621905251918-48416bd8575a"],
+            "available": True,
+            "verified": True,
+            "created_at": datetime.now(timezone.utc)
+        },
+        {
+            "id": str(uuid.uuid4()),
+            "provider_id": "sample-provider-3",
+            "category": "construction",
+            "title": "Premium Construction Company",
+            "description": "Full-service construction company specializing in residential and commercial building projects.",
+            "price_range": "Contact for quote",
+            "location": "Bafoussam, Ouest",
+            "images": ["https://images.unsplash.com/photo-1504307651254-35680f356dfd"],
+            "available": True,
+            "verified": True,
+            "created_at": datetime.now(timezone.utc)
+        },
+        {
+            "id": str(uuid.uuid4()),
+            "provider_id": "sample-provider-4",
+            "category": "interior_design",
+            "title": "Modern Interior Design Studio", 
+            "description": "Creative interior design solutions for homes, offices, and commercial spaces with modern aesthetics.",
+            "price_range": "50,000 - 500,000 XAF",
+            "location": "Douala, Littoral",
+            "images": ["https://images.unsplash.com/photo-1586023492125-27b2c045efd7"],
+            "available": True,
+            "verified": True,
+            "created_at": datetime.now(timezone.utc)
+        },
+        {
+            "id": str(uuid.uuid4()),
+            "provider_id": "sample-provider-5",
+            "category": "painting",
+            "title": "Professional Painting Services",
+            "description": "High-quality interior and exterior painting services for residential and commercial properties.",
+            "price_range": "25,000 - 150,000 XAF",
+            "location": "Bamenda, Nord-Ouest",
+            "images": ["https://images.unsplash.com/photo-1562259949-e8e7689d7828"],
+            "available": True,
+            "verified": True,
+            "created_at": datetime.now(timezone.utc)
+        },
+        {
+            "id": str(uuid.uuid4()),
+            "provider_id": "sample-provider-6",
+            "category": "carpentry",
+            "title": "Custom Carpentry & Woodwork",
+            "description": "Skilled carpentry services including custom furniture, cabinets, and wooden structures.",
+            "price_range": "30,000 - 200,000 XAF",
+            "location": "Garoua, Nord",
+            "images": ["https://images.unsplash.com/photo-1503387762-592deb58ef4e"],
+            "available": True,
+            "verified": True,
+            "created_at": datetime.now(timezone.utc)
+        }
+    ]
+    
+    # Check if services already exist
+    existing_services = await db.services.count_documents({})
+    if existing_services == 0:
+        await db.services.insert_many(sample_services)
+        logger.info(f"Inserted {len(sample_services)} sample services")
+
 # Utility Routes
 @api_router.get("/")
 async def root():
@@ -797,6 +887,12 @@ async def root():
 async def health_check():
     """Health check"""
     return {"status": "healthy", "timestamp": datetime.now(timezone.utc).isoformat()}
+
+@api_router.post("/init-sample-data")
+async def initialize_sample_data():
+    """Initialize sample data for demonstration"""
+    await init_sample_data()
+    return {"message": "Sample data initialized"}
 
 # Include router
 app.include_router(api_router)
