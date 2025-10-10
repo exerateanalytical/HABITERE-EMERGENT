@@ -314,85 +314,104 @@ const Properties = () => {
 
 const PropertyCard = ({ property, isFavorite, onToggleFavorite, formatPrice }) => {
   return (
-    <div className="property-card group" data-testid={`property-card-${property.id}`}>
-      <div className="relative overflow-hidden">
+    <div className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-blue-200 transform hover:-translate-y-1" data-testid={`property-card-${property.id}`}>
+      <div className="relative overflow-hidden h-56">
         <img
-          src={property.images?.[0] || 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2'}
+          src={property.images?.[0] || 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=600&q=80'}
           alt={property.title}
-          className="property-image group-hover:scale-110"
+          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
         />
         
-        <div className="absolute top-3 left-3 flex flex-wrap gap-2">
-          <span className={`badge ${
-            property.listing_type === 'rent' ? 'badge-success' : 
-            property.listing_type === 'sale' ? 'badge-primary' : 'badge-warning'
+        {/* Overlay gradient */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        
+        <div className="absolute top-4 left-4 flex flex-wrap gap-2">
+          <span className={`px-3 py-1 rounded-full text-xs font-semibold shadow-lg backdrop-blur-sm ${
+            property.listing_type === 'rent' 
+              ? 'bg-green-500/90 text-white' 
+              : property.listing_type === 'sale' 
+                ? 'bg-blue-500/90 text-white' 
+                : 'bg-orange-500/90 text-white'
           }`}>
             {property.listing_type === 'rent' ? 'For Rent' : 
              property.listing_type === 'sale' ? 'For Sale' : 'For Lease'}
           </span>
           {property.verified && (
-            <span className="badge badge-success">Verified</span>
+            <span className="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/90 text-white shadow-lg backdrop-blur-sm flex items-center">
+              <Shield className="w-3 h-3 mr-1" />
+              Verified
+            </span>
           )}
         </div>
         
         <button
           onClick={() => onToggleFavorite(property.id)}
-          className={`absolute top-3 right-3 p-2 rounded-full transition-colors ${
-            isFavorite ? 'bg-red-500 text-white' : 'bg-white text-gray-600 hover:text-red-500'
+          className={`absolute top-4 right-4 p-3 rounded-full transition-all duration-200 shadow-lg backdrop-blur-sm ${
+            isFavorite 
+              ? 'bg-red-500 text-white scale-110' 
+              : 'bg-white/90 text-gray-600 hover:text-red-500 hover:bg-white'
           }`}
           data-testid={`favorite-btn-${property.id}`}
         >
-          <Heart className={`w-4 h-4 ${isFavorite ? 'fill-current' : ''}`} />
+          <Heart className={`w-5 h-5 ${isFavorite ? 'fill-current' : ''}`} />
         </button>
+
+        {/* Rating overlay */}
+        {property.rating && (
+          <div className="absolute bottom-4 left-4 flex items-center bg-white/90 backdrop-blur-sm rounded-lg px-2 py-1 shadow-lg">
+            <Star className="w-4 h-4 text-yellow-400 fill-current mr-1" />
+            <span className="text-sm font-semibold text-gray-900">{property.rating}</span>
+          </div>
+        )}
       </div>
 
-      <div className="card-body">
-        <div className="mb-3">
-          <h3 className="text-lg font-semibold text-gray-900 mb-1 line-clamp-2">
+      <div className="p-6">
+        <div className="mb-4">
+          <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors duration-200">
             {property.title}
           </h3>
           <div className="flex items-center text-gray-500 text-sm">
-            <MapPin className="w-4 h-4 mr-1" />
-            {property.location}
+            <MapPin className="w-4 h-4 mr-2 text-blue-500" />
+            <span className="font-medium">{property.location}</span>
           </div>
         </div>
 
-        <div className="text-2xl font-bold text-blue-600 mb-3">
-          {formatPrice(property.price)}
-          {property.listing_type === 'rent' && <span className="text-sm text-gray-500">/month</span>}
+        <div className="mb-4">
+          <div className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            {formatPrice(property.price)}
+            {property.listing_type === 'rent' && <span className="text-sm text-gray-500 font-normal">/month</span>}
+          </div>
         </div>
 
-        <div className="flex items-center text-gray-600 text-sm space-x-4 mb-4">
+        <div className="flex items-center justify-center space-x-6 mb-6 py-3 bg-gray-50 rounded-xl">
           {property.bedrooms > 0 && (
-            <div className="flex items-center">
-              <BedDouble className="w-4 h-4 mr-1" />
-              {property.bedrooms} beds
+            <div className="flex flex-col items-center">
+              <BedDouble className="w-5 h-5 text-blue-500 mb-1" />
+              <span className="text-xs font-semibold text-gray-700">{property.bedrooms} Beds</span>
             </div>
           )}
           {property.bathrooms > 0 && (
-            <div className="flex items-center">
-              <Bath className="w-4 h-4 mr-1" />
-              {property.bathrooms} baths
+            <div className="flex flex-col items-center">
+              <Bath className="w-5 h-5 text-blue-500 mb-1" />
+              <span className="text-xs font-semibold text-gray-700">{property.bathrooms} Baths</span>
             </div>
           )}
           {property.area_sqm && (
-            <div className="flex items-center">
-              <Square className="w-4 h-4 mr-1" />
-              {property.area_sqm}m²
+            <div className="flex flex-col items-center">
+              <Square className="w-5 h-5 text-blue-500 mb-1" />
+              <span className="text-xs font-semibold text-gray-700">{property.area_sqm}m²</span>
             </div>
           )}
         </div>
 
-        <div className="flex items-center justify-between">
-          <Link
-            to={`/properties/${property.id}`}
-            className="btn-primary flex-1 mr-2 justify-center"
-            data-testid={`view-property-${property.id}`}
-          >
-            <Eye className="w-4 h-4 mr-2" />
-            View Details
-          </Link>
-        </div>
+        <Link
+          to={`/properties/${property.id}`}
+          className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center group-hover:scale-105"
+          data-testid={`view-property-${property.id}`}
+        >
+          <Eye className="w-5 h-5 mr-2" />
+          View Details
+        </Link>
       </div>
     </div>
   );
