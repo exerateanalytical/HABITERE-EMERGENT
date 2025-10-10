@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import ServiceCard from '../components/ServiceCard';
-import SearchFilters from '../components/SearchFilters';
+import FilterSidebar from '../components/FilterSidebar';
 import { 
   Search, 
   Filter, 
@@ -18,7 +18,12 @@ import {
   Building,
   Palette,
   Zap,
-  Droplets
+  Droplets,
+  SlidersHorizontal,
+  Shield,
+  Phone,
+  Mail,
+  Award
 } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
