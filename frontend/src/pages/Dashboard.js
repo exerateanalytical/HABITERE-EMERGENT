@@ -410,6 +410,15 @@ const Dashboard = () => {
           </div>
         </div>
 
+        {/* Professional Services Carousel */}
+        <div className="mt-8">
+          <ServicesCarousel 
+            title="Recommended Professional Services" 
+            limit={10}
+            showAll={true}
+          />
+        </div>
+
         {/* Role-specific tips */}
         <div className="mt-8">
           <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
