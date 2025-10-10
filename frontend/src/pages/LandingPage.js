@@ -334,19 +334,56 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Testimonials Section */}
-      <section className="py-20 bg-blue-50">
+      {/* Testimonials Section - Mobile Optimized */}
+      <section className="py-12 md:py-20 bg-blue-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          <div className="text-center mb-8 md:mb-16">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 md:mb-4">
               What Our Users Say
             </h2>
-            <p className="text-lg text-gray-600">
+            <p className="text-base md:text-lg text-gray-600">
               Join thousands of satisfied users across Cameroon
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* Mobile: Horizontal scroll, Desktop: Grid */}
+          <div className="md:hidden">
+            <div className="flex overflow-x-auto scrollbar-hide gap-4 pb-4 snap-x snap-mandatory touch-action-pan-x">
+              {testimonials.map((testimonial, index) => (
+                <div key={index} className="flex-none w-80 card hover-lift snap-start" data-testid={`testimonial-${index}`}>
+                  <div className="card-body p-4">
+                    <div className="flex items-center mb-3">
+                      {[...Array(testimonial.rating)].map((_, i) => (
+                        <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />
+                      ))}
+                    </div>
+                    
+                    <p className="text-sm text-gray-600 mb-4 italic leading-relaxed">
+                      "{testimonial.content}"
+                    </p>
+                    
+                    <div className="flex items-center">
+                      <img 
+                        src={testimonial.image}
+                        alt={testimonial.name}
+                        className="w-10 h-10 rounded-full object-cover mr-3"
+                      />
+                      <div>
+                        <h4 className="font-medium text-gray-900 text-sm">{testimonial.name}</h4>
+                        <p className="text-xs text-gray-600">{testimonial.role}, {testimonial.location}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="flex justify-center mt-4">
+              <div className="swipe-indicator" />
+            </div>
+          </div>
+
+          {/* Desktop Grid */}
+          <div className="hidden md:grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
             {testimonials.map((testimonial, index) => (
               <div key={index} className="card hover-lift" data-testid={`testimonial-${index}`}>
                 <div className="card-body">
