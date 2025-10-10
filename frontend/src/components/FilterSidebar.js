@@ -196,23 +196,39 @@ const FilterSidebar = ({
         flex flex-col
         ${className}
       `}>
-        {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-purple-50">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
-              <SlidersHorizontal className="w-5 h-5 text-white" />
+        {/* Enhanced Header */}
+        <div className="relative overflow-hidden border-b border-gray-100">
+          {/* Background gradient */}
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-purple-50/50 to-indigo-50"></div>
+          
+          <div className="relative flex items-center justify-between p-6">
+            <div className="flex items-center space-x-4">
+              <div className="relative">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 via-purple-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
+                  <SlidersHorizontal className="w-6 h-6 text-white" />
+                </div>
+                <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">Smart Filters</h2>
+                <p className="text-sm text-gray-600">Find your perfect {type === 'properties' ? 'property' : 'service'}</p>
+              </div>
             </div>
-            <div>
-              <h2 className="text-lg font-bold text-gray-900">Filters</h2>
-              <p className="text-sm text-gray-600">Refine your search</p>
+            
+            <div className="flex items-center space-x-2">
+              {/* Active filters count */}
+              <div className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-semibold">
+                {Object.values(filters).filter(value => value && value !== '' && (!Array.isArray(value) || value.length > 0)).length} active
+              </div>
+              
+              <button
+                onClick={onClose}
+                className="lg:hidden w-9 h-9 flex items-center justify-center rounded-xl hover:bg-white/50 transition-colors duration-200 backdrop-blur-sm"
+              >
+                <X className="w-5 h-5 text-gray-500" />
+              </button>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="lg:hidden w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors duration-200"
-          >
-            <X className="w-5 h-5 text-gray-500" />
-          </button>
         </div>
 
         {/* Filters content */}
