@@ -645,50 +645,141 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div className="md:col-span-2">
-              <div className="flex items-center mb-4">
-                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                  <Building className="w-5 h-5 text-white" />
+      {/* Premium Footer */}
+      <footer className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white overflow-hidden">
+        {/* Background pattern */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+          }}></div>
+        </div>
+        
+        <div className="relative py-16 md:py-20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
+              {/* Brand section */}
+              <div className="lg:col-span-2">
+                <div className="flex items-center mb-6">
+                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-xl">
+                    <Building className="w-7 h-7 text-white" />
+                  </div>
+                  <span className="ml-4 text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Habitere</span>
                 </div>
-                <span className="ml-2 text-xl font-bold">Habitere</span>
+                <p className="text-gray-300 mb-6 max-w-md text-lg leading-relaxed">
+                  Cameroon's most trusted platform for real estate and home services. 
+                  Making property transactions and professional services accessible, secure, and convenient for everyone.
+                </p>
+                <div className="space-y-3">
+                  <div className="flex items-center space-x-3 text-gray-300">
+                    <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
+                      <MapPin className="w-5 h-5 text-blue-400" />
+                    </div>
+                    <div>
+                      <p className="font-semibold">Douala, Cameroon</p>
+                      <p className="text-sm text-gray-400">Serving all regions</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-3 text-gray-300">
+                    <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
+                      <Phone className="w-5 h-5 text-green-400" />
+                    </div>
+                    <div>
+                      <p className="font-semibold">+237 6XX XXX XXX</p>
+                      <p className="text-sm text-gray-400">24/7 Support</p>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <p className="text-gray-400 mb-4 max-w-md">
-                Cameroon's leading platform for real estate and home services. 
-                Making property transactions and professional services accessible to everyone.
-              </p>
-              <div className="flex items-center space-x-2 text-gray-400">
-                <MapPin className="w-4 h-4" />
-                <span>Douala, Cameroon</span>
+              
+              {/* Quick Links */}
+              <div>
+                <h3 className="font-bold text-xl mb-6 text-white">Quick Links</h3>
+                <ul className="space-y-3">
+                  <li><a href="/properties" className="group flex items-center text-gray-300 hover:text-blue-400 transition-all duration-300">
+                    <ArrowRight className="w-4 h-4 mr-2 opacity-0 group-hover:opacity-100 transform -translate-x-2 group-hover:translate-x-0 transition-all duration-300" />
+                    Properties
+                  </a></li>
+                  <li><a href="/services" className="group flex items-center text-gray-300 hover:text-purple-400 transition-all duration-300">
+                    <ArrowRight className="w-4 h-4 mr-2 opacity-0 group-hover:opacity-100 transform -translate-x-2 group-hover:translate-x-0 transition-all duration-300" />
+                    Services
+                  </a></li>
+                  <li><a href="/dashboard" className="group flex items-center text-gray-300 hover:text-green-400 transition-all duration-300">
+                    <ArrowRight className="w-4 h-4 mr-2 opacity-0 group-hover:opacity-100 transform -translate-x-2 group-hover:translate-x-0 transition-all duration-300" />
+                    Dashboard
+                  </a></li>
+                  <li><a href="#" className="group flex items-center text-gray-300 hover:text-orange-400 transition-all duration-300">
+                    <ArrowRight className="w-4 h-4 mr-2 opacity-0 group-hover:opacity-100 transform -translate-x-2 group-hover:translate-x-0 transition-all duration-300" />
+                    About Us
+                  </a></li>
+                </ul>
+              </div>
+              
+              {/* Support */}
+              <div>
+                <h3 className="font-bold text-xl mb-6 text-white">Support & Legal</h3>
+                <ul className="space-y-3">
+                  <li><a href="#" className="group flex items-center text-gray-300 hover:text-blue-400 transition-all duration-300">
+                    <ArrowRight className="w-4 h-4 mr-2 opacity-0 group-hover:opacity-100 transform -translate-x-2 group-hover:translate-x-0 transition-all duration-300" />
+                    Help Center
+                  </a></li>
+                  <li><a href="#" className="group flex items-center text-gray-300 hover:text-purple-400 transition-all duration-300">
+                    <ArrowRight className="w-4 h-4 mr-2 opacity-0 group-hover:opacity-100 transform -translate-x-2 group-hover:translate-x-0 transition-all duration-300" />
+                    Privacy Policy
+                  </a></li>
+                  <li><a href="#" className="group flex items-center text-gray-300 hover:text-green-400 transition-all duration-300">
+                    <ArrowRight className="w-4 h-4 mr-2 opacity-0 group-hover:opacity-100 transform -translate-x-2 group-hover:translate-x-0 transition-all duration-300" />
+                    Terms of Service
+                  </a></li>
+                  <li><a href="#" className="group flex items-center text-gray-300 hover:text-orange-400 transition-all duration-300">
+                    <ArrowRight className="w-4 h-4 mr-2 opacity-0 group-hover:opacity-100 transform -translate-x-2 group-hover:translate-x-0 transition-all duration-300" />
+                    Contact Us
+                  </a></li>
+                </ul>
               </div>
             </div>
             
-            <div>
-              <h3 className="font-semibold mb-4">Quick Links</h3>
-              <ul className="space-y-2 text-gray-400">
-                <li><a href="/properties" className="hover:text-white transition-colors">Properties</a></li>
-                <li><a href="/services" className="hover:text-white transition-colors">Services</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">About Us</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Contact</a></li>
-              </ul>
+            {/* Payment methods and social */}
+            <div className="border-t border-gray-700 mt-12 pt-8">
+              <div className="flex flex-col md:flex-row justify-between items-center space-y-6 md:space-y-0">
+                <div className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-8">
+                  <div className="flex items-center space-x-4">
+                    <span className="text-gray-400 font-medium">Secure Payments:</span>
+                    <div className="flex items-center space-x-3">
+                      <div className="w-12 h-8 bg-yellow-400 rounded-lg flex items-center justify-center">
+                        <span className="text-xs font-bold text-gray-900">MTN</span>
+                      </div>
+                      <div className="w-12 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
+                        <span className="text-xs font-bold text-white">🏦</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center space-x-4">
+                    <span className="text-gray-400 font-medium">Follow Us:</span>
+                    <div className="flex items-center space-x-3">
+                      <a href="#" className="w-10 h-10 bg-blue-600 hover:bg-blue-700 rounded-full flex items-center justify-center transition-colors duration-300">
+                        <span className="text-white font-bold text-sm">f</span>
+                      </a>
+                      <a href="#" className="w-10 h-10 bg-blue-400 hover:bg-blue-500 rounded-full flex items-center justify-center transition-colors duration-300">
+                        <span className="text-white font-bold text-sm">t</span>
+                      </a>
+                      <a href="#" className="w-10 h-10 bg-pink-600 hover:bg-pink-700 rounded-full flex items-center justify-center transition-colors duration-300">
+                        <span className="text-white font-bold text-sm">i</span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="text-center md:text-right">
+                  <p className="text-gray-400 text-sm">
+                    &copy; 2024 Habitere. All rights reserved.
+                  </p>
+                  <p className="text-gray-500 text-xs mt-1">
+                    Made with ❤️ in Cameroon
+                  </p>
+                </div>
+              </div>
             </div>
-            
-            <div>
-              <h3 className="font-semibold mb-4">Support</h3>
-              <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">Help Center</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Privacy Policy</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Terms of Service</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">FAQ</a></li>
-              </ul>
-            </div>
-          </div>
-          
-          <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 Habitere. All rights reserved.</p>
           </div>
         </div>
       </footer>
