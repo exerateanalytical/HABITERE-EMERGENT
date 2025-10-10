@@ -131,23 +131,53 @@ const Services = () => {
   return (
     <div className="min-h-screen bg-gray-50" data-testid="services-page">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">Professional Services</h1>
-              <p className="text-gray-600 mt-1">
-                Connect with {filteredServices.length} verified professionals across Cameroon
+      <div className="bg-gradient-to-br from-white via-purple-50/30 to-blue-50/30 shadow-sm border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-6 lg:space-y-0">
+            <div className="text-center lg:text-left">
+              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+                Professional Services
+              </h1>
+              <p className="text-lg text-gray-600">
+                Connect with <span className="font-semibold text-purple-600">{filteredServices.length}</span> verified professionals across Cameroon
               </p>
             </div>
 
-            {/* View toggle */}
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center bg-gray-100 rounded-lg p-1">
+            {/* Controls */}
+            <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4">
+              {/* Mobile Filter Button */}
+              <button
+                onClick={() => setSidebarOpen(true)}
+                className="lg:hidden w-full sm:w-auto bg-white border border-gray-200 px-4 py-3 rounded-xl flex items-center justify-center space-x-2 hover:bg-gray-50 transition-colors duration-200"
+              >
+                <SlidersHorizontal className="w-5 h-5 text-gray-600" />
+                <span className="font-medium text-gray-700">Filters</span>
+              </button>
+
+              {/* Sort Dropdown */}
+              <div className="relative w-full sm:w-auto">
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="w-full sm:w-auto bg-white border border-gray-200 px-4 py-3 rounded-xl appearance-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 font-medium text-gray-700"
+                >
+                  <option value="newest">Newest First</option>
+                  <option value="rating">Highest Rated</option>
+                  <option value="popular">Most Popular</option>
+                  <option value="price_low">Price: Low to High</option>
+                  <option value="price_high">Price: High to Low</option>
+                </select>
+                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+              </div>
+
+              {/* View Toggle */}
+              <div className="flex items-center bg-white border border-gray-200 rounded-xl p-1">
                 <button
                   onClick={() => setViewMode('grid')}
-                  className={`p-2 rounded-md transition-colors ${
-                    viewMode === 'grid' ? 'bg-white shadow text-blue-600' : 'text-gray-500'
+                  className={`p-2 rounded-lg transition-all duration-200 ${
+                    viewMode === 'grid' 
+                      ? 'bg-purple-500 text-white shadow-md' 
+                      : 'text-gray-500 hover:text-gray-700'
                   }`}
                   data-testid="grid-view-btn"
                 >
@@ -155,8 +185,10 @@ const Services = () => {
                 </button>
                 <button
                   onClick={() => setViewMode('list')}
-                  className={`p-2 rounded-md transition-colors ${
-                    viewMode === 'list' ? 'bg-white shadow text-blue-600' : 'text-gray-500'
+                  className={`p-2 rounded-lg transition-all duration-200 ${
+                    viewMode === 'list' 
+                      ? 'bg-purple-500 text-white shadow-md' 
+                      : 'text-gray-500 hover:text-gray-700'
                   }`}
                   data-testid="list-view-btn"
                 >
@@ -165,117 +197,43 @@ const Services = () => {
               </div>
             </div>
           </div>
-
-          {/* Search and filters */}
-          <div className="mt-6 space-y-4">
-            {/* Search bar */}
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <input
-                type="text"
-                placeholder="Search services by title, category, location, or description..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="form-input pl-10 w-full"
-                data-testid="search-input"
-              />
-            </div>
-
-            {/* Service categories */}
-            <div className="flex flex-wrap gap-2">
-              {serviceCategories.slice(0, 8).map((category) => {
-                const Icon = category.icon;
-                return (
-                  <button
-                    key={category.value}
-                    onClick={() => handleFilterChange('category', 
-                      filters.category === category.value ? '' : category.value
-                    )}
-                    className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                      filters.category === category.value
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-white text-gray-700 hover:bg-blue-50 border border-gray-200'
-                    }`}
-                    data-testid={`category-${category.value}`}
-                  >
-                    <Icon className="w-4 h-4 mr-2" />
-                    {category.label}
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Filter toggle */}
-            <div className="flex items-center justify-between">
-              <button
-                onClick={() => setShowFilters(!showFilters)}
-                className="btn-secondary flex items-center"
-                data-testid="toggle-filters-btn"
-              >
-                <Filter className="w-4 h-4 mr-2" />
-                More Filters
-                <ChevronDown className={`w-4 h-4 ml-2 transform transition-transform ${
-                  showFilters ? 'rotate-180' : ''
-                }`} />
-              </button>
-
-              {Object.values(filters).some(value => value) && (
-                <button
-                  onClick={clearFilters}
-                  className="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center"
-                  data-testid="clear-filters-btn"
-                >
-                  <X className="w-4 h-4 mr-1" />
-                  Clear Filters
-                </button>
-              )}
-            </div>
-
-            {/* Additional filters */}
-            {showFilters && (
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Service Category
-                    </label>
-                    <select
-                      value={filters.category}
-                      onChange={(e) => handleFilterChange('category', e.target.value)}
-                      className="form-select"
-                      data-testid="filter-category"
-                    >
-                      <option value="">All Categories</option>
-                      {serviceCategories.map((category) => (
-                        <option key={category.value} value={category.value}>
-                          {category.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Location
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Enter location"
-                      value={filters.location}
-                      onChange={(e) => handleFilterChange('location', e.target.value)}
-                      className="form-input"
-                      data-testid="filter-location"
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
         </div>
       </div>
 
-      {/* Results */}
+      {/* Main Content with Sidebar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex gap-8">
+          {/* Filter Sidebar */}
+          <FilterSidebar
+            type="services"
+            isOpen={sidebarOpen}
+            onClose={() => setSidebarOpen(false)}
+            onFiltersChange={handleFilterChange}
+            className="hidden lg:block lg:w-80 flex-shrink-0"
+          />
+
+          {/* Mobile Sidebar */}
+          <FilterSidebar
+            type="services"
+            isOpen={sidebarOpen}
+            onClose={() => setSidebarOpen(false)}
+            onFiltersChange={handleFilterChange}
+            className="lg:hidden"
+          />
+
+          {/* Main Content */}
+          <div className="flex-1 min-w-0">
+            {/* Results Header */}
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-xl font-semibold text-gray-900">
+                  {filteredServices.length} Services Available
+                </h2>
+                <p className="text-sm text-gray-600 mt-1">
+                  Certified professionals ready to help
+                </p>
+              </div>
+            </div>
         {error && (
           <div className="bg-red-50 border border-red-200 rounded-xl p-6 mb-6" data-testid="error-message">
             <p className="text-red-700">{error}</p>
