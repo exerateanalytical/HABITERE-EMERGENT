@@ -21,6 +21,21 @@ import {
 
 const LandingPage = () => {
   const { login } = useAuth();
+  
+  // Generate comprehensive SEO data for homepage
+  const seoData = generateSEOData('homepage', {
+    location: 'Cameroon',
+    count: '1000+'
+  });
+  
+  const structuredData = generateStructuredData('RealEstateAgent', {
+    name: 'Habitere',
+    description: 'Cameroon\'s leading real estate and home services platform',
+    location: 'Cameroon',
+    region: 'Centre',
+    telephone: '+27675668211',
+    areaServed: 'Cameroon'
+  });
 
   // Generate SEO data for landing page
   const seoData = generateSEOData({
