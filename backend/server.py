@@ -675,54 +675,267 @@ async def create_booking(
     return serialize_doc(booking_doc)
 
 # Payment Routes
-@api_router.post("/payments/mtn-momo", response_model=Dict[str, Any])
-async def create_mtn_payment(
-    payment_data: PaymentCreate,
-    current_user: User = Depends(get_current_user)
-):
-    """Create MTN MoMo payment"""
-    if payment_data.method != "mtn_momo":
-        raise HTTPException(status_code=400, detail="Invalid payment method")
+# MTN Mobile Money Configuration and Models
+class MTNMoMoConfig:
+    def __init__(self):
+        self.api_user_id = os.getenv('MTN_MOMO_API_USER_ID', '')
+        self.api_key = os.getenv('MTN_MOMO_API_KEY', '')
+        self.subscription_key = os.getenv('MTN_MOMO_SUBSCRIPTION_KEY', '')
+        self.target_environment = os.getenv('MTN_MOMO_TARGET_ENVIRONMENT', 'sandbox')
+        self.base_url = os.getenv('MTN_MOMO_BASE_URL', 'https://sandbox.momodeveloper.mtn.com')
+        self.callback_url = os.getenv('MTN_MOMO_CALLBACK_URL', '')
+
+mtn_config = MTNMoMoConfig()
+
+class MTNMoMoTokenManager:
+    def __init__(self):
+        self.access_token = None
+        self.token_expires_at = None
     
-    if not payment_data.phone_number:
-        raise HTTPException(status_code=400, detail="Phone number required for MTN MoMo")
-    
-    # Create payment record
-    payment_doc = payment_data.model_dump()
-    payment_doc["id"] = str(uuid.uuid4())
-    payment_doc["user_id"] = current_user.id
-    payment_doc["reference_id"] = str(uuid.uuid4())
-    payment_doc["created_at"] = datetime.now(timezone.utc)
-    
-    await db.payments.insert_one(payment_doc)
-    
-    # Request payment from MTN MoMo
-    try:
-        mtn_response = await mtn_client.request_to_pay(
-            amount=payment_data.amount,
-            phone_number=payment_data.phone_number,
-            external_id=payment_doc["id"]
-        )
+    async def get_access_token(self):
+        """Get valid access token, refresh if needed"""
+        if self.access_token and self.token_expires_at and datetime.now(timezone.utc) < self.token_expires_at:
+            return self.access_token
         
-        # Update payment with MTN reference
-        await db.payments.update_one(
-            {"id": payment_doc["id"]},
-            {"$set": {"transaction_id": mtn_response["reference_id"]}}
-        )
-        
-        return {
-            "payment_id": payment_doc["id"],
-            "reference_id": mtn_response["reference_id"],
-            "status": "pending",
-            "message": "Payment request sent. Please approve on your phone."
+        # Request new token
+        auth = (mtn_config.api_user_id, mtn_config.api_key)
+        headers = {
+            'Ocp-Apim-Subscription-Key': mtn_config.subscription_key,
+            'X-Target-Environment': mtn_config.target_environment
         }
         
-    except Exception as e:
-        await db.payments.update_one(
-            {"id": payment_doc["id"]},
-            {"$set": {"status": "failed"}}
+        try:
+            import requests
+            response = requests.post(
+                f"{mtn_config.base_url}/collection/token/",
+                auth=auth,
+                headers=headers,
+                timeout=30
+            )
+            
+            if response.status_code == 200:
+                token_data = response.json()
+                self.access_token = token_data['access_token']
+                expires_in = token_data.get('expires_in', 3600)  # Default 1 hour
+                self.token_expires_at = datetime.now(timezone.utc) + timedelta(seconds=expires_in - 60)  # 1 min buffer
+                return self.access_token
+            else:
+                logger.error(f"MTN MoMo token request failed: {response.status_code} - {response.text}")
+                return None
+                
+        except Exception as e:
+            logger.error(f"MTN MoMo token request error: {e}")
+            return None
+
+# Global token manager instance
+token_manager = MTNMoMoTokenManager()
+
+class PaymentRequest(BaseModel):
+    amount: str
+    currency: str = "EUR"  # EUR for sandbox, XAF for production
+    external_id: str
+    payer_message: str
+    payee_note: str
+    phone: str
+    
+class PaymentResponse(BaseModel):
+    success: bool
+    payment_id: str
+    reference_id: str
+    status: str
+    message: str
+    
+@api_router.post("/payments/mtn-momo", response_model=PaymentResponse)
+async def process_mtn_momo_payment(
+    payment_request: PaymentRequest,
+    user: User = Depends(get_current_user)
+):
+    """Process MTN Mobile Money payment using sandbox API"""
+    try:
+        # Get access token
+        access_token = await token_manager.get_access_token()
+        if not access_token:
+            raise HTTPException(status_code=500, detail="Failed to authenticate with MTN MoMo API")
+        
+        # Generate reference ID
+        reference_id = str(uuid.uuid4())
+        
+        # Prepare request payload
+        payload = {
+            "amount": payment_request.amount,
+            "currency": payment_request.currency,
+            "externalId": payment_request.external_id,
+            "payer": {
+                "partyIdType": "MSISDN",
+                "partyId": payment_request.phone
+            },
+            "payerMessage": payment_request.payer_message,
+            "payeeNote": payment_request.payee_note
+        }
+        
+        # Prepare headers
+        headers = {
+            'Authorization': f'Bearer {access_token}',
+            'X-Reference-Id': reference_id,
+            'X-Target-Environment': mtn_config.target_environment,
+            'Ocp-Apim-Subscription-Key': mtn_config.subscription_key,
+            'Content-Type': 'application/json'
+        }
+        
+        if mtn_config.callback_url:
+            headers['X-Callback-Url'] = mtn_config.callback_url
+        
+        # Create payment record in database
+        payment_data = {
+            "id": str(uuid.uuid4()),
+            "user_id": user.id,
+            "amount": float(payment_request.amount),
+            "currency": payment_request.currency,
+            "method": "mtn_momo",
+            "status": "pending",
+            "reference_id": reference_id,
+            "external_id": payment_request.external_id,
+            "phone": payment_request.phone,
+            "created_at": datetime.now(timezone.utc)
+        }
+        
+        # Send request to MTN MoMo API
+        import requests
+        response = requests.post(
+            f"{mtn_config.base_url}/collection/v1_0/requesttopay",
+            json=payload,
+            headers=headers,
+            timeout=30
         )
-        raise HTTPException(status_code=500, detail=f"Payment failed: {str(e)}")
+        
+        if response.status_code == 202:
+            # Payment request accepted
+            result = await db.payments.insert_one(payment_data)
+            
+            return PaymentResponse(
+                success=True,
+                payment_id=payment_data["id"],
+                reference_id=reference_id,
+                status="pending",
+                message="Payment request sent to customer's mobile phone"
+            )
+        else:
+            logger.error(f"MTN MoMo payment request failed: {response.status_code} - {response.text}")
+            raise HTTPException(
+                status_code=400, 
+                detail=f"Payment request failed: {response.text}"
+            )
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"MTN MoMo payment error: {e}")
+        raise HTTPException(status_code=500, detail="Payment processing failed")
+
+@api_router.get("/payments/mtn-momo/status/{reference_id}")
+async def check_mtn_momo_payment_status(
+    reference_id: str,
+    user: User = Depends(get_current_user)
+):
+    """Check MTN Mobile Money payment status"""
+    try:
+        # Get access token
+        access_token = await token_manager.get_access_token()
+        if not access_token:
+            raise HTTPException(status_code=500, detail="Failed to authenticate with MTN MoMo API")
+        
+        # Prepare headers
+        headers = {
+            'Authorization': f'Bearer {access_token}',
+            'X-Target-Environment': mtn_config.target_environment,
+            'Ocp-Apim-Subscription-Key': mtn_config.subscription_key
+        }
+        
+        # Check status with MTN MoMo API
+        import requests
+        response = requests.get(
+            f"{mtn_config.base_url}/collection/v1_0/requesttopay/{reference_id}",
+            headers=headers,
+            timeout=30
+        )
+        
+        if response.status_code == 200:
+            status_data = response.json()
+            
+            # Update local payment record
+            await db.payments.update_one(
+                {"reference_id": reference_id},
+                {
+                    "$set": {
+                        "status": status_data["status"].lower(),
+                        "transaction_id": status_data.get("financialTransactionId"),
+                        "updated_at": datetime.now(timezone.utc)
+                    }
+                }
+            )
+            
+            return {
+                "success": True,
+                "reference_id": reference_id,
+                "status": status_data["status"].lower(),
+                "amount": status_data["amount"],
+                "currency": status_data["currency"],
+                "financial_transaction_id": status_data.get("financialTransactionId"),
+                "reason": status_data.get("reason")
+            }
+        else:
+            logger.error(f"MTN MoMo status check failed: {response.status_code} - {response.text}")
+            raise HTTPException(
+                status_code=400,
+                detail=f"Status check failed: {response.text}"
+            )
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"MTN MoMo status check error: {e}")
+        raise HTTPException(status_code=500, detail="Status check failed")
+
+@api_router.post("/payments/mtn-momo/callback")
+async def mtn_momo_callback(request: Request):
+    """Handle MTN Mobile Money callback notifications"""
+    try:
+        callback_data = await request.json()
+        
+        # Extract reference ID and status
+        reference_id = callback_data.get("referenceId")
+        status = callback_data.get("status", "").lower()
+        
+        if not reference_id:
+            raise HTTPException(status_code=400, detail="Missing reference ID in callback")
+        
+        # Update payment record
+        update_data = {
+            "status": status,
+            "updated_at": datetime.now(timezone.utc)
+        }
+        
+        if callback_data.get("financialTransactionId"):
+            update_data["transaction_id"] = callback_data["financialTransactionId"]
+        
+        if callback_data.get("reason"):
+            update_data["failure_reason"] = callback_data["reason"]
+        
+        result = await db.payments.update_one(
+            {"reference_id": reference_id},
+            {"$set": update_data}
+        )
+        
+        if result.matched_count > 0:
+            logger.info(f"MTN MoMo callback processed for reference {reference_id}: {status}")
+            return {"success": True, "message": "Callback processed"}
+        else:
+            logger.warning(f"No payment found for reference ID: {reference_id}")
+            return {"success": False, "message": "Payment not found"}
+            
+    except Exception as e:
+        logger.error(f"MTN MoMo callback error: {e}")
+        raise HTTPException(status_code=500, detail="Callback processing failed")
 
 @api_router.get("/payments/{payment_id}/status")
 async def get_payment_status(
