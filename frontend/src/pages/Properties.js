@@ -63,22 +63,27 @@ const Properties = () => {
     }
   };
 
-  const handleFilterChange = (key, value) => {
-    setFilters(prev => ({
-      ...prev,
-      [key]: value
-    }));
+  const handleFilterChange = (newFilters) => {
+    setFilters(newFilters);
+    setSearchQuery(newFilters.search || '');
+  };
+
+  const handleSearch = (searchFilters) => {
+    setFilters(searchFilters);
+    setSearchQuery(searchFilters.search || '');
   };
 
   const clearFilters = () => {
-    setFilters({
+    const clearedFilters = {
       property_type: '',
       listing_type: '',
       location: '',
       min_price: '',
       max_price: '',
       bedrooms: ''
-    });
+    };
+    setFilters(clearedFilters);
+    setSearchQuery('');
   };
 
   const toggleFavorite = (propertyId) => {
