@@ -685,7 +685,7 @@ const LandingPage = () => {
                       <Phone className="w-5 h-5 text-green-400" />
                     </div>
                     <div>
-                      <p className="font-semibold">+237 6XX XXX XXX</p>
+                      <p className="font-semibold">+27 67 566 8211</p>
                       <p className="text-sm text-gray-400">24/7 Support</p>
                     </div>
                   </div>
