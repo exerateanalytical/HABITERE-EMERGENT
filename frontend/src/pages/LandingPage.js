@@ -136,6 +136,15 @@ const LandingPage = () => {
 
   return (
     <div className="min-h-screen bg-white" data-testid="landing-page">
+      <SEOHead
+        title={seoData.title}
+        description={seoData.description}
+        keywords={seoData.keywords}
+        focusKeyword={seoData.focusKeyword}
+        structuredData={structuredData}
+        ogImage="https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&q=80"
+        location="Cameroon"
+      />
       <SEOHead 
         seoData={seoData} 
         structuredData={structuredData} 
