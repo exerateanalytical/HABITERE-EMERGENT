@@ -308,6 +308,17 @@ const LandingPage = () => {
         </div>
       </section>
 
+      {/* Featured Properties Carousel */}
+      <section className="py-20 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <FeaturedProperties 
+            title="Featured Properties" 
+            limit={8}
+            showAll={true}
+          />
+        </div>
+      </section>
+
       {/* Professional Services Carousel */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
