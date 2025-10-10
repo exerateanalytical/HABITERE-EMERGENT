@@ -3,8 +3,11 @@
 import requests
 import sys
 import json
+import os
+import io
 from datetime import datetime
 from typing import Dict, Any
+from PIL import Image
 
 class HabitereAPITester:
     def __init__(self, base_url="https://cameroon-homes-1.preview.emergentagent.com"):
