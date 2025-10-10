@@ -312,76 +312,7 @@ const Services = () => {
   );
 };
 
-const ServiceCard = ({ service }) => {
-  const categoryInfo = serviceCategories.find(cat => cat.value === service.category) || 
-                      { label: service.category, icon: Wrench };
-  const Icon = categoryInfo.icon;
-
-  return (
-    <div className="service-card group" data-testid={`service-card-${service.id}`}>
-      <div className="relative overflow-hidden">
-        <img
-          src={service.images?.[0] || 'https://images.unsplash.com/photo-1505798577917-a65157d3320a'}
-          alt={service.title}
-          className="service-image group-hover:scale-110"
-        />
-        
-        <div className="absolute top-3 left-3 flex flex-wrap gap-2">
-          <span className="badge badge-primary flex items-center">
-            <Icon className="w-3 h-3 mr-1" />
-            {categoryInfo.label}
-          </span>
-          {service.verified && (
-            <span className="badge badge-success">Verified</span>
-          )}
-        </div>
-      </div>
-
-      <div className="card-body">
-        <div className="mb-3">
-          <h3 className="text-lg font-semibold text-gray-900 mb-1 line-clamp-2">
-            {service.title}
-          </h3>
-          <div className="flex items-center text-gray-500 text-sm mb-2">
-            <MapPin className="w-4 h-4 mr-1" />
-            {service.location}
-          </div>
-        </div>
-
-        <p className="text-gray-600 text-sm mb-4 line-clamp-3">
-          {service.description}
-        </p>
-
-        {service.price_range && (
-          <div className="text-lg font-semibold text-blue-600 mb-3">
-            {service.price_range}
-          </div>
-        )}
-
-        <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
-          <div className="flex items-center">
-            <Star className="w-4 h-4 text-yellow-400 fill-current mr-1" />
-            <span>4.8</span>
-            <span className="ml-1">(24 reviews)</span>
-          </div>
-          <div className="flex items-center">
-            <Users className="w-4 h-4 mr-1" />
-            <span>15 projects</span>
-          </div>
-        </div>
-
-        <Link
-          to={`/services/${service.id}`}
-          className="btn-primary w-full justify-center"
-          data-testid={`view-service-${service.id}`}
-        >
-          <Eye className="w-4 h-4 mr-2" />
-          View Details
-        </Link>
-      </div>
-    </div>
-  );
-};
+// ServiceCard component is imported from ../components/ServiceCard
 
 const ServiceListItem = ({ service }) => {
   const categoryInfo = serviceCategories.find(cat => cat.value === service.category) || 
