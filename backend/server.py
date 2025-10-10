@@ -18,6 +18,7 @@ import shutil
 import aiofiles
 from PIL import Image
 import mimetypes
+import requests
 
 # Load environment variables
 ROOT_DIR = Path(__file__).parent
