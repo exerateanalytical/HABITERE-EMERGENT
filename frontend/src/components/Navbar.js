@@ -111,13 +111,21 @@ const Navbar = () => {
                 </button>
               </div>
             ) : (
-              <button
-                onClick={handleLogin}
-                className="btn-primary"
-                data-testid="login-btn"
-              >
-                Login with Google
-              </button>
+              <div className="flex items-center space-x-3">
+                <Link
+                  to="/login"
+                  className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  to="/register"
+                  className="btn-primary"
+                  data-testid="register-btn"
+                >
+                  Get Started
+                </Link>
+              </div>
             )}
           </div>
 
