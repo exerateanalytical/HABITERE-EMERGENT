@@ -71,7 +71,16 @@ const Properties = () => {
   };
 
   const handleFilterChange = (newFilters) => {
-    setFilters(newFilters);
+    // Transform FilterSidebar filters to match backend API expectations
+    const transformedFilters = {
+      property_type: newFilters.propertyType || '',
+      listing_type: newFilters.listingType || '',
+      location: newFilters.location || '',
+      min_price: newFilters.priceRange?.min || '',
+      max_price: newFilters.priceRange?.max || '',
+      bedrooms: newFilters.bedrooms || ''
+    };
+    setFilters(transformedFilters);
     setSearchQuery(newFilters.search || '');
   };
 
