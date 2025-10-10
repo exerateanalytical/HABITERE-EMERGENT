@@ -102,7 +102,14 @@ const FilterSidebar = ({
     { value: 'popular', label: 'Most Popular' }
   ];
 
+  // Don't call onFiltersChange on mount - only when filters actually change
+  const isFirstRender = React.useRef(true);
+  
   useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
     onFiltersChange?.(filters);
   }, [filters]);
 
