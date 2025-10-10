@@ -89,53 +89,57 @@ const LandingPage = () => {
 
   return (
     <div className="min-h-screen bg-white" data-testid="landing-page">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-100 py-20">
+      {/* Hero Section - Mobile Optimized */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-100 py-12 md:py-20 safe-area-top">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-8">
-              <div className="space-y-4">
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+            <div className="space-y-6 md:space-y-8 text-center lg:text-left">
+              <div className="space-y-3 md:space-y-4">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-gray-900 leading-tight">
                   Find Your Perfect
                   <span className="text-blue-600"> Home</span> and
-                  <span className="text-blue-600"> Services</span> in Cameroon
+                  <span className="text-blue-600"> Services</span>
+                  <span className="block mt-1 text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl">
+                    in Cameroon
+                  </span>
                 </h1>
-                <p className="text-lg md:text-xl text-gray-600 leading-relaxed max-w-2xl">
+                <p className="text-base sm:text-lg md:text-xl text-gray-600 leading-relaxed max-w-2xl mx-auto lg:mx-0">
                   Habitere is Cameroon's leading platform for real estate and home services. 
                   Discover properties, connect with professionals, and make secure payments all in one place.
                 </p>
               </div>
               
-              <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col sm:flex-row gap-3 md:gap-4 max-w-lg mx-auto lg:mx-0">
                 <button
                   onClick={handleGetStarted}
-                  className="btn-primary text-lg px-8 py-4"
+                  className="btn-primary btn-mobile-full sm:btn-primary text-base md:text-lg px-6 md:px-8 py-3 md:py-4 touch-action-manipulation"
                   data-testid="get-started-btn"
                 >
                   Get Started
-                  <ArrowRight className="ml-2 w-5 h-5" />
+                  <ArrowRight className="ml-2 w-4 md:w-5 h-4 md:h-5" />
                 </button>
                 <a 
                   href="/properties" 
-                  className="btn-outline text-lg px-8 py-4"
+                  className="btn-outline btn-mobile-full sm:btn-outline text-base md:text-lg px-6 md:px-8 py-3 md:py-4 touch-action-manipulation"
                   data-testid="browse-properties-btn"
                 >
                   Browse Properties
                 </a>
               </div>
 
-              <div className="flex items-center space-x-8 pt-4">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-gray-900">1000+</div>
-                  <div className="text-sm text-gray-600">Properties Listed</div>
+              {/* Mobile-optimized stats */}
+              <div className="grid grid-cols-3 gap-2 sm:gap-4 md:gap-8 pt-4 max-w-sm mx-auto lg:mx-0 lg:flex lg:max-w-none lg:justify-start">
+                <div className="text-center lg:text-left">
+                  <div className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900">1000+</div>
+                  <div className="text-xs sm:text-sm text-gray-600">Properties Listed</div>
                 </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-gray-900">500+</div>
-                  <div className="text-sm text-gray-600">Service Providers</div>
+                <div className="text-center lg:text-left">
+                  <div className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900">500+</div>
+                  <div className="text-xs sm:text-sm text-gray-600">Service Providers</div>
                 </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-gray-900">10,000+</div>
-                  <div className="text-sm text-gray-600">Happy Users</div>
+                <div className="text-center lg:text-left">
+                  <div className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900">10,000+</div>
+                  <div className="text-xs sm:text-sm text-gray-600">Happy Users</div>
                 </div>
               </div>
             </div>
