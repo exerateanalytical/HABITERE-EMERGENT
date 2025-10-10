@@ -790,6 +790,86 @@ async def send_message(
 # Sample data initialization
 async def init_sample_data():
     """Initialize sample services for demonstration"""
+    # Sample properties
+    sample_properties = [
+        {
+            "id": str(uuid.uuid4()),
+            "owner_id": "sample-owner-1",
+            "title": "Modern 3-Bedroom Apartment in Douala",
+            "description": "Beautiful modern apartment with city views, fully furnished, close to shopping centers and business district. Features include air conditioning, modern kitchen, and secure parking.",
+            "price": 180000,
+            "currency": "XAF",
+            "location": "Akwa, Douala, Littoral",
+            "property_type": "apartment",
+            "listing_type": "rent",
+            "bedrooms": 3,
+            "bathrooms": 2,
+            "area_sqm": 120,
+            "images": ["https://images.unsplash.com/photo-1560448204-e02f11c3d0e2", "https://images.unsplash.com/photo-1571055107559-3e67626fa8be"],
+            "amenities": ["Air Conditioning", "Furnished", "Parking", "Security", "Internet"],
+            "available": True,
+            "verified": True,
+            "created_at": datetime.now(timezone.utc)
+        },
+        {
+            "id": str(uuid.uuid4()),
+            "owner_id": "sample-owner-2", 
+            "title": "Spacious Family House for Sale",
+            "description": "Large family house with garden, perfect for growing families. Located in quiet residential area with good access to schools and healthcare facilities.",
+            "price": 45000000,
+            "currency": "XAF",
+            "location": "Bastos, Yaoundé, Centre",
+            "property_type": "house",
+            "listing_type": "sale",
+            "bedrooms": 4,
+            "bathrooms": 3,
+            "area_sqm": 250,
+            "images": ["https://images.unsplash.com/photo-1580587771525-78b9dba3b914", "https://images.unsplash.com/photo-1605146769289-440113cc3d00"],
+            "amenities": ["Garden", "Garage", "Modern Kitchen", "Study Room", "Guest Room"],
+            "available": True,
+            "verified": True,
+            "created_at": datetime.now(timezone.utc)
+        },
+        {
+            "id": str(uuid.uuid4()),
+            "owner_id": "sample-owner-3",
+            "title": "Commercial Office Space",
+            "description": "Prime commercial office space in business district, suitable for companies and startups. Modern facilities with meeting rooms and parking.",
+            "price": 350000,
+            "currency": "XAF", 
+            "location": "Bonanjo, Douala, Littoral",
+            "property_type": "commercial",
+            "listing_type": "rent",
+            "bedrooms": 0,
+            "bathrooms": 2,
+            "area_sqm": 180,
+            "images": ["https://images.unsplash.com/photo-1497366216548-37526070297c", "https://images.unsplash.com/photo-1497366811353-6870744d04b2"],
+            "amenities": ["Meeting Rooms", "Parking", "Internet", "Reception Area", "Security"],
+            "available": True,
+            "verified": True,
+            "created_at": datetime.now(timezone.utc)
+        },
+        {
+            "id": str(uuid.uuid4()),
+            "owner_id": "sample-owner-4",
+            "title": "Cozy Studio Apartment",
+            "description": "Perfect studio for students or young professionals. Located near university campus with easy access to public transportation.",
+            "price": 85000,
+            "currency": "XAF",
+            "location": "Ngoa-Ekelle, Yaoundé, Centre", 
+            "property_type": "apartment",
+            "listing_type": "rent",
+            "bedrooms": 1,
+            "bathrooms": 1,
+            "area_sqm": 45,
+            "images": ["https://images.unsplash.com/photo-1522708323590-d24dbb6b0267", "https://images.unsplash.com/photo-1560448075-bb485b067938"],
+            "amenities": ["Furnished", "Internet", "Near Campus", "Public Transport"],
+            "available": True,
+            "verified": True,
+            "created_at": datetime.now(timezone.utc)
+        }
+    ]
+
     sample_services = [
         {
             "id": str(uuid.uuid4()),
