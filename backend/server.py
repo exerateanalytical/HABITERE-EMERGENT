@@ -811,7 +811,7 @@ async def process_mtn_momo_payment(
         
         if response.status_code == 202:
             # Payment request accepted
-            result = await db.payments.insert_one(payment_data)
+            await db.payments.insert_one(payment_data)
             
             return PaymentResponse(
                 success=True,
