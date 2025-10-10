@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 import ServicesCarousel from '../components/ServicesCarousel';
+import FeaturedProperties from '../components/FeaturedProperties';
 import { 
   Building, 
   Wrench, 
