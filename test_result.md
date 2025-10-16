@@ -368,13 +368,14 @@
 
 ## test_plan:
   current_focus:
-    - "Phase 2: Core Features Frontend Testing"
+    - "Authentication System Issues Resolution"
     - "Reviews & Ratings System Integration"
     - "Messaging System Between Users"
     - "Booking Flow End-to-End"
     - "Property Management UI"
     - "Admin Dashboard (Local Environment)"
-  stuck_tasks: []
+  stuck_tasks:
+    - "Authentication System Issues"
   test_all: false
   test_priority: "high_first"
 
