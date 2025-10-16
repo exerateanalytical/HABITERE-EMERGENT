@@ -33,7 +33,7 @@ const RegisterPage = () => {
       return;
     }
 
-    const result = await register(formData.email, formData.password, formData.name);
+    const result = await register(formData.email, formData.password, formData.name, formData.phone);
     
     if (result.success) {
       setSuccess(true);
