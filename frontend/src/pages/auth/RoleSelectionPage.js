@@ -33,7 +33,12 @@ const RoleSelectionPage = () => {
     const result = await selectRole(selectedRole);
     
     if (result.success) {
-      navigate('/dashboard');
+      // Redirect based on selected role
+      if (selectedRole === 'property_seeker') {
+        navigate('/properties');
+      } else {
+        navigate('/dashboard');
+      }
     } else {
       setError(result.error);
     }
