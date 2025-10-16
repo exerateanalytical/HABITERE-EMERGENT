@@ -145,14 +145,14 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="min-h-screen bg-gray-50 py-4 sm:py-6 md:py-8">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 mb-6 sm:mb-8">
             {[...Array(4)].map((_, index) => (
               <div key={index} className="card animate-pulse">
-                <div className="card-body">
-                  <div className="h-4 bg-gray-300 rounded mb-2"></div>
-                  <div className="h-8 bg-gray-300 rounded"></div>
+                <div className="card-body p-4 sm:p-5">
+                  <div className="h-3 sm:h-4 bg-gray-300 rounded mb-2"></div>
+                  <div className="h-6 sm:h-8 bg-gray-300 rounded"></div>
                 </div>
               </div>
             ))}
