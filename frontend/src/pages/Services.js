@@ -512,7 +512,7 @@ const ServiceListItem = ({ service }) => {
       <div className="flex flex-col md:flex-row">
         <div className="md:w-80 h-48 md:h-auto relative overflow-hidden flex-shrink-0">
           <img
-            src={service.images?.[0] || 'https://images.unsplash.com/photo-1505798577917-a65157d3320a'}
+            src={getServiceImageUrl(service.images?.[0])}
             alt={service.title}
             className="w-full h-full object-cover"
           />
