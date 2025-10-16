@@ -71,8 +71,11 @@ const HelpCenter = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <SEOHead 
-        title="Help Center | Habitere"
-        description="Get help with Habitere. Browse guides, FAQs, and resources for property seekers, owners, and service providers."
+        title="Help Center - Guides & Support | Habitere Cameroon Real Estate Help"
+        description="Comprehensive help center for Habitere users in Cameroon. Find step-by-step guides for listing properties, finding homes, hiring professionals, payments, and account management."
+        keywords="habitere help center, real estate help cameroon, property listing guide, user support habitere, how to use habitere, real estate platform help"
+        focusKeyword="habitere help center"
+        canonicalUrl="https://habitere.com/help-center"
       />
 
       {/* Hero Section */}
