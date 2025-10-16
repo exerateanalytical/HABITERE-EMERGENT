@@ -115,15 +115,18 @@ const PropertyForm = () => {
       }
 
       const propertyData = {
-        ...formData,
+        title: formData.title,
+        description: formData.description,
         price: parseFloat(formData.price),
+        location: formData.location,
+        property_sector: formData.property_sector,
+        property_category: formData.property_category,
+        listing_type: formData.listing_type,
         bedrooms: parseInt(formData.bedrooms) || 0,
         bathrooms: parseInt(formData.bathrooms) || 0,
         area_sqm: parseFloat(formData.area_sqm) || 0,
         images: imageUrls,
-        amenities: [],
-        available: true,
-        verified: false
+        amenities: []
       };
 
       console.log('Creating property with data:', propertyData);
