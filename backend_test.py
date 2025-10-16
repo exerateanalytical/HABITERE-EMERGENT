@@ -438,10 +438,13 @@ class HabitereAPITester:
             }
             
             response = self.session.post(f"{self.api_url}/auth/login", json=login_data)
-            success = response.status_code == 200
-            details = f"Status: {response.status_code}"
             
-            if success:
+            # Check the response
+            if response.status_code == 200:
+                # Successful login
+                success = True
+                details = f"Status: {response.status_code}"
+                
                 # Check if session cookie is set
                 session_cookie = None
                 for cookie in response.cookies:
@@ -450,7 +453,7 @@ class HabitereAPITester:
                         break
                 
                 if session_cookie:
-                    details += f", Session cookie set: ✅ (secure={session_cookie.secure}, samesite={session_cookie.get('samesite', 'None')})"
+                    details += f", Session cookie: ✅ (secure={session_cookie.secure}, samesite={session_cookie.get('samesite', 'None')})"
                     self.admin_token = session_cookie.value
                     
                     # Test /auth/me with admin credentials
@@ -469,22 +472,40 @@ class HabitereAPITester:
                         details += f", Auth/me failed: {me_response.status_code}"
                 else:
                     details += ", No session cookie found"
-                    success = False
-            else:
+                    
+            elif response.status_code == 403:
+                # Email verification required - this is expected and correct behavior
                 try:
                     error_data = response.json()
-                    error_detail = error_data.get('detail', 'Unknown error')
-                    details += f", Error: {error_detail}"
-                    
-                    # Check if it's an email verification issue
-                    if "verify your email" in error_detail.lower() or response.status_code == 403:
-                        details += " (Email verification required - this is expected for new admin users)"
-                        # For testing purposes, we'll consider this a partial success
-                        # as it shows the authentication system is working correctly
+                    error_detail = error_data.get('detail', '')
+                    if "verify your email" in error_detail.lower():
                         success = True
-                        details = f"Status: {response.status_code}, Email verification required (system working correctly)"
+                        details = f"Status: {response.status_code}, Email verification required ✅ (correct security behavior)"
+                    else:
+                        success = False
+                        details = f"Status: {response.status_code}, Unexpected 403 error: {error_detail}"
                 except:
-                    details += f", Error: {response.text[:100]}"
+                    success = False
+                    details = f"Status: {response.status_code}, Could not parse error response"
+                    
+            elif response.status_code == 401:
+                # Invalid credentials
+                success = False
+                try:
+                    error_data = response.json()
+                    details = f"Status: {response.status_code}, Error: {error_data.get('detail', 'Invalid credentials')}"
+                except:
+                    details = f"Status: {response.status_code}, Invalid credentials"
+                    
+            else:
+                # Other error
+                success = False
+                details = f"Status: {response.status_code}, Unexpected response"
+                try:
+                    error_data = response.json()
+                    details += f", Error: {error_data.get('detail', 'Unknown error')}"
+                except:
+                    details += f", Raw response: {response.text[:100]}"
             
             self.log_test("Admin Login", success, details)
             return success
