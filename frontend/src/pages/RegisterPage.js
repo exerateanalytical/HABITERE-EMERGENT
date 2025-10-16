@@ -226,7 +226,7 @@ const RegisterPage = () => {
           </div>
 
           {/* Center - Registration Form */}
-          <div className="bg-white rounded-3xl shadow-2xl border border-gray-100 p-8 lg:p-10">
+          <div className="bg-white rounded-3xl shadow-2xl border border-gray-100 p-6 lg:p-10">
             {/* Back to home link */}
             <div className="mb-6">
               <Link 
