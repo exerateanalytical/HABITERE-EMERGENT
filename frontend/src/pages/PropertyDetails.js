@@ -19,7 +19,8 @@ import {
   Shield,
   Eye,
   ArrowLeft,
-  User
+  User,
+  Edit
 } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
