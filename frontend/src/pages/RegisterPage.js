@@ -97,7 +97,7 @@ const RegisterPage = () => {
       if (response.success) {
         navigate('/dashboard');
       } else {
-        setError(response.message || 'Registration failed');
+        setError(response.error || 'Registration failed');
       }
     } catch (err) {
       setError('Registration failed. Please try again.');
