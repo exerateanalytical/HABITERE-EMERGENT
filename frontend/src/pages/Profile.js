@@ -459,7 +459,7 @@ const Profile = () => {
                         >
                           <div className="relative h-48">
                             <img
-                              src={property.images?.[0] || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=400'}
+                              src={getImageUrl(property.images?.[0])}
                               alt={property.title}
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                             />
