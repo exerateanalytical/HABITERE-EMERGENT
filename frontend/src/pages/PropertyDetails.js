@@ -405,20 +405,24 @@ const PropertyDetails = () => {
                   </div>
                 )}
 
-                {/* Owner info placeholder */}
+                {/* Owner info */}
                 <div className="border-t border-gray-200 mt-6 pt-6">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                      <span className="text-blue-600 font-semibold">
-                        {property.title?.[0]?.toUpperCase()}
-                      </span>
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-gray-900">Property Owner</h4>
-                      <div className="flex items-center text-sm text-gray-500">
-                        <Star className="w-4 h-4 text-yellow-400 fill-current mr-1" />
-                        4.8 (23 reviews)
+                  <div className="flex items-center space-x-4">
+                    {owner?.picture ? (
+                      <img 
+                        src={owner.picture} 
+                        alt={owner.name}
+                        className="w-14 h-14 rounded-full object-cover border-2 border-gray-200"
+                      />
+                    ) : (
+                      <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-xl font-bold">
+                        {owner?.name?.charAt(0)?.toUpperCase() || <User className="w-7 h-7" />}
                       </div>
+                    )}
+                    <div>
+                      <p className="text-sm text-gray-600">Listed by</p>
+                      <h4 className="font-semibold text-gray-900">{owner?.name || 'Property Owner'}</h4>
+                      <p className="text-xs text-gray-500">{owner?.role?.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) || 'Verified Seller'}</p>
                     </div>
                   </div>
                 </div>
