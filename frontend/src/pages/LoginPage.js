@@ -57,9 +57,24 @@ const LoginPage = () => {
     }
   };
 
-  const handleGoogleLogin = () => {
-    // This would integrate with Google OAuth
-    setError('Google login coming soon!');
+  const handleGoogleLogin = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      
+      // Get the Google OAuth URL from backend
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/google/login`, {
+        credentials: 'include'
+      });
+      const data = await response.json();
+      
+      // Redirect to Google OAuth
+      window.location.href = data.auth_url;
+    } catch (err) {
+      console.error('Google login error:', err);
+      setError('Failed to initiate Google login. Please try again.');
+      setLoading(false);
+    }
   };
 
   const handleFacebookLogin = () => {
