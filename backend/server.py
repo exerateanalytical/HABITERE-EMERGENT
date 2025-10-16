@@ -1526,8 +1526,8 @@ async def upload_images(
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Error uploading images: {e}")
-        raise HTTPException(status_code=500, detail="Failed to upload images")
+        logger.error(f"Error uploading images: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Failed to upload images: {str(e)}")
 
 @api_router.get("/images/{entity_type}/{entity_id}", response_model=List[Dict[str, Any]])
 async def get_entity_images(entity_type: str, entity_id: str):
