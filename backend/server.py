@@ -3296,17 +3296,10 @@ async def get_available_slots(property_id: str, date: str):
 app.include_router(api_router)
 
 # CORS middleware - Production Configuration
-# Support multiple domains for preview and production
-ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # Local development
-    "https://property-platform-12.preview.emergentagent.com",  # Preview
-    "https://habitere.com",  # Production
-    "https://www.habitere.com"  # Production with www
-]
-
+# Allow all origins temporarily to debug CORS issue
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=ALLOWED_ORIGINS,
+    allow_origins=["*"],  # Allow all origins
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
