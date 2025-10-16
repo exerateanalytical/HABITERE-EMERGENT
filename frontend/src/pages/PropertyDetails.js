@@ -85,6 +85,21 @@ const PropertyDetails = () => {
     navigate('/messages', { state: { recipientId: property.owner_id } });
   };
 
+  const handleDelete = async () => {
+    if (!window.confirm('Are you sure you want to delete this property? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      await axios.delete(`${API}/properties/${id}`);
+      alert('Property deleted successfully');
+      navigate('/profile');
+    } catch (err) {
+      console.error('Error deleting property:', err);
+      alert('Failed to delete property. Please try again.');
+    }
+  };
+
   const toggleFavorite = () => {
     setIsFavorite(!isFavorite);
   };
