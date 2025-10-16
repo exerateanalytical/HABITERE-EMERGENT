@@ -31,6 +31,14 @@ from sendgrid.helpers.mail import Mail
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
+# Environment configuration
+ENVIRONMENT = os.environ.get('ENVIRONMENT', 'production')
+IS_DEVELOPMENT = ENVIRONMENT == 'development'
+
+# Cookie security settings based on environment
+COOKIE_SECURE = not IS_DEVELOPMENT  # False in dev, True in production
+COOKIE_SAMESITE = "lax" if IS_DEVELOPMENT else "None"  # lax in dev, None in production
+
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
