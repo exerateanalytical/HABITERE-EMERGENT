@@ -150,8 +150,25 @@ const FAQ = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <SEOHead 
-        title="FAQ - Frequently Asked Questions | Habitere"
-        description="Find answers to common questions about using Habitere. Learn how to list properties, search for homes, and connect with service providers in Cameroon."
+        title="FAQ - Frequently Asked Questions About Habitere | Real Estate Help Cameroon"
+        description="Get answers to common questions about Cameroon's #1 real estate platform. Learn how to buy, rent, list properties, and hire verified professionals in Douala, Yaoundé & across Cameroon."
+        keywords="habitere faq, real estate questions cameroon, how to list property cameroon, property search help, douala housing faq, yaoundé real estate questions"
+        focusKeyword="habitere faq cameroon"
+        canonicalUrl="https://habitere.com/faq"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "mainEntity": faqs.flatMap(category => 
+            category.questions.map(item => ({
+              "@type": "Question",
+              "name": item.q,
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": item.a
+              }
+            }))
+          )
+        }}
       />
 
       {/* Hero Section */}
