@@ -6,8 +6,11 @@ const Privacy = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <SEOHead 
-        title="Privacy Policy | Habitere"
-        description="Learn how Habitere protects your privacy and handles your personal data. Read our comprehensive privacy policy."
+        title="Privacy Policy - How Habitere Protects Your Data | Cameroon Real Estate Privacy"
+        description="Habitere's comprehensive privacy policy for users in Cameroon. Learn how we collect, use, and protect your personal data on Africa's leading real estate platform. GDPR compliant."
+        keywords="habitere privacy policy, data protection cameroon, real estate privacy, gdpr cameroon, personal data security, privacy policy douala"
+        focusKeyword="habitere privacy policy"
+        canonicalUrl="https://habitere.com/privacy"
       />
 
       <div className="bg-gradient-to-br from-blue-600 to-purple-600 text-white">
