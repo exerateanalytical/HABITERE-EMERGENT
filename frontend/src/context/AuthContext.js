@@ -23,6 +23,22 @@ export const AuthProvider = ({ children }) => {
     checkExistingSession();
   }, []);
 
+  // Set up axios interceptor to handle 401 errors
+  useEffect(() => {
+    const interceptor = axios.interceptors.response.use(
+      response => response,
+      error => {
+        if (error.response?.status === 401 && error.config.url !== `${API}/auth/me`) {
+          console.log('Authentication failed - clearing user state');
+          setUser(null);
+        }
+        return Promise.reject(error);
+      }
+    );
+
+    return () => axios.interceptors.response.eject(interceptor);
+  }, []);
+
   const checkExistingSession = async () => {
     try {
       const response = await axios.get(`${API}/auth/me`);
