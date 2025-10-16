@@ -33,6 +33,47 @@ const PropertyEditForm = () => {
     area_sqm: ''
   });
 
+  useEffect(() => {
+    fetchProperty();
+  }, [id]);
+
+  const fetchProperty = async () => {
+    try {
+      setLoadingProperty(true);
+      const response = await axios.get(`${API}/properties/${id}`);
+      const property = response.data;
+      
+      // Check if user is the owner
+      if (property.owner_id !== user?.id) {
+        setError('You are not authorized to edit this property');
+        setTimeout(() => navigate('/properties'), 2000);
+        return;
+      }
+      
+      // Populate form with existing data
+      setFormData({
+        title: property.title || '',
+        description: property.description || '',
+        price: property.price || '',
+        location: property.location || '',
+        property_category: property.property_category || '',
+        property_sector: property.property_sector || '',
+        listing_type: property.listing_type || 'sale',
+        bedrooms: property.bedrooms || '',
+        bathrooms: property.bathrooms || '',
+        area_sqm: property.area_sqm || ''
+      });
+      
+      setExistingImages(property.images || []);
+    } catch (err) {
+      console.error('Error fetching property:', err);
+      setError('Failed to load property. Redirecting...');
+      setTimeout(() => navigate('/properties'), 2000);
+    } finally {
+      setLoadingProperty(false);
+    }
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
