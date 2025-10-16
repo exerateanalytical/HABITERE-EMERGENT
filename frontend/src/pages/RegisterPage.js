@@ -106,6 +106,32 @@ const RegisterPage = () => {
     }
   };
 
+  const handleGoogleRegister = async () => {
+    if (!formData.role) {
+      setError('Please select a role before continuing with Google');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError('');
+      
+      // Get the Google OAuth URL from backend with role
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/google/login?role=${formData.role}`, {
+        credentials: 'include'
+      });
+      const data = await response.json();
+      
+      // Redirect to Google OAuth
+      window.location.href = data.auth_url;
+    } catch (err) {
+      console.error('Google registration error:', err);
+      setError('Failed to initiate Google registration. Please try again.');
+      setLoading(false);
+    }
+  };
+
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 py-12 px-4 sm:px-6 lg:px-8">
       <SEOHead
