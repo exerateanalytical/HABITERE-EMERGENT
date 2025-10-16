@@ -284,7 +284,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
           {/* Recent Properties */}
           {canListProperties && recentProperties.length > 0 && (
             <div className="card" data-testid="recent-properties">
