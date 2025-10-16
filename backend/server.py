@@ -2935,6 +2935,355 @@ async def delete_message(
         logger.error(f"Error deleting message: {e}")
         raise HTTPException(status_code=500, detail="Failed to delete message")
 
+# ============================================================================
+# BOOKING ENDPOINTS
+# ============================================================================
+
+@api_router.post("/bookings")
+async def create_booking(
+    booking_data: dict,
+    current_user: User = Depends(get_current_user)
+):
+    """Create a new booking for property viewing or service"""
+    try:
+        # Validate booking type
+        booking_type = booking_data.get('booking_type')
+        if booking_type not in ['property_viewing', 'service_booking']:
+            raise HTTPException(status_code=400, detail="Invalid booking type")
+        
+        # Validate that either property_id or service_id is provided
+        property_id = booking_data.get('property_id')
+        service_id = booking_data.get('service_id')
+        
+        if booking_type == 'property_viewing' and not property_id:
+            raise HTTPException(status_code=400, detail="Property ID required for property viewing")
+        
+        if booking_type == 'service_booking' and not service_id:
+            raise HTTPException(status_code=400, detail="Service ID required for service booking")
+        
+        # Verify property or service exists
+        if property_id:
+            property_doc = await db.properties.find_one({"id": property_id})
+            if not property_doc:
+                raise HTTPException(status_code=404, detail="Property not found")
+        
+        if service_id:
+            service_doc = await db.professional_services.find_one({"id": service_id})
+            if not service_doc:
+                raise HTTPException(status_code=404, detail="Service not found")
+        
+        # Parse scheduled date
+        scheduled_date_str = booking_data.get('scheduled_date')
+        if not scheduled_date_str:
+            raise HTTPException(status_code=400, detail="Scheduled date is required")
+        
+        try:
+            scheduled_date = datetime.fromisoformat(scheduled_date_str.replace('Z', '+00:00'))
+        except:
+            raise HTTPException(status_code=400, detail="Invalid date format")
+        
+        # Create booking
+        booking = {
+            "id": str(uuid.uuid4()),
+            "client_id": current_user.id,
+            "property_id": property_id,
+            "service_id": service_id,
+            "booking_type": booking_type,
+            "scheduled_date": scheduled_date,
+            "scheduled_time": booking_data.get('scheduled_time'),
+            "duration_hours": booking_data.get('duration_hours', 1),
+            "status": "pending",
+            "notes": booking_data.get('notes', ''),
+            "created_at": datetime.now(timezone.utc)
+        }
+        
+        await db.bookings.insert_one(booking)
+        
+        return {"message": "Booking created successfully", "booking": Booking(**booking)}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error creating booking: {e}")
+        raise HTTPException(status_code=500, detail="Failed to create booking")
+
+@api_router.get("/bookings")
+async def get_user_bookings(
+    current_user: User = Depends(get_current_user),
+    status: Optional[str] = None
+):
+    """Get all bookings for current user"""
+    try:
+        query = {"client_id": current_user.id}
+        if status:
+            query["status"] = status
+        
+        bookings_cursor = db.bookings.find(query).sort("scheduled_date", -1)
+        bookings = await bookings_cursor.to_list(length=None)
+        
+        # Fetch property/service details for each booking
+        for booking in bookings:
+            if booking.get('property_id'):
+                prop = await db.properties.find_one({"id": booking['property_id']})
+                if prop:
+                    booking["property_title"] = prop["title"]
+                    booking["property_location"] = prop["location"]
+                    booking["property_price"] = prop["price"]
+            
+            if booking.get('service_id'):
+                service = await db.professional_services.find_one({"id": booking['service_id']})
+                if service:
+                    booking["service_title"] = service["title"]
+                    booking["service_category"] = service["category"]
+                    
+                    # Get provider info
+                    provider = await db.users.find_one({"id": service["provider_id"]})
+                    if provider:
+                        booking["provider_name"] = provider["name"]
+        
+        return {"bookings": [Booking(**booking) for booking in bookings]}
+    except Exception as e:
+        logger.error(f"Error fetching bookings: {e}")
+        raise HTTPException(status_code=500, detail="Failed to fetch bookings")
+
+@api_router.get("/bookings/received")
+async def get_received_bookings(
+    current_user: User = Depends(get_current_user),
+    status: Optional[str] = None
+):
+    """Get bookings received (for property owners and service providers)"""
+    try:
+        # Find properties/services owned by current user
+        properties = await db.properties.find({"owner_id": current_user.id}).to_list(length=None)
+        property_ids = [p["id"] for p in properties]
+        
+        services = await db.professional_services.find({"provider_id": current_user.id}).to_list(length=None)
+        service_ids = [s["id"] for s in services]
+        
+        # Find bookings for these properties/services
+        query = {
+            "$or": [
+                {"property_id": {"$in": property_ids}},
+                {"service_id": {"$in": service_ids}}
+            ]
+        }
+        
+        if status:
+            query["status"] = status
+        
+        bookings_cursor = db.bookings.find(query).sort("scheduled_date", -1)
+        bookings = await bookings_cursor.to_list(length=None)
+        
+        # Fetch client and property/service details
+        for booking in bookings:
+            client = await db.users.find_one({"id": booking['client_id']})
+            if client:
+                booking["client_name"] = client["name"]
+                booking["client_email"] = client["email"]
+                booking["client_phone"] = client.get("phone")
+            
+            if booking.get('property_id'):
+                prop = await db.properties.find_one({"id": booking['property_id']})
+                if prop:
+                    booking["property_title"] = prop["title"]
+                    booking["property_location"] = prop["location"]
+            
+            if booking.get('service_id'):
+                service = await db.professional_services.find_one({"id": booking['service_id']})
+                if service:
+                    booking["service_title"] = service["title"]
+        
+        return {"bookings": [Booking(**booking) for booking in bookings]}
+    except Exception as e:
+        logger.error(f"Error fetching received bookings: {e}")
+        raise HTTPException(status_code=500, detail="Failed to fetch bookings")
+
+@api_router.get("/bookings/{booking_id}")
+async def get_booking(booking_id: str, current_user: User = Depends(get_current_user)):
+    """Get booking details"""
+    try:
+        booking = await db.bookings.find_one({"id": booking_id})
+        if not booking:
+            raise HTTPException(status_code=404, detail="Booking not found")
+        
+        # Check authorization
+        is_client = booking["client_id"] == current_user.id
+        
+        # Check if user is property owner or service provider
+        is_owner = False
+        if booking.get('property_id'):
+            prop = await db.properties.find_one({"id": booking['property_id']})
+            is_owner = prop and prop["owner_id"] == current_user.id
+        elif booking.get('service_id'):
+            service = await db.professional_services.find_one({"id": booking['service_id']})
+            is_owner = service and service["provider_id"] == current_user.id
+        
+        if not is_client and not is_owner and current_user.role != "admin":
+            raise HTTPException(status_code=403, detail="Not authorized")
+        
+        return {"booking": Booking(**booking)}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error fetching booking: {e}")
+        raise HTTPException(status_code=500, detail="Failed to fetch booking")
+
+@api_router.put("/bookings/{booking_id}/confirm")
+async def confirm_booking(booking_id: str, current_user: User = Depends(get_current_user)):
+    """Confirm a booking (property owner or service provider only)"""
+    try:
+        booking = await db.bookings.find_one({"id": booking_id})
+        if not booking:
+            raise HTTPException(status_code=404, detail="Booking not found")
+        
+        # Check if user is owner/provider
+        is_authorized = False
+        if booking.get('property_id'):
+            prop = await db.properties.find_one({"id": booking['property_id']})
+            is_authorized = prop and prop["owner_id"] == current_user.id
+        elif booking.get('service_id'):
+            service = await db.professional_services.find_one({"id": booking['service_id']})
+            is_authorized = service and service["provider_id"] == current_user.id
+        
+        if not is_authorized and current_user.role != "admin":
+            raise HTTPException(status_code=403, detail="Not authorized")
+        
+        result = await db.bookings.update_one(
+            {"id": booking_id},
+            {
+                "$set": {
+                    "status": "confirmed",
+                    "confirmed_by": current_user.id,
+                    "confirmed_at": datetime.now(timezone.utc)
+                }
+            }
+        )
+        
+        if result.modified_count:
+            return {"message": "Booking confirmed successfully"}
+        raise HTTPException(status_code=400, detail="Failed to confirm booking")
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error confirming booking: {e}")
+        raise HTTPException(status_code=500, detail="Failed to confirm booking")
+
+@api_router.put("/bookings/{booking_id}/complete")
+async def complete_booking(booking_id: str, current_user: User = Depends(get_current_user)):
+    """Mark booking as completed"""
+    try:
+        booking = await db.bookings.find_one({"id": booking_id})
+        if not booking:
+            raise HTTPException(status_code=404, detail="Booking not found")
+        
+        # Check authorization (owner/provider or admin)
+        is_authorized = False
+        if booking.get('property_id'):
+            prop = await db.properties.find_one({"id": booking['property_id']})
+            is_authorized = prop and prop["owner_id"] == current_user.id
+        elif booking.get('service_id'):
+            service = await db.professional_services.find_one({"id": booking['service_id']})
+            is_authorized = service and service["provider_id"] == current_user.id
+        
+        if not is_authorized and current_user.role != "admin":
+            raise HTTPException(status_code=403, detail="Not authorized")
+        
+        result = await db.bookings.update_one(
+            {"id": booking_id},
+            {"$set": {"status": "completed"}}
+        )
+        
+        if result.modified_count:
+            return {"message": "Booking marked as completed"}
+        raise HTTPException(status_code=400, detail="Failed to complete booking")
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error completing booking: {e}")
+        raise HTTPException(status_code=500, detail="Failed to complete booking")
+
+@api_router.put("/bookings/{booking_id}/cancel")
+async def cancel_booking(
+    booking_id: str,
+    reason: Optional[str] = None,
+    current_user: User = Depends(get_current_user)
+):
+    """Cancel a booking"""
+    try:
+        booking = await db.bookings.find_one({"id": booking_id})
+        if not booking:
+            raise HTTPException(status_code=404, detail="Booking not found")
+        
+        # Check if user is client or owner/provider
+        is_client = booking["client_id"] == current_user.id
+        
+        is_owner = False
+        if booking.get('property_id'):
+            prop = await db.properties.find_one({"id": booking['property_id']})
+            is_owner = prop and prop["owner_id"] == current_user.id
+        elif booking.get('service_id'):
+            service = await db.professional_services.find_one({"id": booking['service_id']})
+            is_owner = service and service["provider_id"] == current_user.id
+        
+        if not is_client and not is_owner and current_user.role != "admin":
+            raise HTTPException(status_code=403, detail="Not authorized")
+        
+        result = await db.bookings.update_one(
+            {"id": booking_id},
+            {
+                "$set": {
+                    "status": "cancelled",
+                    "cancellation_reason": reason or "Cancelled by user"
+                }
+            }
+        )
+        
+        if result.modified_count:
+            return {"message": "Booking cancelled successfully"}
+        raise HTTPException(status_code=400, detail="Failed to cancel booking")
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error cancelling booking: {e}")
+        raise HTTPException(status_code=500, detail="Failed to cancel booking")
+
+@api_router.get("/bookings/property/{property_id}/slots")
+async def get_available_slots(property_id: str, date: str):
+    """Get available time slots for a property on a specific date"""
+    try:
+        # Parse date
+        try:
+            target_date = datetime.fromisoformat(date.replace('Z', '+00:00')).date()
+        except:
+            raise HTTPException(status_code=400, detail="Invalid date format")
+        
+        # Get all bookings for this property on this date
+        start_of_day = datetime.combine(target_date, datetime.min.time()).replace(tzinfo=timezone.utc)
+        end_of_day = datetime.combine(target_date, datetime.max.time()).replace(tzinfo=timezone.utc)
+        
+        bookings = await db.bookings.find({
+            "property_id": property_id,
+            "scheduled_date": {"$gte": start_of_day, "$lte": end_of_day},
+            "status": {"$in": ["pending", "confirmed"]}
+        }).to_list(length=None)
+        
+        # Generate time slots (9 AM to 6 PM)
+        booked_times = [b.get("scheduled_time") for b in bookings if b.get("scheduled_time")]
+        
+        all_slots = []
+        for hour in range(9, 18):
+            time_str = f"{hour:02d}:00"
+            all_slots.append({
+                "time": time_str,
+                "available": time_str not in booked_times
+            })
+        
+        return {"date": date, "slots": all_slots}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error fetching available slots: {e}")
+        raise HTTPException(status_code=500, detail="Failed to fetch available slots")
+
 # Include router
 app.include_router(api_router)
 
