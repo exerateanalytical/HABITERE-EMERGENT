@@ -26,7 +26,13 @@ const LoginPage = () => {
       if (result.needsRoleSelection) {
         navigate('/choose-role');
       } else {
-        navigate('/dashboard');
+        // Redirect based on user role
+        const userRole = result.user?.role?.toLowerCase();
+        if (userRole === 'property_seeker' || userRole === 'seeker') {
+          navigate('/properties');
+        } else {
+          navigate('/dashboard');
+        }
       }
     } else {
       setError(result.error);
