@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
-import { Home, MapPin, DollarSign, BedDouble, Bath, Square, Upload, X, Image as ImageIcon } from 'lucide-react';
+import { Home, MapPin, DollarSign, BedDouble, Bath, Square, Upload, X, Image as ImageIcon, ChevronDown } from 'lucide-react';
+import { PROPERTY_CATEGORIES } from '../utils/propertyCategories';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
