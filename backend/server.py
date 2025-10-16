@@ -164,6 +164,8 @@ class ProfessionalService(BaseModel):
     verified_by: Optional[str] = None  # Admin user ID who verified
     verified_at: Optional[datetime] = None
     rejection_reason: Optional[str] = None
+    average_rating: float = 0.0
+    review_count: int = 0
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class Booking(BaseModel):
