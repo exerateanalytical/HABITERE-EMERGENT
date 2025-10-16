@@ -122,132 +122,96 @@ const LandingPage = () => {
         seoData={seoData} 
         structuredData={structuredData} 
       />
-      {/* Hero Section - Premium Mobile-First Design */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-8 sm:py-12 md:py-20 lg:py-24 safe-area-top">
-        {/* Background decorative elements */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-200/30 to-purple-200/30 rounded-full blur-3xl"></div>
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-indigo-200/30 to-blue-200/30 rounded-full blur-3xl"></div>
-        </div>
+      
+      {/* Hero Section - Native Mobile-First Design */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-purple-50 pt-20 pb-12 sm:pt-24 sm:pb-16 md:pt-28 md:pb-20 safe-area-top">
+        {/* Optimized background - Single subtle gradient */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-100/20 via-transparent to-purple-100/20"></div>
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
-            <div className="space-y-6 md:space-y-8 text-center lg:text-left fade-in">
-              {/* Trust badge */}
-              <div className="inline-flex items-center px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full shadow-lg border border-white/20">
-                <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
-                <span className="text-sm font-medium text-gray-700">#1 Platform in Cameroon</span>
-              </div>
+          <div className="max-w-4xl mx-auto text-center space-y-8">
+            {/* Trust badge - Optimized for mobile */}
+            <div className="inline-flex items-center px-4 py-2.5 bg-white rounded-full shadow-md border border-gray-200">
+              <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
+              <span className="text-sm font-semibold text-gray-800">#1 Platform in Cameroon</span>
+            </div>
+            
+            {/* Heading - Mobile optimized hierarchy */}
+            <div className="space-y-4">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-gray-900 leading-tight">
+                Find Your Perfect
+                <span className="block mt-2 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  Home & Services
+                </span>
+                <span className="block mt-2 text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-700">
+                  in Cameroon
+                </span>
+              </h1>
               
-              <div className="space-y-4 md:space-y-6">
-                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold text-gray-900 leading-tight tracking-tight">
-                  Find Your Perfect
-                  <span className="block mt-2">
-                    <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-700 bg-clip-text text-transparent">Home</span> and
-                    <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-700 bg-clip-text text-transparent"> Services</span>
-                  </span>
-                  <span className="block mt-2 text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-gray-700">
-                    in Cameroon
-                  </span>
-                </h1>
-                <p className="text-lg sm:text-xl md:text-2xl text-gray-600 leading-relaxed max-w-2xl mx-auto lg:mx-0 font-medium">
-                  Cameroon's most trusted platform for real estate and home services. 
-                  Discover verified properties, connect with certified professionals, and make secure payments with MTN MoMo.
-                </p>
-              </div>
+              <p className="text-lg sm:text-xl md:text-2xl text-gray-600 leading-relaxed max-w-3xl mx-auto px-4">
+                Cameroon's most trusted real estate platform. Browse verified properties and connect with professionals.
+              </p>
+            </div>
+            
+            {/* CTA Buttons - Native mobile feel */}
+            <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto px-4">
+              <button
+                onClick={handleGetStarted}
+                className="group relative bg-gradient-to-r from-blue-600 to-purple-600 active:from-blue-700 active:to-purple-700 text-white font-bold px-8 py-5 rounded-2xl shadow-lg active:shadow-md transform active:scale-95 transition-all duration-100 text-lg touch-manipulation w-full sm:flex-1"
+                data-testid="get-started-btn"
+                aria-label="Get started for free"
+              >
+                <span className="flex items-center justify-center gap-2">
+                  Get Started Free
+                  <ArrowRight className="w-5 h-5" />
+                </span>
+              </button>
               
-              <div className="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto lg:mx-0">
-                <button
-                  onClick={handleGetStarted}
-                  className="group relative overflow-hidden bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 active:from-blue-800 active:to-purple-800 text-white font-bold px-6 sm:px-8 py-4 sm:py-5 rounded-xl sm:rounded-2xl shadow-lg hover:shadow-2xl active:shadow-xl transform hover:-translate-y-1 active:translate-y-0 transition-all duration-200 text-base sm:text-lg touch-manipulation min-h-[56px] w-full sm:w-auto"
-                  data-testid="get-started-btn"
-                  aria-label="Get started for free"
-                >
-                  <span className="relative z-10 flex items-center justify-center gap-2">
-                    <span>Get Started Free</span>
-                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-200" />
-                  </span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
-                </button>
-                <a 
-                  href="/properties" 
-                  className="group bg-white hover:bg-gray-50 active:bg-gray-100 border-2 border-gray-300 hover:border-blue-400 active:border-blue-500 text-gray-800 hover:text-blue-700 active:text-blue-800 font-bold px-6 sm:px-8 py-4 sm:py-5 rounded-xl sm:rounded-2xl shadow-md hover:shadow-xl active:shadow-lg transition-all duration-200 text-base sm:text-lg touch-manipulation flex items-center justify-center gap-2 min-h-[56px] w-full sm:w-auto"
-                  data-testid="browse-properties-btn"
-                  aria-label="Browse available properties"
-                >
-                  <span>Browse Properties</span>
-                  <Home className="w-5 h-5 group-hover:scale-110 transition-transform duration-200" />
-                </a>
-              </div>
-
-              {/* Enhanced mobile-optimized stats */}
-              <div className="grid grid-cols-3 gap-4 sm:gap-6 md:gap-8 pt-6 max-w-md mx-auto lg:mx-0">
-                <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-4 text-center shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300">
-                  <div className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">1000+</div>
-                  <div className="text-xs sm:text-sm text-gray-600 font-medium mt-1">Properties</div>
-                </div>
-                <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-4 text-center shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300">
-                  <div className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">500+</div>
-                  <div className="text-xs sm:text-sm text-gray-600 font-medium mt-1">Professionals</div>
-                </div>
-                <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-4 text-center shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300">
-                  <div className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">10K+</div>
-                  <div className="text-xs sm:text-sm text-gray-600 font-medium mt-1">Happy Users</div>
-                </div>
-              </div>
+              <a 
+                href="/properties" 
+                className="group bg-white active:bg-gray-100 border-2 border-gray-300 text-gray-800 font-bold px-8 py-5 rounded-2xl shadow-md active:shadow-sm transform active:scale-95 transition-all duration-100 text-lg touch-manipulation flex items-center justify-center gap-2 w-full sm:flex-1"
+                data-testid="browse-properties-btn"
+                aria-label="Browse available properties"
+              >
+                <span>Browse Properties</span>
+                <Home className="w-5 h-5" />
+              </a>
             </div>
 
-            <div className="relative slide-up">
-              <div className="grid grid-cols-2 gap-4 md:gap-6">
-                <div className="space-y-4">
-                  <div className="relative group overflow-hidden rounded-3xl shadow-2xl">
-                    <img 
-                      src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&q=80"
-                      alt="Modern house with keys"
-                      className="object-cover h-48 sm:h-56 md:h-64 w-full transform group-hover:scale-105 transition-transform duration-700"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-                  </div>
-                  <div className="relative group overflow-hidden rounded-2xl shadow-xl">
-                    <img 
-                      src="https://images.unsplash.com/photo-1605146769289-440113cc3d00?w=600&q=80"
-                      alt="Residential houses"
-                      className="object-cover h-32 sm:h-36 w-full transform group-hover:scale-105 transition-transform duration-700"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-                  </div>
-                </div>
-                <div className="space-y-4 pt-8">
-                  <div className="relative group overflow-hidden rounded-2xl shadow-xl">
-                    <img 
-                      src="https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=600&q=80"
-                      alt="Luxury house with pool"
-                      className="object-cover h-32 sm:h-36 w-full transform group-hover:scale-105 transition-transform duration-700"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-                  </div>
-                  <div className="relative group overflow-hidden rounded-3xl shadow-2xl">
-                    <img 
-                      src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&q=80"
-                      alt="Modern apartment building"
-                      className="object-cover h-48 sm:h-56 md:h-64 w-full transform group-hover:scale-105 transition-transform duration-700"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-                  </div>
-                </div>
+            {/* Stats - Optimized for mobile screens */}
+            <div className="grid grid-cols-3 gap-3 sm:gap-4 max-w-xl mx-auto pt-8 px-4">
+              <div className="bg-white rounded-2xl p-4 sm:p-5 text-center shadow-md border border-gray-100">
+                <div className="text-2xl sm:text-3xl font-extrabold text-blue-600">1000+</div>
+                <div className="text-xs sm:text-sm text-gray-600 font-medium mt-1">Properties</div>
               </div>
-              
-              {/* Enhanced floating cards */}
-              <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-3 border border-white/20 hover:shadow-3xl transition-all duration-300 zoom-in">
-                <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-                  <span className="text-sm font-semibold text-gray-900">Available Now</span>
-                </div>
+              <div className="bg-white rounded-2xl p-4 sm:p-5 text-center shadow-md border border-gray-100">
+                <div className="text-2xl sm:text-3xl font-extrabold text-purple-600">500+</div>
+                <div className="text-xs sm:text-sm text-gray-600 font-medium mt-1">Professionals</div>
               </div>
-              
-              <div className="absolute bottom-4 right-4 bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-3 border border-white/20 hover:shadow-3xl transition-all duration-300 zoom-in">
-                <div className="flex items-center space-x-2">
-                  <div className="flex items-center">
+              <div className="bg-white rounded-2xl p-4 sm:p-5 text-center shadow-md border border-gray-100">
+                <div className="text-2xl sm:text-3xl font-extrabold text-green-600">10K+</div>
+                <div className="text-xs sm:text-sm text-gray-600 font-medium mt-1">Users</div>
+              </div>
+            </div>
+            
+            {/* Trust indicators - Mobile optimized */}
+            <div className="flex flex-wrap items-center justify-center gap-4 pt-4 px-4">
+              <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow-sm">
+                <Shield className="w-4 h-4 text-green-600" />
+                <span className="text-sm font-medium text-gray-700">Verified</span>
+              </div>
+              <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow-sm">
+                <Star className="w-4 h-4 text-yellow-500 fill-current" />
+                <span className="text-sm font-medium text-gray-700">4.9 Rating</span>
+              </div>
+              <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow-sm">
+                <Users className="w-4 h-4 text-blue-600" />
+                <span className="text-sm font-medium text-gray-700">10K+ Users</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
                     <Star className="w-4 h-4 text-yellow-400 fill-current" />
                     <Star className="w-4 h-4 text-yellow-400 fill-current" />
                     <Star className="w-4 h-4 text-yellow-400 fill-current" />
