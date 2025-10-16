@@ -263,44 +263,76 @@ const PropertyForm = () => {
               )}
             </div>
 
-            {/* Property Type and Listing Type */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Property Type *
-                </label>
-                <select
-                  name="property_type"
-                  value={formData.property_type}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                >
-                  <option value="apartment">Apartment</option>
-                  <option value="house">House</option>
-                  <option value="land">Land</option>
-                  <option value="commercial">Commercial</option>
-                  <option value="villa">Villa</option>
-                  <option value="studio">Studio</option>
-                </select>
-              </div>
+            {/* Property Sector */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Property Sector *
+              </label>
+              <select
+                name="property_sector"
+                value={formData.property_sector}
+                onChange={(e) => {
+                  setFormData(prev => ({
+                    ...prev,
+                    property_sector: e.target.value,
+                    property_category: '' // Reset category when sector changes
+                  }));
+                }}
+                required
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="">Select a sector...</option>
+                {PROPERTY_CATEGORIES.map((sector) => (
+                  <option key={sector.sector} value={sector.sector}>
+                    {sector.icon} {sector.sector}
+                  </option>
+                ))}
+              </select>
+            </div>
 
+            {/* Property Category - Only show if sector is selected */}
+            {formData.property_sector && (
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Listing Type *
+                  Property Category *
                 </label>
                 <select
-                  name="listing_type"
-                  value={formData.listing_type}
+                  name="property_category"
+                  value={formData.property_category}
                   onChange={handleChange}
                   required
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
-                  <option value="rent">For Rent</option>
-                  <option value="sale">For Sale</option>
-                  <option value="lease">For Lease</option>
+                  <option value="">Select a category...</option>
+                  {PROPERTY_CATEGORIES
+                    .find(s => s.sector === formData.property_sector)
+                    ?.categories.map((category) => (
+                      <option key={category} value={category}>
+                        {category}
+                      </option>
+                    ))}
                 </select>
               </div>
+            )}
+
+            {/* Listing Type */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Listing Type *
+              </label>
+              <select
+                name="listing_type"
+                value={formData.listing_type}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="sale">For Sale</option>
+                <option value="rent">For Rent</option>
+                <option value="lease">For Lease</option>
+                <option value="short_let">Short Let</option>
+                <option value="auction">Auction</option>
+              </select>
             </div>
 
             {/* Price and Location */}
