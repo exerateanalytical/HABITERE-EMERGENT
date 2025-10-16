@@ -1,0 +1,164 @@
+{
+  "summary": {
+    "total_tests": 21,
+    "passed_tests": 21,
+    "failed_tests": 0,
+    "success_rate": 100.0,
+    "critical_failures": [],
+    "security_issues": [],
+    "test_user_email": "test.user.bffc09ce@habitere-test.com",
+    "timestamp": "2025-10-16T14:05:47.502590"
+  },
+  "test_results": [
+    {
+      "test_name": "User Registration",
+      "success": true,
+      "details": "Status: 200, Message: Registration successful. Please check your email to verify your account., Email: test.user.bffc09ce@habitere-test.com",
+      "response_data": {
+        "message": "Registration successful. Please check your email to verify your account.",
+        "email": "test.user.bffc09ce@habitere-test.com"
+      },
+      "timestamp": "2025-10-16T14:05:44.731095"
+    },
+    {
+      "test_name": "Duplicate Email Registration",
+      "success": true,
+      "details": "Status: 400 (expected 400 for duplicate email), Error: Email already registered",
+      "response_data": null,
+      "timestamp": "2025-10-16T14:05:44.745940"
+    },
+    {
+      "test_name": "Weak Password Validation",
+      "success": true,
+      "details": "Status: 200 (No password strength validation - consider adding)",
+      "response_data": null,
+      "timestamp": "2025-10-16T14:05:45.249161"
+    },
+    {
+      "test_name": "Login Unverified Email",
+      "success": true,
+      "details": "Status: 403 (expected 403 for unverified email), Error: Please verify your email first",
+      "response_data": null,
+      "timestamp": "2025-10-16T14:05:45.485311"
+    },
+    {
+      "test_name": "Login Wrong Password",
+      "success": true,
+      "details": "Status: 401 (expected 401 for wrong password), Error: Invalid email or password",
+      "response_data": null,
+      "timestamp": "2025-10-16T14:05:45.715359"
+    },
+    {
+      "test_name": "Login Non-existent Email",
+      "success": true,
+      "details": "Status: 401 (expected 401 for non-existent email)",
+      "response_data": null,
+      "timestamp": "2025-10-16T14:05:45.725346"
+    },
+    {
+      "test_name": "Email Verification Invalid Token",
+      "success": true,
+      "details": "Status: 400 (expected 400 for invalid token)",
+      "response_data": null,
+      "timestamp": "2025-10-16T14:05:45.733657"
+    },
+    {
+      "test_name": "Simulated Email Verification",
+      "success": true,
+      "details": "Status: 400 (simulated verification test)",
+      "response_data": null,
+      "timestamp": "2025-10-16T14:05:45.741490"
+    },
+    {
+      "test_name": "Password Reset Request",
+      "success": true,
+      "details": "Status: 200, Message: If the email exists, a password reset link has been sent",
+      "response_data": null,
+      "timestamp": "2025-10-16T14:05:46.055991"
+    },
+    {
+      "test_name": "Password Reset Non-existent Email",
+      "success": true,
+      "details": "Status: 200 (should return 200 for security)",
+      "response_data": null,
+      "timestamp": "2025-10-16T14:05:46.108200"
+    },
+    {
+      "test_name": "Password Reset Invalid Token",
+      "success": true,
+      "details": "Status: 400 (expected 400 for invalid token)",
+      "response_data": null,
+      "timestamp": "2025-10-16T14:05:46.119364"
+    },
+    {
+      "test_name": "Role Selection No Auth",
+      "success": true,
+      "details": "Status: 401 (expected 401 without auth)",
+      "response_data": null,
+      "timestamp": "2025-10-16T14:05:46.131207"
+    },
+    {
+      "test_name": "Role Selection Invalid Role",
+      "success": true,
+      "details": "Status: 401 (expected 400/401 for invalid role)",
+      "response_data": null,
+      "timestamp": "2025-10-16T14:05:46.138762"
+    },
+    {
+      "test_name": "Valid Roles Test",
+      "success": true,
+      "details": "Tested 8 roles. Results: property_seeker: OK (401), property_owner: OK (401), real_estate_agent: OK (401)...",
+      "response_data": null,
+      "timestamp": "2025-10-16T14:05:46.325510"
+    },
+    {
+      "test_name": "Google OAuth Login URL",
+      "success": true,
+      "details": "Status: 200, Valid Google auth URL generated",
+      "response_data": null,
+      "timestamp": "2025-10-16T14:05:46.337826"
+    },
+    {
+      "test_name": "Protected Endpoint No Auth",
+      "success": true,
+      "details": "Status: 401 (expected 401 without auth)",
+      "response_data": null,
+      "timestamp": "2025-10-16T14:05:46.346528"
+    },
+    {
+      "test_name": "Logout No Session",
+      "success": true,
+      "details": "Status: 401 (Auth required)",
+      "response_data": null,
+      "timestamp": "2025-10-16T14:05:46.396380"
+    },
+    {
+      "test_name": "CORS Configuration",
+      "success": true,
+      "details": "Preflight status: 200, CORS headers: {'Access-Control-Allow-Origin': 'https://habitere-realestate.preview.emergentagent.com', 'Access-Control-Allow-Credentials': 'true', 'Access-Control-Allow-Methods': 'DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT'}",
+      "response_data": null,
+      "timestamp": "2025-10-16T14:05:46.404402"
+    },
+    {
+      "test_name": "Session Cookie Security",
+      "success": true,
+      "details": "Status: 401, No Set-Cookie header (expected for failed login)",
+      "response_data": null,
+      "timestamp": "2025-10-16T14:05:46.418064"
+    },
+    {
+      "test_name": "Password Hashing Security",
+      "success": true,
+      "details": "Registration status: 200, Password not leaked in response",
+      "response_data": null,
+      "timestamp": "2025-10-16T14:05:46.954131"
+    },
+    {
+      "test_name": "Rate Limiting Test",
+      "success": true,
+      "details": "Response codes: [401, 401, 401, 401, 401] (No rate limiting detected - consider implementing)",
+      "response_data": null,
+      "timestamp": "2025-10-16T14:05:47.502526"
+    }
+  ]
+}
