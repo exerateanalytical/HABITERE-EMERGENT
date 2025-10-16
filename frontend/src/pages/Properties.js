@@ -200,35 +200,35 @@ const Properties = () => {
         <div className="relative max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-6 sm:py-8 md:py-10">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-6 lg:space-y-0">
             <div className="text-center lg:text-left">
-              <div className="flex flex-col lg:flex-row lg:items-center space-y-4 lg:space-y-0 lg:space-x-6 mb-4">
+              <div className="flex flex-col lg:flex-row lg:items-center space-y-3 sm:space-y-4 lg:space-y-0 lg:space-x-6 mb-3 sm:mb-4">
                 <div>
-                  <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-2">
+                  <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-2">
                     Properties in 
                     <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"> Cameroon</span>
                   </h1>
-                  <p className="text-lg md:text-xl text-gray-600">
-                    Discover <span className="font-bold text-blue-600">{filteredProperties.length}</span> verified properties across all regions
+                  <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-600">
+                    Discover <span className="font-bold text-blue-600">{filteredProperties.length}</span> verified properties
                   </p>
                 </div>
               </div>
               
               {/* Quick stats */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto lg:mx-0">
-                <div className="bg-white/70 backdrop-blur-sm rounded-xl p-3 text-center shadow-lg border border-white/20">
-                  <div className="text-lg font-bold text-blue-600">1000+</div>
-                  <div className="text-xs text-gray-600">Total Properties</div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 md:gap-4 max-w-2xl mx-auto lg:mx-0">
+                <div className="bg-white/70 backdrop-blur-sm rounded-lg sm:rounded-xl p-2 sm:p-3 text-center shadow-lg border border-white/20">
+                  <div className="text-base sm:text-lg font-bold text-blue-600">1000+</div>
+                  <div className="text-xs text-gray-600">Properties</div>
                 </div>
-                <div className="bg-white/70 backdrop-blur-sm rounded-xl p-3 text-center shadow-lg border border-white/20">
-                  <div className="text-lg font-bold text-green-600">245</div>
+                <div className="bg-white/70 backdrop-blur-sm rounded-lg sm:rounded-xl p-2 sm:p-3 text-center shadow-lg border border-white/20">
+                  <div className="text-base sm:text-lg font-bold text-green-600">245</div>
                   <div className="text-xs text-gray-600">For Sale</div>
                 </div>
-                <div className="bg-white/70 backdrop-blur-sm rounded-xl p-3 text-center shadow-lg border border-white/20">
-                  <div className="text-lg font-bold text-purple-600">387</div>
+                <div className="bg-white/70 backdrop-blur-sm rounded-lg sm:rounded-xl p-2 sm:p-3 text-center shadow-lg border border-white/20">
+                  <div className="text-base sm:text-lg font-bold text-purple-600">387</div>
                   <div className="text-xs text-gray-600">For Rent</div>
                 </div>
-                <div className="bg-white/70 backdrop-blur-sm rounded-xl p-3 text-center shadow-lg border border-white/20">
-                  <div className="text-lg font-bold text-orange-600">156</div>
-                  <div className="text-xs text-gray-600">New This Week</div>
+                <div className="bg-white/70 backdrop-blur-sm rounded-lg sm:rounded-xl p-2 sm:p-3 text-center shadow-lg border border-white/20">
+                  <div className="text-base sm:text-lg font-bold text-orange-600">156</div>
+                  <div className="text-xs text-gray-600">New</div>
                 </div>
               </div>
             </div>
