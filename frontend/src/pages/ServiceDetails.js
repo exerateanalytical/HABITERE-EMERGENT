@@ -464,6 +464,9 @@ const ServiceDetails = () => {
           </div>
         </div>
 
+        {/* Reviews Section */}
+        <Reviews serviceId={id} type="service" />
+
         {/* Similar Services */}
         <div className="mt-12">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Similar Services</h2>
