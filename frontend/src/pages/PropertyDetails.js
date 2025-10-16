@@ -18,7 +18,8 @@ import {
   Star,
   Shield,
   Eye,
-  ArrowLeft
+  ArrowLeft,
+  User
 } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
