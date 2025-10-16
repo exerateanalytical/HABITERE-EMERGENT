@@ -129,6 +129,14 @@ function AppContent() {
         <Route path="/services" element={<Services />} />
         <Route path="/services/:id" element={<ServiceDetails />} />
         
+        {/* Static Content Pages - available to all */}
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/faq" element={<FAQ />} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/help-center" element={<HelpCenter />} />
+        
         {/* Protected Routes */}
         <Route 
           path="/dashboard" 
