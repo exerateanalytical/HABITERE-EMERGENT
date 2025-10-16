@@ -1000,8 +1000,8 @@ async def logout(
     response.delete_cookie(
         key="session_token",
         path="/",
-        secure=False,  # Set to True in production with HTTPS
-        samesite="lax"  # Changed from "none" to "lax" for localhost
+        secure=True,  # Production with HTTPS
+        samesite="None"  # Required for cross-site cookies
     )
     
     return {"message": "Logged out successfully"}
