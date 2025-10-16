@@ -51,8 +51,10 @@ const Dashboard = () => {
       
       // Fetch user's properties if they can list properties
       if (['property_owner', 'real_estate_agent', 'real_estate_company'].includes(user.role)) {
-        const propertiesResponse = await axios.get(`${API}/properties`);
-        const userProperties = propertiesResponse.data.filter(p => p.owner_id === user.id);
+        const propertiesResponse = await axios.get(`${API}/users/me/properties`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+        });
+        const userProperties = propertiesResponse.data;
         setRecentProperties(userProperties.slice(0, 3));
         setStats(prev => ({ ...prev, properties: userProperties.length }));
       }
