@@ -372,7 +372,7 @@ const EnhancedServiceCard = ({ service }) => {
         {/* Professional image with loading state */}
         <div className={`w-full h-full bg-gradient-to-br from-purple-200 to-indigo-300 ${!imageLoaded ? 'animate-pulse' : ''}`}>
           <img
-            src={service.images?.[0] || 'https://images.unsplash.com/photo-1505798577917-a65157d3320a?w=800&q=80'}
+            src={getServiceImageUrl(service.images?.[0])}
             alt={service.title}
             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
             onLoad={() => setImageLoaded(true)}
