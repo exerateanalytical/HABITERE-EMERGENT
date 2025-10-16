@@ -20,7 +20,8 @@ import {
   Eye,
   ArrowLeft,
   User,
-  Edit
+  Edit,
+  Trash2
 } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
