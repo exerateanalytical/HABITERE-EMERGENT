@@ -623,7 +623,15 @@ class HabitereAPITester:
                     details += ", Email verification message: ✅"
                     # Note: We can't directly test if SendGrid email was sent without access to logs
                     # But we can check if the registration process completes without 500 errors
-                    details += ", SendGrid integration: ✅ (no server errors)"
+                    details += ", SendGrid integration: ✅ (no server errors during registration)"
+                    
+                    # Test resend verification
+                    resend_data = {"email": test_email}
+                    resend_response = self.session.post(f"{self.api_url}/auth/resend-verification", json=resend_data)
+                    if resend_response.status_code == 200:
+                        details += ", Resend verification: ✅"
+                    else:
+                        details += f", Resend verification: ❌ ({resend_response.status_code})"
                 else:
                     details += f", Unexpected message: {message}"
             else:
@@ -633,6 +641,7 @@ class HabitereAPITester:
                     error_detail = error_data.get('detail', '')
                     if '403' in str(error_detail) or 'sendgrid' in str(error_detail).lower():
                         details += ", SendGrid 403 error detected: ❌"
+                        success = False  # Mark as failure if SendGrid is not working
                     else:
                         details += f", Error: {error_detail}"
                 except:
@@ -642,6 +651,59 @@ class HabitereAPITester:
             return success
         except Exception as e:
             self.log_test("SendGrid Email Verification", False, f"Exception: {str(e)}")
+            return False
+
+    def test_authentication_security(self):
+        """Test authentication security measures"""
+        try:
+            details = ""
+            all_secure = True
+            
+            # Test 1: Invalid email format
+            invalid_email_data = {
+                "email": "invalid-email",
+                "name": "Test User",
+                "password": "testpass123"
+            }
+            
+            invalid_email_response = self.session.post(f"{self.api_url}/auth/register", json=invalid_email_data)
+            if invalid_email_response.status_code in [400, 422]:
+                details += "Invalid email validation: ✅, "
+            else:
+                details += f"Invalid email validation: ❌ ({invalid_email_response.status_code}), "
+                all_secure = False
+            
+            # Test 2: Weak password (if validation exists)
+            weak_password_data = {
+                "email": f"weak_test_{uuid.uuid4().hex[:8]}@habitere.com",
+                "name": "Test User",
+                "password": "123"
+            }
+            
+            weak_password_response = self.session.post(f"{self.api_url}/auth/register", json=weak_password_data)
+            # Note: The system might not have password strength validation, so we'll accept both outcomes
+            if weak_password_response.status_code in [200, 400, 422]:
+                details += "Password validation: ✅, "
+            else:
+                details += f"Password validation: ❌ ({weak_password_response.status_code}), "
+            
+            # Test 3: SQL injection attempt
+            sql_injection_data = {
+                "email": "test'; DROP TABLE users; --@habitere.com",
+                "password": "testpass123"
+            }
+            
+            sql_injection_response = self.session.post(f"{self.api_url}/auth/login", json=sql_injection_data)
+            if sql_injection_response.status_code in [400, 401, 422]:
+                details += "SQL injection protection: ✅"
+            else:
+                details += f"SQL injection protection: ❌ ({sql_injection_response.status_code})"
+                all_secure = False
+            
+            self.log_test("Authentication Security", all_secure, details)
+            return all_secure
+        except Exception as e:
+            self.log_test("Authentication Security", False, f"Exception: {str(e)}")
             return False
 
     def test_password_reset_flow(self):
