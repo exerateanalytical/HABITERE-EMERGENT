@@ -241,7 +241,7 @@ const PropertyCard = ({ property, isFavorite, onToggleFavorite, formatPrice }) =
           {/* Image */}
           <div className="relative h-48 overflow-hidden">
             <img
-              src={property.images?.[0] || 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2'}
+              src={getPropertyImageUrl(property.images?.[0])}
               alt={property.title}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             />
