@@ -209,9 +209,18 @@ const PropertyEditForm = () => {
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white rounded-2xl shadow-xl p-8">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">List Your Property</h1>
-            <p className="text-gray-600">Fill in the details below to list your property on Habitere</p>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Edit Your Property</h1>
+            <p className="text-gray-600">Update your property details below</p>
           </div>
+
+          {loadingProperty && (
+            <div className="flex items-center justify-center py-12">
+              <Loader className="w-8 h-8 animate-spin text-blue-600" />
+              <span className="ml-3 text-gray-600">Loading property...</span>
+            </div>
+          )}
+
+          {!loadingProperty && (
 
           {error && (
             <div className="mb-6 bg-red-50 border border-red-200 rounded-xl p-4">
