@@ -320,21 +320,25 @@ const LandingPage = () => {
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium text-gray-700">Search</label>
-                <button className="group w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold px-6 py-3 rounded-2xl shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 text-base touch-action-manipulation" data-testid="search-btn">
-                  <div className="flex items-center justify-center">
-                    <Search className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform duration-300" />
-                    Search Properties
+                <button 
+                  className="group w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 active:from-blue-800 active:to-purple-800 text-white font-bold px-6 py-4 rounded-xl shadow-lg hover:shadow-2xl active:shadow-lg transform hover:-translate-y-1 active:translate-y-0 transition-all duration-200 text-base sm:text-lg touch-manipulation min-h-[56px]" 
+                  data-testid="search-btn"
+                  aria-label="Search properties"
+                >
+                  <div className="flex items-center justify-center gap-2">
+                    <Search className="w-5 h-5 sm:w-6 sm:h-6 group-hover:scale-110 transition-transform duration-200" />
+                    <span>Search Properties</span>
                   </div>
                 </button>
               </div>
             </div>
             
-            {/* Quick filters */}
-            <div className="mt-6 flex flex-wrap gap-2 justify-center">
-              <span className="text-sm text-gray-600">Popular:</span>
-              <button className="px-3 py-1 bg-white/60 hover:bg-blue-100 border border-gray-200 rounded-full text-sm text-gray-700 hover:text-blue-700 transition-colors duration-200">Houses in Douala</button>
-              <button className="px-3 py-1 bg-white/60 hover:bg-blue-100 border border-gray-200 rounded-full text-sm text-gray-700 hover:text-blue-700 transition-colors duration-200">Apartments</button>
-              <button className="px-3 py-1 bg-white/60 hover:bg-blue-100 border border-gray-200 rounded-full text-sm text-gray-700 hover:text-blue-700 transition-colors duration-200">Land for Sale</button>
+            {/* Quick filters - Mobile optimized */}
+            <div className="mt-6 flex flex-wrap gap-2 sm:gap-3 justify-center">
+              <span className="text-sm font-medium text-gray-600 leading-loose">Popular:</span>
+              <button className="px-4 py-2 bg-white hover:bg-blue-50 active:bg-blue-100 border-2 border-gray-200 hover:border-blue-300 active:border-blue-400 rounded-full text-sm font-medium text-gray-700 hover:text-blue-700 active:text-blue-800 transition-all duration-200 touch-manipulation min-h-[40px]">Houses in Douala</button>
+              <button className="px-4 py-2 bg-white hover:bg-blue-50 active:bg-blue-100 border-2 border-gray-200 hover:border-blue-300 active:border-blue-400 rounded-full text-sm font-medium text-gray-700 hover:text-blue-700 active:text-blue-800 transition-all duration-200 touch-manipulation min-h-[40px]">Apartments</button>
+              <button className="px-4 py-2 bg-white hover:bg-blue-50 active:bg-blue-100 border-2 border-gray-200 hover:border-blue-300 active:border-blue-400 rounded-full text-sm font-medium text-gray-700 hover:text-blue-700 active:text-blue-800 transition-all duration-200 touch-manipulation min-h-[40px]">Land for Sale</button>
             </div>
           </div>
         </div>
