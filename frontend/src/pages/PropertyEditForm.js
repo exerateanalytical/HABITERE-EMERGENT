@@ -531,17 +531,18 @@ const PropertyEditForm = () => {
               </button>
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || loadingProperty}
                 className="flex-1 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
-                {loading ? 'Creating...' : 'List Property'}
+                {loading ? 'Updating...' : 'Update Property'}
               </button>
             </div>
           </form>
+          )}
         </div>
       </div>
     </div>
   );
 };
 
-export default PropertyForm;
+export default PropertyEditForm;
