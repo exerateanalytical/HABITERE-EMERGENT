@@ -11,7 +11,7 @@ from PIL import Image
 import uuid
 
 class HabitereAPITester:
-    def __init__(self, base_url="https://property-platform-12.preview.emergentagent.com"):
+    def __init__(self, base_url="https://habitere.com"):
         self.base_url = base_url
         self.api_url = f"{base_url}/api"
         self.session = requests.Session()
