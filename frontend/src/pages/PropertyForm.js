@@ -101,12 +101,20 @@ const PropertyForm = () => {
       setLoading(true);
       setError('');
 
+      // Upload images first if any
+      let imageUrls = [];
+      if (selectedFiles.length > 0) {
+        imageUrls = await uploadImages();
+      }
+
       const propertyData = {
         ...formData,
         price: parseFloat(formData.price),
         bedrooms: parseInt(formData.bedrooms) || 0,
         bathrooms: parseInt(formData.bathrooms) || 0,
         area_sqm: parseFloat(formData.area_sqm) || 0,
+        images: imageUrls,
+        amenities: [],
         available: true,
         verified: false
       };
