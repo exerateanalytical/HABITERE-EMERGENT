@@ -71,7 +71,7 @@ const FeaturedProperties = ({ title = "Featured Properties", showAll = true, lim
 
   const getVisibleCards = () => {
     if (typeof window === 'undefined') return 3;
-    if (window.innerWidth < 640) return 1;
+    if (window.innerWidth < 640) return 2; // Show 2 cards on mobile
     if (window.innerWidth < 1024) return 2;
     return 3;
   };
