@@ -86,6 +86,24 @@ const PropertyDetails = () => {
     navigate('/messages', { state: { recipientId: property.owner_id } });
   };
 
+  const handleCall = () => {
+    if (!owner?.phone) {
+      alert("Phone number not available");
+      return;
+    }
+    window.location.href = `tel:${owner.phone}`;
+  };
+
+  const handleWhatsApp = () => {
+    if (!owner?.phone) {
+      alert("Phone number not available");
+      return;
+    }
+    const message = encodeURIComponent(`Hi, I am interested in your property: ${property?.title}`);
+    const phoneNumber = owner.phone.replace(/[^0-9]/g, ""); // Remove non-numeric characters
+    window.open(`https://wa.me/${phoneNumber}?text=${message}`, "_blank");
+  };
+
   const handleDelete = async () => {
     if (!window.confirm('Are you sure you want to delete this property? This action cannot be undone.')) {
       return;
