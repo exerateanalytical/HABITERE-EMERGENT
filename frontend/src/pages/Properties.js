@@ -566,7 +566,7 @@ const PropertyListItem = ({ property, isFavorite, onToggleFavorite, formatPrice 
       <div className="flex flex-col md:flex-row">
         <div className="md:w-80 h-48 md:h-auto relative overflow-hidden flex-shrink-0">
           <img
-            src={property.images?.[0] || 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2'}
+            src={getImageUrl(property.images?.[0])}
             alt={property.title}
             className="w-full h-full object-cover"
           />
