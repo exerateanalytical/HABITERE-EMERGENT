@@ -53,6 +53,135 @@ class HabitereAPITester:
             "timestamp": datetime.now().isoformat()
         })
 
+    def create_test_user(self, email: str, name: str, password: str, role: str) -> Optional[str]:
+        """Create a test user and return session token"""
+        try:
+            # Register user
+            register_data = {
+                "email": email,
+                "name": name,
+                "password": password
+            }
+            
+            register_response = self.session.post(f"{self.api_url}/auth/register", json=register_data)
+            if register_response.status_code != 200:
+                print(f"Failed to register {email}: {register_response.status_code}")
+                return None
+            
+            # For testing, we'll manually verify the user and set role
+            # In a real scenario, this would require email verification
+            
+            # Try to login (this will fail if email not verified)
+            login_data = {
+                "email": email,
+                "password": password
+            }
+            
+            login_response = self.session.post(f"{self.api_url}/auth/login", json=login_data)
+            
+            # If login fails due to unverified email, we need to handle this
+            if login_response.status_code == 403:
+                # Email not verified - for testing, we'll create the user directly in the database
+                # This is a workaround for testing purposes
+                print(f"User {email} needs email verification - creating test user directly")
+                return self.create_verified_test_user(email, name, password, role)
+            
+            if login_response.status_code != 200:
+                print(f"Failed to login {email}: {login_response.status_code}")
+                return None
+            
+            # Extract session token from cookies
+            session_token = None
+            for cookie in login_response.cookies:
+                if cookie.name == 'session_token':
+                    session_token = cookie.value
+                    break
+            
+            if not session_token:
+                print(f"No session token found for {email}")
+                return None
+            
+            # Set role
+            role_headers = {'Authorization': f'Bearer {session_token}'}
+            role_data = {"role": role}
+            role_response = requests.post(
+                f"{self.api_url}/auth/select-role",
+                json=role_data,
+                headers=role_headers
+            )
+            
+            if role_response.status_code != 200:
+                print(f"Failed to set role for {email}: {role_response.status_code}")
+                return None
+            
+            return session_token
+            
+        except Exception as e:
+            print(f"Error creating test user {email}: {str(e)}")
+            return None
+
+    def create_verified_test_user(self, email: str, name: str, password: str, role: str) -> Optional[str]:
+        """Create a verified test user directly (testing workaround)"""
+        # This is a simplified approach for testing
+        # In production, proper email verification would be required
+        try:
+            # For now, we'll return None and handle authentication differently
+            # The actual implementation would require database access
+            return None
+        except Exception as e:
+            print(f"Error creating verified test user: {str(e)}")
+            return None
+
+    def setup_test_authentication(self):
+        """Set up authentication for different user roles"""
+        print("🔐 Setting up test authentication...")
+        
+        # Create admin user
+        self.admin_token = self.create_test_user(
+            "admin@habitere.com", 
+            "Admin User", 
+            "admin123", 
+            "admin"
+        )
+        
+        # Create client user
+        self.client_token = self.create_test_user(
+            "client@test.com", 
+            "Test Client", 
+            "client123", 
+            "property_seeker"
+        )
+        
+        # Create property owner
+        self.owner_token = self.create_test_user(
+            "owner@test.com", 
+            "Property Owner", 
+            "owner123", 
+            "property_owner"
+        )
+        
+        # Create service provider
+        self.provider_token = self.create_test_user(
+            "provider@test.com", 
+            "Service Provider", 
+            "provider123", 
+            "plumber"
+        )
+        
+        print(f"Admin token: {'✅' if self.admin_token else '❌'}")
+        print(f"Client token: {'✅' if self.client_token else '❌'}")
+        print(f"Owner token: {'✅' if self.owner_token else '❌'}")
+        print(f"Provider token: {'✅' if self.provider_token else '❌'}")
+
+    def make_authenticated_request(self, method: str, endpoint: str, token: str, **kwargs):
+        """Make an authenticated request"""
+        headers = kwargs.get('headers', {})
+        headers['Authorization'] = f'Bearer {token}'
+        kwargs['headers'] = headers
+        
+        url = f"{self.api_url}{endpoint}"
+        return getattr(requests, method.lower())(url, **kwargs)
+
     def test_api_health(self):
         """Test API health endpoint"""
         try:
