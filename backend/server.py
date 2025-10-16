@@ -695,6 +695,32 @@ async def get_current_user_info(current_user: User = Depends(get_current_user)):
     """Get current user information"""
     return serialize_doc(current_user.model_dump())
 
+
+@api_router.get("/users/{user_id}", response_model=Dict[str, Any])
+async def get_user_by_id(user_id: str):
+    """Get user information by ID (public endpoint for displaying user names)"""
+    try:
+        user_doc = await db.users.find_one({"id": user_id})
+        if not user_doc:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        # Return only public information
+        public_info = {
+            "id": user_doc.get("id"),
+            "name": user_doc.get("name", "User"),
+            "email": user_doc.get("email", ""),
+            "role": user_doc.get("role", ""),
+            "picture": user_doc.get("picture", ""),
+            "company_name": user_doc.get("company_name", "")
+        }
+        return public_info
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error fetching user: {e}")
+        raise HTTPException(status_code=500, detail="Failed to fetch user")
+
+
 @api_router.post("/auth/logout")
 async def logout(
     response: Response,
