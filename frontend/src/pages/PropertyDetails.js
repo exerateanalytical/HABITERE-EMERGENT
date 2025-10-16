@@ -46,6 +46,17 @@ const PropertyDetails = () => {
       setLoading(true);
       const response = await axios.get(`${API}/properties/${id}`);
       setProperty(response.data);
+      
+      // Fetch owner data
+      if (response.data.owner_id) {
+        try {
+          const ownerResponse = await axios.get(`${API}/users/${response.data.owner_id}`);
+          setOwner(ownerResponse.data);
+        } catch (ownerErr) {
+          console.log('Could not fetch owner data:', ownerErr);
+          // Don't fail the whole page if owner fetch fails
+        }
+      }
     } catch (err) {
       console.error('Error fetching property:', err);
       setError('Property not found');
