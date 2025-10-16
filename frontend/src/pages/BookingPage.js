@@ -6,17 +6,16 @@ import {
   Calendar, 
   Clock, 
   MapPin, 
-  User, 
-  CreditCard,
+  User,
   ArrowLeft,
   Building,
   Wrench,
   AlertCircle,
-  CheckCircle
+  CheckCircle,
+  Send
 } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
 
 const BookingPage = () => {
   const { type, id } = useParams(); // type is 'property' or 'service'
@@ -26,138 +25,147 @@ const BookingPage = () => {
   const [item, setItem] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [step, setStep] = useState(1); // 1: Details, 2: Payment, 3: Confirmation
+  const [success, setSuccess] = useState(false);
+  
+  // Available time slots
+  const [availableSlots, setAvailableSlots] = useState([]);
+  const [loadingSlots, setLoadingSlots] = useState(false);
   
   // Booking form data
   const [bookingData, setBookingData] = useState({
     scheduled_date: '',
-    notes: '',
-    payment_method: 'mtn_momo',
-    phone_number: user?.phone || ''
+    scheduled_time: '',
+    duration_hours: 1,
+    notes: ''
   });
   
-  const [paymentLoading, setPaymentLoading] = useState(false);
-  const [bookingId, setBookingId] = useState(null);
-  const [paymentId, setPaymentId] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
+    if (!user) {
+      navigate('/auth/login');
+      return;
+    }
+    
     if (id && type) {
       fetchItem();
     }
-  }, [id, type]);
+  }, [id, type, user]);
+
+  useEffect(() => {
+    if (bookingData.scheduled_date && type === 'property' && id) {
+      fetchAvailableSlots();
+    }
+  }, [bookingData.scheduled_date]);
 
   const fetchItem = async () => {
     try {
       setLoading(true);
-      const endpoint = type === 'property' ? 'properties' : 'services';
-      const response = await axios.get(`${API}/${endpoint}/${id}`);
+      const endpoint = type === 'property' 
+        ? `/api/properties/${id}` 
+        : `/api/services/${id}`;
+      
+      const response = await axios.get(`${BACKEND_URL}${endpoint}`);
       setItem(response.data);
     } catch (err) {
       console.error('Error fetching item:', err);
-      setError(`${type} not found`);
+      setError('Failed to load booking details');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleInputChange = (field, value) => {
+  const fetchAvailableSlots = async () => {
+    try {
+      setLoadingSlots(true);
+      const response = await axios.get(
+        `${BACKEND_URL}/api/bookings/property/${id}/slots?date=${bookingData.scheduled_date}`
+      );
+      setAvailableSlots(response.data.slots || []);
+    } catch (err) {
+      console.error('Error fetching slots:', err);
+    } finally {
+      setLoadingSlots(false);
+    }
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
     setBookingData(prev => ({
       ...prev,
-      [field]: value
+      [name]: value
     }));
   };
 
-  const handleBookingSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (!bookingData.scheduled_date) {
-      setError('Please select a date and time');
+      alert('Please select a date');
+      return;
+    }
+    
+    if (type === 'property' && !bookingData.scheduled_time) {
+      alert('Please select a time slot');
       return;
     }
 
     try {
-      setPaymentLoading(true);
-      setError('');
-
-      // Create booking
-      const bookingPayload = {
-        scheduled_date: bookingData.scheduled_date,
+      setSubmitting(true);
+      
+      const booking = {
+        booking_type: type === 'property' ? 'property_viewing' : 'service_booking',
+        ...(type === 'property' ? { property_id: id } : { service_id: id }),
+        scheduled_date: new Date(bookingData.scheduled_date).toISOString(),
+        scheduled_time: bookingData.scheduled_time,
+        duration_hours: parseInt(bookingData.duration_hours),
         notes: bookingData.notes
       };
-
-      if (type === 'property') {
-        bookingPayload.property_id = id;
-      } else {
-        bookingPayload.service_id = id;
-      }
-
-      const bookingResponse = await axios.post(`${API}/bookings`, bookingPayload);
-      setBookingId(bookingResponse.data.id);
-
-      // Calculate booking amount (this would be more complex in real app)
-      const amount = type === 'property' ? 25000 : 50000; // Booking fee in XAF
-
-      // Create payment
-      const paymentPayload = {
-        booking_id: bookingResponse.data.id,
-        amount: amount,
-        method: bookingData.payment_method,
-        phone_number: bookingData.phone_number
-      };
-
-      const paymentResponse = await axios.post(`${API}/payments/mtn-momo`, paymentPayload);
-      setPaymentId(paymentResponse.data.payment_id);
       
-      setStep(3); // Move to confirmation
+      const response = await axios.post(
+        `${BACKEND_URL}/api/bookings`,
+        booking,
+        { withCredentials: true }
+      );
+      
+      setSuccess(true);
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 2000);
       
     } catch (err) {
-      console.error('Booking error:', err);
-      setError(err.response?.data?.detail || 'Failed to create booking');
+      console.error('Error creating booking:', err);
+      alert(err.response?.data?.detail || 'Failed to create booking');
     } finally {
-      setPaymentLoading(false);
+      setSubmitting(false);
     }
   };
 
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat('fr-CM', {
-      style: 'currency',
-      currency: 'XAF',
-      minimumFractionDigits: 0
-    }).format(price);
+  // Get minimum date (today)
+  const getMinDate = () => {
+    const today = new Date();
+    return today.toISOString().split('T')[0];
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 py-8">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="animate-pulse">
-            <div className="h-8 bg-gray-300 rounded mb-6"></div>
-            <div className="card">
-              <div className="card-body">
-                <div className="space-y-4">
-                  <div className="h-6 bg-gray-300 rounded w-3/4"></div>
-                  <div className="h-4 bg-gray-300 rounded w-1/2"></div>
-                  <div className="h-32 bg-gray-300 rounded"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
       </div>
     );
   }
 
-  if (error && !item) {
+  if (error || !item) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Not Found</h2>
-          <p className="text-gray-600 mb-8">{error}</p>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full text-center">
+          <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Error</h2>
+          <p className="text-gray-600 mb-4">{error || 'Item not found'}</p>
           <button
             onClick={() => navigate(-1)}
             className="btn-primary"
           >
-            <ArrowLeft className="w-5 h-5 mr-2" />
             Go Back
           </button>
         </div>
@@ -165,377 +173,181 @@ const BookingPage = () => {
     );
   }
 
-  return (
-    <div className="min-h-screen bg-gray-50" data-testid="booking-page">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="mb-8">
+  if (success) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full text-center">
+          <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Booking Successful!</h2>
+          <p className="text-gray-600 mb-4">
+            Your booking request has been submitted. You'll receive a confirmation once approved.
+          </p>
           <button
-            onClick={() => navigate(-1)}
-            className="flex items-center text-gray-600 hover:text-gray-900 transition-colors mb-4"
-            data-testid="back-btn"
+            onClick={() => navigate('/dashboard')}
+            className="btn-primary"
           >
-            <ArrowLeft className="w-5 h-5 mr-2" />
-            Back
+            Go to Dashboard
           </button>
-          
-          <h1 className="text-3xl font-bold text-gray-900">
-            Book {type === 'property' ? 'Property Viewing' : 'Service'}
-          </h1>
-          
-          {/* Progress indicator */}
-          <div className="flex items-center space-x-4 mt-6">
-            <div className={`flex items-center ${step >= 1 ? 'text-blue-600' : 'text-gray-400'}`}>
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                step >= 1 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'
-              }`}>
-                1
-              </div>
-              <span className="ml-2 text-sm font-medium">Details</span>
-            </div>
-            
-            <div className="flex-1 h-px bg-gray-200"></div>
-            
-            <div className={`flex items-center ${step >= 2 ? 'text-blue-600' : 'text-gray-400'}`}>
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                step >= 2 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'
-              }`}>
-                2
-              </div>
-              <span className="ml-2 text-sm font-medium">Payment</span>
-            </div>
-            
-            <div className="flex-1 h-px bg-gray-200"></div>
-            
-            <div className={`flex items-center ${step >= 3 ? 'text-blue-600' : 'text-gray-400'}`}>
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                step >= 3 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'
-              }`}>
-                3
-              </div>
-              <span className="ml-2 text-sm font-medium">Confirmation</span>
-            </div>
-          </div>
         </div>
+      </div>
+    );
+  }
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Booking Form */}
-          <div className="lg:col-span-2">
-            {step === 1 && (
-              <form onSubmit={(e) => { e.preventDefault(); setStep(2); }} className="card">
-                <div className="card-body">
-                  <h2 className="text-xl font-semibold text-gray-900 mb-6">
-                    Booking Details
-                  </h2>
+  return (
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center text-blue-600 hover:text-blue-700 mb-6"
+        >
+          <ArrowLeft className="w-5 h-5 mr-2" />
+          Back
+        </button>
 
-                  <div className="space-y-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        <Calendar className="w-4 h-4 inline mr-2" />
-                        Select Date & Time
-                      </label>
-                      <input
-                        type="datetime-local"
-                        value={bookingData.scheduled_date}
-                        onChange={(e) => handleInputChange('scheduled_date', e.target.value)}
-                        min={new Date().toISOString().slice(0, 16)}
-                        className="form-input"
-                        required
-                        data-testid="scheduled-date"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Additional Notes (Optional)
-                      </label>
-                      <textarea
-                        value={bookingData.notes}
-                        onChange={(e) => handleInputChange('notes', e.target.value)}
-                        placeholder={`Any specific requirements for the ${type} ${type === 'property' ? 'viewing' : 'service'}...`}
-                        rows={4}
-                        className="form-textarea"
-                        data-testid="booking-notes"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Your Phone Number
-                      </label>
-                      <input
-                        type="tel"
-                        value={bookingData.phone_number}
-                        onChange={(e) => handleInputChange('phone_number', e.target.value)}
-                        placeholder="+237 6XX XX XX XX"
-                        className="form-input"
-                        required
-                        data-testid="phone-number"
-                      />
-                      <p className="text-sm text-gray-500 mt-1">
-                        We'll use this number to send booking confirmations and payment prompts
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-between mt-8">
-                    <button
-                      type="button"
-                      onClick={() => navigate(-1)}
-                      className="btn-secondary"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      className="btn-primary"
-                      data-testid="continue-to-payment-btn"
-                    >
-                      Continue to Payment
-                    </button>
-                  </div>
-                </div>
-              </form>
-            )}
-
-            {step === 2 && (
-              <form onSubmit={handleBookingSubmit} className="card">
-                <div className="card-body">
-                  <h2 className="text-xl font-semibold text-gray-900 mb-6">
-                    Payment Information
-                  </h2>
-
-                  <div className="space-y-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-3">
-                        Payment Method
-                      </label>
-                      <div className="space-y-3">
-                        <label className="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-blue-50 hover:border-blue-300">
-                          <input
-                            type="radio"
-                            name="payment_method"
-                            value="mtn_momo"
-                            checked={bookingData.payment_method === 'mtn_momo'}
-                            onChange={(e) => handleInputChange('payment_method', e.target.value)}
-                            className="sr-only"
-                          />
-                          <div className={`w-4 h-4 rounded-full border-2 mr-3 ${
-                            bookingData.payment_method === 'mtn_momo' 
-                              ? 'border-blue-600 bg-blue-600' 
-                              : 'border-gray-300'
-                          }`}>
-                            {bookingData.payment_method === 'mtn_momo' && (
-                              <div className="w-full h-full rounded-full bg-white scale-50"></div>
-                            )}
-                          </div>
-                          <div className="flex items-center">
-                            <CreditCard className="w-6 h-6 mr-3 text-orange-500" />
-                            <div>
-                              <div className="font-medium">MTN Mobile Money</div>
-                              <div className="text-sm text-gray-500">Pay with your MTN MoMo account</div>
-                            </div>
-                          </div>
-                        </label>
-
-                        <label className="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer opacity-50">
-                          <input
-                            type="radio"
-                            name="payment_method"
-                            value="bank_transfer"
-                            disabled
-                            className="sr-only"
-                          />
-                          <div className="w-4 h-4 rounded-full border-2 border-gray-300 mr-3"></div>
-                          <div className="flex items-center">
-                            <CreditCard className="w-6 h-6 mr-3 text-gray-400" />
-                            <div>
-                              <div className="font-medium text-gray-400">Bank Transfer</div>
-                              <div className="text-sm text-gray-400">Coming soon</div>
-                            </div>
-                          </div>
-                        </label>
-                      </div>
-                    </div>
-
-                    <div className="border-t border-gray-200 pt-6">
-                      <div className="flex justify-between text-lg font-semibold">
-                        <span>Booking Fee:</span>
-                        <span className="text-blue-600">
-                          {formatPrice(type === 'property' ? 25000 : 50000)}
-                        </span>
-                      </div>
-                      <p className="text-sm text-gray-500 mt-1">
-                        {type === 'property' 
-                          ? 'Refundable booking fee for property viewing'
-                          : 'Service booking fee (applied to final invoice)'
-                        }
-                      </p>
-                    </div>
-                  </div>
-
-                  {error && (
-                    <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start">
-                      <AlertCircle className="w-5 h-5 text-red-600 mt-0.5 mr-3 flex-shrink-0" />
-                      <div className="text-red-700">{error}</div>
-                    </div>
-                  )}
-
-                  <div className="flex justify-between mt-8">
-                    <button
-                      type="button"
-                      onClick={() => setStep(1)}
-                      className="btn-secondary"
-                      disabled={paymentLoading}
-                    >
-                      Back
-                    </button>
-                    <button
-                      type="submit"
-                      className="btn-primary"
-                      disabled={paymentLoading}
-                      data-testid="confirm-booking-btn"
-                    >
-                      {paymentLoading ? (
-                        <>
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                          Processing...
-                        </>
-                      ) : (
-                        'Confirm Booking'
-                      )}
-                    </button>
-                  </div>
-                </div>
-              </form>
-            )}
-
-            {step === 3 && (
-              <div className="card">
-                <div className="card-body text-center">
-                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <CheckCircle className="w-8 h-8 text-green-600" />
-                  </div>
-                  
-                  <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                    Booking Confirmed!
-                  </h2>
-                  
-                  <p className="text-gray-600 mb-6">
-                    Your {type} booking has been confirmed. You should receive an MTN Mobile Money 
-                    payment prompt on your phone shortly.
-                  </p>
-
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-                    <h3 className="font-semibold text-blue-900 mb-2">Next Steps:</h3>
-                    <ul className="text-left text-blue-800 space-y-1 text-sm">
-                      <li>1. Approve the payment on your phone</li>
-                      <li>2. You'll receive a confirmation SMS</li>
-                      <li>3. The {type === 'property' ? 'owner' : 'service provider'} will contact you</li>
-                    </ul>
-                  </div>
-
-                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                    <button
-                      onClick={() => navigate('/dashboard')}
-                      className="btn-primary"
-                      data-testid="go-to-dashboard-btn"
-                    >
-                      Go to Dashboard
-                    </button>
-                    <button
-                      onClick={() => navigate('/messages')}
-                      className="btn-secondary"
-                    >
-                      View Messages
-                    </button>
-                  </div>
-                </div>
+        <div className="bg-white rounded-lg shadow-md overflow-hidden">
+          {/* Item Info */}
+          <div className="p-6 bg-gradient-to-r from-blue-50 to-purple-50 border-b">
+            <div className="flex items-start">
+              <div className="flex-shrink-0">
+                {type === 'property' ? (
+                  <Building className="w-12 h-12 text-blue-600" />
+                ) : (
+                  <Wrench className="w-12 h-12 text-purple-600" />
+                )}
               </div>
-            )}
-          </div>
-
-          {/* Item Summary */}
-          <div className="lg:col-span-1">
-            <div className="card sticky top-8">
-              <div className="card-body">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                  {type === 'property' ? 'Property' : 'Service'} Summary
-                </h3>
-
-                {item && (
-                  <div className="space-y-4">
-                    <div className="flex items-start space-x-3">
-                      <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
-                        type === 'property' ? 'bg-blue-100' : 'bg-green-100'
-                      }`}>
-                        {type === 'property' ? (
-                          <Building className={`w-6 h-6 ${type === 'property' ? 'text-blue-600' : 'text-green-600'}`} />
-                        ) : (
-                          <Wrench className="w-6 h-6 text-green-600" />
-                        )}
-                      </div>
-                      <div className="flex-1">
-                        <h4 className="font-semibold text-gray-900">{item.title}</h4>
-                        <div className="flex items-center text-gray-500 text-sm mt-1">
-                          <MapPin className="w-4 h-4 mr-1" />
-                          {item.location}
-                        </div>
-                      </div>
-                    </div>
-
-                    {item.price && (
-                      <div className="border-t border-gray-200 pt-4">
-                        <div className="text-sm text-gray-500">
-                          {type === 'property' ? 'Property Price' : 'Service Price'}
-                        </div>
-                        <div className="text-lg font-semibold text-blue-600">
-                          {type === 'property' ? formatPrice(item.price) : (item.price_range || 'Contact for quote')}
-                        </div>
-                      </div>
-                    )}
-
-                    <div className="border-t border-gray-200 pt-4">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-500">Booking Fee</span>
-                        <span className="font-semibold">
-                          {formatPrice(type === 'property' ? 25000 : 50000)}
-                        </span>
-                      </div>
-                    </div>
-
-                    {step > 1 && bookingData.scheduled_date && (
-                      <div className="border-t border-gray-200 pt-4">
-                        <div className="text-sm text-gray-500 mb-1">Scheduled Date</div>
-                        <div className="flex items-center text-gray-900">
-                          <Clock className="w-4 h-4 mr-2" />
-                          {new Date(bookingData.scheduled_date).toLocaleDateString('en-US', {
-                            weekday: 'long',
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit'
-                          })}
-                        </div>
-                      </div>
-                    )}
+              <div className="ml-4 flex-1">
+                <h1 className="text-2xl font-bold text-gray-900 mb-2">{item.title}</h1>
+                {type === 'property' && (
+                  <div className="flex items-center text-gray-600 mb-2">
+                    <MapPin className="w-4 h-4 mr-1" />
+                    {item.location}
                   </div>
                 )}
-
-                <div className="border-t border-gray-200 mt-6 pt-6">
-                  <div className="flex items-start space-x-3">
-                    <User className="w-5 h-5 text-blue-600 mt-0.5" />
-                    <div className="text-sm text-gray-600">
-                      <p className="font-medium text-gray-900 mb-1">Booking for</p>
-                      <p>{user?.name}</p>
-                      <p>{bookingData.phone_number || user?.phone}</p>
-                    </div>
-                  </div>
-                </div>
+                {type === 'property' && (
+                  <p className="text-2xl font-bold text-blue-600">
+                    {item.price?.toLocaleString()} {item.currency}
+                    {item.listing_type === 'rent' && '/month'}
+                  </p>
+                )}
+                {type === 'service' && (
+                  <p className="text-lg text-gray-700">{item.category}</p>
+                )}
               </div>
             </div>
           </div>
+
+          {/* Booking Form */}
+          <form onSubmit={handleSubmit} className="p-6 space-y-6">
+            <h2 className="text-xl font-bold text-gray-900 mb-4">
+              {type === 'property' ? 'Schedule Property Viewing' : 'Book Service'}
+            </h2>
+
+            {/* Date Selection */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                <Calendar className="w-4 h-4 inline mr-1" />
+                Select Date
+              </label>
+              <input
+                type="date"
+                name="scheduled_date"
+                value={bookingData.scheduled_date}
+                onChange={handleInputChange}
+                min={getMinDate()}
+                required
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+
+            {/* Time Slot Selection (for property viewings) */}
+            {type === 'property' && bookingData.scheduled_date && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <Clock className="w-4 h-4 inline mr-1" />
+                  Select Time Slot
+                </label>
+                {loadingSlots ? (
+                  <p className="text-gray-500">Loading available slots...</p>
+                ) : (
+                  <div className="grid grid-cols-3 md:grid-cols-4 gap-2">
+                    {availableSlots.map((slot) => (
+                      <button
+                        key={slot.time}
+                        type="button"
+                        onClick={() => handleInputChange({ target: { name: 'scheduled_time', value: slot.time } })}
+                        disabled={!slot.available}
+                        className={`px-4 py-2 rounded-lg border text-sm font-medium transition-colors ${
+                          bookingData.scheduled_time === slot.time
+                            ? 'bg-blue-600 text-white border-blue-600'
+                            : slot.available
+                            ? 'border-gray-300 hover:border-blue-500 hover:bg-blue-50'
+                            : 'border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed'
+                        }`}
+                      >
+                        {slot.time}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Duration */}
+            {type === 'service' && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Duration (hours)
+                </label>
+                <select
+                  name="duration_hours"
+                  value={bookingData.duration_hours}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="1">1 hour</option>
+                  <option value="2">2 hours</option>
+                  <option value="3">3 hours</option>
+                  <option value="4">4 hours</option>
+                  <option value="8">Full day (8 hours)</option>
+                </select>
+              </div>
+            )}
+
+            {/* Notes */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Additional Notes (Optional)
+              </label>
+              <textarea
+                name="notes"
+                value={bookingData.notes}
+                onChange={handleInputChange}
+                rows="4"
+                placeholder="Any specific requirements or questions..."
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+
+            {/* Submit Button */}
+            <div className="flex items-center justify-between pt-4 border-t">
+              <button
+                type="button"
+                onClick={() => navigate(-1)}
+                className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={submitting}
+                className="btn-primary flex items-center disabled:opacity-50"
+              >
+                <Send className="w-4 h-4 mr-2" />
+                {submitting ? 'Submitting...' : 'Submit Booking Request'}
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
