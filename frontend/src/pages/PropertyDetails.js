@@ -169,22 +169,22 @@ const PropertyDetails = () => {
     <div className="min-h-screen bg-gray-50" data-testid="property-details">
       {/* Back button */}
       <div className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div className="max-w-6xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-3 sm:py-4">
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center text-gray-600 hover:text-gray-900 transition-colors"
+            className="flex items-center text-gray-600 hover:text-gray-900 transition-colors text-sm sm:text-base"
             data-testid="back-btn"
           >
-            <ArrowLeft className="w-5 h-5 mr-2" />
-            Back to Properties
+            <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" />
+            Back
           </button>
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-6xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6 md:py-8">
         {/* Image Gallery */}
-        <div className="relative mb-8">
-          <div className="h-96 md:h-[500px] rounded-xl overflow-hidden bg-gray-200">
+        <div className="relative mb-4 sm:mb-6 md:mb-8">
+          <div className="h-64 sm:h-80 md:h-96 lg:h-[500px] rounded-xl sm:rounded-2xl overflow-hidden bg-gray-200">
             <img
               src={images[currentImageIndex]}
               alt={property.title}
@@ -197,26 +197,26 @@ const PropertyDetails = () => {
               <>
                 <button
                   onClick={prevImage}
-                  className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 rounded-full p-3 shadow-lg transition-all"
+                  className="absolute left-2 sm:left-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 rounded-full p-2 sm:p-3 shadow-lg transition-all"
                   data-testid="prev-image-btn"
                 >
-                  <ChevronLeft className="w-5 h-5" />
+                  <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
                 <button
                   onClick={nextImage}
-                  className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 rounded-full p-3 shadow-lg transition-all"
+                  className="absolute right-2 sm:right-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 rounded-full p-2 sm:p-3 shadow-lg transition-all"
                   data-testid="next-image-btn"
                 >
-                  <ChevronRight className="w-5 h-5" />
+                  <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
 
                 {/* Image indicators */}
-                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+                <div className="absolute bottom-3 sm:bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-1.5 sm:space-x-2">
                   {images.map((_, index) => (
                     <button
                       key={index}
                       onClick={() => setCurrentImageIndex(index)}
-                      className={`w-3 h-3 rounded-full transition-colors ${
+                      className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full transition-colors ${
                         index === currentImageIndex ? 'bg-white' : 'bg-white bg-opacity-50'
                       }`}
                     />
@@ -226,27 +226,27 @@ const PropertyDetails = () => {
             )}
 
             {/* Action buttons overlay */}
-            <div className="absolute top-4 right-4 flex space-x-2">
+            <div className="absolute top-2 sm:top-4 right-2 sm:right-4 flex space-x-1.5 sm:space-x-2">
               <button
                 onClick={toggleFavorite}
-                className={`p-3 rounded-full transition-colors ${
+                className={`p-2 sm:p-3 rounded-full transition-colors shadow-lg ${
                   isFavorite ? 'bg-red-500 text-white' : 'bg-white text-gray-600 hover:text-red-500'
                 }`}
                 data-testid="favorite-btn"
               >
-                <Heart className={`w-5 h-5 ${isFavorite ? 'fill-current' : ''}`} />
+                <Heart className={`w-4 h-4 sm:w-5 sm:h-5 ${isFavorite ? 'fill-current' : ''}`} />
               </button>
               <button
-                className="p-3 bg-white text-gray-600 hover:text-blue-600 rounded-full transition-colors"
+                className="p-2 sm:p-3 bg-white text-gray-600 hover:text-blue-600 rounded-full transition-colors shadow-lg"
                 data-testid="share-btn"
               >
-                <Share2 className="w-5 h-5" />
+                <Share2 className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
           {/* Property Details */}
           <div className="lg:col-span-2 space-y-8">
             {/* Header */}
