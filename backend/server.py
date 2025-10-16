@@ -668,8 +668,8 @@ async def verify_email(response: Response, verification: EmailVerification):
         value=session_token,
         max_age=7 * 24 * 60 * 60,
         httponly=True,
-        secure=True,  # Production with HTTPS
-        samesite="None",  # Required for cross-site cookies
+        secure=COOKIE_SECURE,  # Environment-aware
+        samesite=COOKIE_SAMESITE,  # Environment-aware
         path="/"
     )
     
@@ -751,8 +751,8 @@ async def login_user(response: Response, user_login: UserLogin):
         value=session_token,
         max_age=7 * 24 * 60 * 60,
         httponly=True,
-        secure=True,  # Production with HTTPS
-        samesite="None",  # Required for cross-site cookies
+        secure=COOKIE_SECURE,  # Environment-aware
+        samesite=COOKIE_SAMESITE,  # Environment-aware
         path="/"
     )
     
