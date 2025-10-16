@@ -1473,12 +1473,14 @@ async def upload_images(
             
             # Determine upload path based on entity type
             entity_dir = UPLOAD_DIR / entity_type.lower()
+            entity_dir.mkdir(parents=True, exist_ok=True)  # Ensure directory exists
+            
             file_path = entity_dir / unique_filename
             thumbnail_path = UPLOAD_DIR / "thumbnails" / f"thumb_{unique_filename}"
             
             # Save original file
+            content = await file.read()
             async with aiofiles.open(file_path, 'wb') as f:
-                content = await file.read()
                 await f.write(content)
             
             # Create thumbnail
