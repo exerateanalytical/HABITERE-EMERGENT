@@ -348,10 +348,11 @@
 
 ## test_plan:
   current_focus:
-    - "Mobile-First Responsive Design Optimization"
-    - "Enhanced Image Upload UI Components"
-    - "Dashboard Responsiveness Enhancement"
-  stuck_tasks: []
+    - "Authentication System Issues"
+    - "Booking Flow Integration"
+    - "Message Owner Functionality"
+  stuck_tasks:
+    - "Authentication System Issues"
   test_all: false
   test_priority: "high_first"
 
