@@ -778,6 +778,10 @@ class HabitereAPITester:
         print("\n6️⃣ Session Management...")
         self.test_session_management()
         
+        # 7. Admin System Access Protection
+        print("\n7️⃣ Admin System Access Protection...")
+        self.test_admin_system_access()
+        
         # Print authentication summary
         self.print_authentication_summary()
         
