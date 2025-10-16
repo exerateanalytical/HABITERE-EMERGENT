@@ -109,6 +109,7 @@ function AppContent() {
         {/* Property browsing - available to all */}
         <Route path="/properties" element={<Properties />} />
         <Route path="/properties/new" element={<PropertyForm />} />
+        <Route path="/properties/edit/:id" element={<PropertyEditForm />} />
         <Route path="/properties/:id" element={<PropertyDetails />} />
         <Route path="/services" element={<Services />} />
         <Route path="/services/:id" element={<ServiceDetails />} />
