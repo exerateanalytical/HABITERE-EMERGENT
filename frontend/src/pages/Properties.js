@@ -234,69 +234,67 @@ const Properties = () => {
             </div>
 
             {/* Enhanced Controls */}
-            <div className="lg:text-right space-y-4">
+            <div className="lg:text-right space-y-3 sm:space-y-4">
               {/* Quick Search */}
               <div className="relative max-w-md lg:ml-auto">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Search className="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
                 <input
                   type="text"
-                  placeholder="Search properties..."
+                  placeholder="Search..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-500 shadow-lg"
+                  className="w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-2.5 sm:py-3 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-xl sm:rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base text-gray-900 placeholder-gray-500 shadow-lg"
                 />
               </div>
               
-              <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-3">
                 {/* Mobile Filter Button */}
                 <button
                   onClick={() => setSidebarOpen(true)}
-                  className="lg:hidden w-full sm:w-auto bg-white/90 backdrop-blur-sm border border-gray-200 px-6 py-3 rounded-2xl flex items-center justify-center space-x-2 hover:bg-white hover:shadow-lg transition-all duration-200 shadow-lg"
+                  className="lg:hidden w-full sm:w-auto bg-white/90 backdrop-blur-sm border border-gray-200 px-4 py-2.5 sm:px-6 sm:py-3 rounded-xl sm:rounded-2xl flex items-center justify-center space-x-2 hover:bg-white hover:shadow-lg transition-all duration-200 shadow-lg text-sm sm:text-base"
                 >
-                  <SlidersHorizontal className="w-5 h-5 text-gray-600" />
-                  <span className="font-semibold text-gray-700">Advanced Filters</span>
+                  <SlidersHorizontal className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
+                  <span className="font-semibold text-gray-700">Filters</span>
                 </button>
 
                 {/* Sort Dropdown */}
-                <div className="relative w-full sm:w-auto">
+                <div className="relative w-full sm:flex-1">
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value)}
-                    className="w-full sm:w-auto bg-white/90 backdrop-blur-sm border border-gray-200 px-6 py-3 rounded-2xl appearance-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-semibold text-gray-700 shadow-lg pr-12"
+                    className="w-full bg-white/90 backdrop-blur-sm border border-gray-200 px-4 py-2.5 sm:px-6 sm:py-3 rounded-xl sm:rounded-2xl appearance-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-semibold text-gray-700 shadow-lg pr-10 sm:pr-12 text-sm sm:text-base"
                   >
-                    <option value="newest">🕐 Newest First</option>
-                    <option value="price_low">💰 Price: Low to High</option>
-                    <option value="price_high">💎 Price: High to Low</option>
-                    <option value="rating">⭐ Highest Rated</option>
-                    <option value="size">📐 Largest Properties</option>
-                    <option value="featured">🔥 Featured First</option>
+                    <option value="newest">🕐 Newest</option>
+                    <option value="price_low">💰 Low-High</option>
+                    <option value="price_high">💎 High-Low</option>
+                    <option value="rating">⭐ Top Rated</option>
                   </select>
-                  <ChevronDown className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                  <ChevronDown className="absolute right-3 sm:right-4 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400 pointer-events-none" />
                 </div>
 
                 {/* View Toggle */}
-                <div className="flex items-center bg-white/90 backdrop-blur-sm border border-gray-200 rounded-2xl p-1 shadow-lg">
+                <div className="hidden sm:flex items-center bg-white/90 backdrop-blur-sm border border-gray-200 rounded-2xl p-1 shadow-lg">
                   <button
                     onClick={() => setViewMode('grid')}
-                    className={`p-3 rounded-xl transition-all duration-200 ${
+                    className={`p-2.5 sm:p-3 rounded-xl transition-all duration-200 ${
                       viewMode === 'grid' 
                         ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg' 
                         : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
                     }`}
                     data-testid="grid-view-btn"
                   >
-                    <Grid3x3 className="w-5 h-5" />
+                    <Grid3x3 className="w-4 h-4 sm:w-5 sm:h-5" />
                   </button>
                   <button
                     onClick={() => setViewMode('list')}
-                    className={`p-3 rounded-xl transition-all duration-200 ${
+                    className={`p-2.5 sm:p-3 rounded-xl transition-all duration-200 ${
                       viewMode === 'list' 
                         ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg' 
                         : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
                     }`}
                     data-testid="list-view-btn"
                   >
-                    <List className="w-5 h-5" />
+                    <List className="w-4 h-4 sm:w-5 sm:h-5" />
                   </button>
                 </div>
               </div>
