@@ -24,6 +24,12 @@ import {
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
+// Helper function to get proper image URL
+const getImageUrl = (url) => {
+  if (!url) return 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=400';
+  return url.startsWith('/uploads/') ? `${BACKEND_URL}${url}` : url;
+};
+
 const Profile = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
