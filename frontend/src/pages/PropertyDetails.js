@@ -528,6 +528,9 @@ const PropertyDetails = () => {
           />
         </div>
 
+        {/* Reviews Section */}
+        <Reviews propertyId={id} type="property" />
+
         {/* Similar Properties */}
         <div className="mt-8 sm:mt-10 md:mt-12">
           <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">Similar Properties</h2>
