@@ -221,6 +221,7 @@ function App() {
   return (
     <HelmetProvider>
       <Router>
+        <ScrollToTop />
         <AuthProvider>
           <AppContent />
         </AuthProvider>
