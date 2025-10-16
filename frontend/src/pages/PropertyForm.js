@@ -35,6 +35,60 @@ const PropertyForm = () => {
     }));
   };
 
+  const handleFileSelect = (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length + selectedFiles.length > 10) {
+      setError('Maximum 10 images allowed');
+      return;
+    }
+    
+    // Create preview URLs
+    const newFiles = files.map(file => ({
+      file,
+      preview: URL.createObjectURL(file)
+    }));
+    
+    setSelectedFiles(prev => [...prev, ...newFiles]);
+    setError('');
+  };
+
+  const removeFile = (index) => {
+    setSelectedFiles(prev => {
+      const newFiles = [...prev];
+      URL.revokeObjectURL(newFiles[index].preview);
+      newFiles.splice(index, 1);
+      return newFiles;
+    });
+  };
+
+  const uploadImages = async () => {
+    if (selectedFiles.length === 0) return [];
+    
+    try {
+      setUploadingImages(true);
+      const formData = new FormData();
+      
+      selectedFiles.forEach(({ file }) => {
+        formData.append('files', file);
+      });
+      formData.append('entity_type', 'property');
+      
+      const response = await axios.post(`${API}/upload/images`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      
+      setUploadedImages(response.data.images);
+      return response.data.images.map(img => img.url);
+    } catch (err) {
+      console.error('Error uploading images:', err);
+      throw new Error('Failed to upload images');
+    } finally {
+      setUploadingImages(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
