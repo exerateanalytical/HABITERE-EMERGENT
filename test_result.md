@@ -253,7 +253,7 @@
   - task: "Static Content Pages Implementation"
     implemented: true
     working: true
-    file: "/app/frontend/src/pages/About.js, /app/frontend/src/pages/Contact.js, /app/frontend/src/pages/FAQ.js, /app/frontend/src/pages/Privacy.js, /app/frontend/src/pages/Terms.js, /app/frontend/src/pages/HelpCenter.js, /app/frontend/src/components/Footer.js, /app/frontend/src/App.js"
+    file: "/app/frontend/src/pages/About.js, /app/frontend/src/pages/Contact.js, /app/frontend/src/pages/FAQ.js, /app/frontend/src/pages/Privacy.js, /app/frontend/src/pages/Terms.js, /app/frontend/src/pages/HelpCenter.js, /app/frontend/src/components/Footer.js, /app/frontend/src/App.js, /app/frontend/src/pages/LandingPage.js"
     stuck_count: 0
     priority: "high"
     needs_retesting: false
@@ -267,6 +267,9 @@
         - working: true
           agent: "main"
           comment: "FOOTER CREATED & INTEGRATED - Created professional Footer component (/app/frontend/src/components/Footer.js) with organized link sections: Company (About Us, Contact, Help Center), Resources (Properties, Services, FAQ), Legal (Privacy Policy, Terms & Conditions). Footer includes brand information, contact details (location, phone, email), social media links (Facebook, Twitter, Instagram, LinkedIn), and copyright. Footer is fully responsive and integrated into App.js layout, appearing on all pages."
+        - working: true
+          agent: "main"
+          comment: "DUPLICATES REMOVED - Removed duplicate footer from LandingPage.js (lines 681-815) to prevent double footers. Verified no duplicate routes, no duplicate files, no duplicate imports. Tested navigation across all 6 static pages - all working correctly. All routes are unique, all imports are clean, single Footer component used globally."
 
 ## metadata:
   created_by: "main_agent"
