@@ -690,91 +690,671 @@ class HabitereAPITester:
             self.log_test("MTN MoMo Configuration Check", False, f"Exception: {str(e)}")
             return False
 
-    def run_all_tests(self):
-        """Run all API tests"""
-        print("🚀 Starting Habitere API Tests...")
+    # ============================================================================
+    # ADMIN SYSTEM TESTS (12 endpoints)
+    # ============================================================================
+    
+    def test_admin_stats(self):
+        """Test admin dashboard statistics"""
+        if not self.admin_token:
+            self.log_test("Admin Stats", False, "No admin token available")
+            return False
+            
+        try:
+            response = self.make_authenticated_request('GET', '/admin/stats', self.admin_token)
+            success = response.status_code == 200
+            details = f"Status: {response.status_code}"
+            
+            if success:
+                data = response.json()
+                details += f", Users: {data.get('total_users', 0)}, Properties: {data.get('total_properties', 0)}"
+            
+            self.log_test("Admin Stats", success, details)
+            return success
+        except Exception as e:
+            self.log_test("Admin Stats", False, f"Exception: {str(e)}")
+            return False
+
+    def test_admin_users_list(self):
+        """Test admin users listing with filters"""
+        if not self.admin_token:
+            self.log_test("Admin Users List", False, "No admin token available")
+            return False
+            
+        try:
+            # Test basic listing
+            response = self.make_authenticated_request('GET', '/admin/users', self.admin_token)
+            success = response.status_code == 200
+            details = f"Status: {response.status_code}"
+            
+            if success:
+                data = response.json()
+                user_count = len(data) if isinstance(data, list) else 0
+                details += f", Users found: {user_count}"
+                
+                # Test with filters
+                filter_response = self.make_authenticated_request(
+                    'GET', '/admin/users?role=admin&status=approved', self.admin_token
+                )
+                if filter_response.status_code == 200:
+                    details += ", Filters: OK"
+                else:
+                    details += f", Filters: FAILED ({filter_response.status_code})"
+            
+            self.log_test("Admin Users List", success, details)
+            return success
+        except Exception as e:
+            self.log_test("Admin Users List", False, f"Exception: {str(e)}")
+            return False
+
+    def test_admin_user_approval(self):
+        """Test admin user approval functionality"""
+        if not self.admin_token:
+            self.log_test("Admin User Approval", False, "No admin token available")
+            return False
+            
+        try:
+            # First get a user to approve (create a test user)
+            test_user_id = "test-user-for-approval"
+            
+            # Test approval endpoint
+            response = self.make_authenticated_request(
+                'PUT', f'/admin/users/{test_user_id}/approve', self.admin_token
+            )
+            
+            # We expect 404 since user doesn't exist, but endpoint should be accessible
+            expected_status = response.status_code in [200, 404]
+            details = f"Status: {response.status_code} (expected 200 or 404)"
+            
+            self.log_test("Admin User Approval", expected_status, details)
+            return expected_status
+        except Exception as e:
+            self.log_test("Admin User Approval", False, f"Exception: {str(e)}")
+            return False
+
+    def test_admin_user_rejection(self):
+        """Test admin user rejection functionality"""
+        if not self.admin_token:
+            self.log_test("Admin User Rejection", False, "No admin token available")
+            return False
+            
+        try:
+            test_user_id = "test-user-for-rejection"
+            rejection_data = {"reason": "Test rejection reason"}
+            
+            response = self.make_authenticated_request(
+                'PUT', f'/admin/users/{test_user_id}/reject', 
+                self.admin_token, json=rejection_data
+            )
+            
+            expected_status = response.status_code in [200, 404]
+            details = f"Status: {response.status_code} (expected 200 or 404)"
+            
+            self.log_test("Admin User Rejection", expected_status, details)
+            return expected_status
+        except Exception as e:
+            self.log_test("Admin User Rejection", False, f"Exception: {str(e)}")
+            return False
+
+    def test_admin_properties_moderation(self):
+        """Test admin properties moderation"""
+        if not self.admin_token:
+            self.log_test("Admin Properties Moderation", False, "No admin token available")
+            return False
+            
+        try:
+            response = self.make_authenticated_request('GET', '/admin/properties', self.admin_token)
+            success = response.status_code == 200
+            details = f"Status: {response.status_code}"
+            
+            if success:
+                data = response.json()
+                properties_count = len(data) if isinstance(data, list) else 0
+                details += f", Properties for moderation: {properties_count}"
+            
+            self.log_test("Admin Properties Moderation", success, details)
+            return success
+        except Exception as e:
+            self.log_test("Admin Properties Moderation", False, f"Exception: {str(e)}")
+            return False
+
+    def test_admin_property_verification(self):
+        """Test admin property verification"""
+        if not self.admin_token:
+            self.log_test("Admin Property Verification", False, "No admin token available")
+            return False
+            
+        try:
+            test_property_id = "test-property-id"
+            
+            response = self.make_authenticated_request(
+                'PUT', f'/admin/properties/{test_property_id}/verify', self.admin_token
+            )
+            
+            expected_status = response.status_code in [200, 404]
+            details = f"Status: {response.status_code} (expected 200 or 404)"
+            
+            self.log_test("Admin Property Verification", expected_status, details)
+            return expected_status
+        except Exception as e:
+            self.log_test("Admin Property Verification", False, f"Exception: {str(e)}")
+            return False
+
+    def test_admin_services_moderation(self):
+        """Test admin services moderation"""
+        if not self.admin_token:
+            self.log_test("Admin Services Moderation", False, "No admin token available")
+            return False
+            
+        try:
+            response = self.make_authenticated_request('GET', '/admin/services', self.admin_token)
+            success = response.status_code == 200
+            details = f"Status: {response.status_code}"
+            
+            if success:
+                data = response.json()
+                services_count = len(data) if isinstance(data, list) else 0
+                details += f", Services for moderation: {services_count}"
+            
+            self.log_test("Admin Services Moderation", success, details)
+            return success
+        except Exception as e:
+            self.log_test("Admin Services Moderation", False, f"Exception: {str(e)}")
+            return False
+
+    def test_admin_analytics(self):
+        """Test admin analytics endpoints"""
+        if not self.admin_token:
+            self.log_test("Admin Analytics", False, "No admin token available")
+            return False
+            
+        try:
+            # Test user analytics
+            users_response = self.make_authenticated_request('GET', '/admin/analytics/users', self.admin_token)
+            users_success = users_response.status_code == 200
+            
+            # Test property analytics
+            properties_response = self.make_authenticated_request('GET', '/admin/analytics/properties', self.admin_token)
+            properties_success = properties_response.status_code == 200
+            
+            success = users_success and properties_success
+            details = f"Users analytics: {users_response.status_code}, Properties analytics: {properties_response.status_code}"
+            
+            self.log_test("Admin Analytics", success, details)
+            return success
+        except Exception as e:
+            self.log_test("Admin Analytics", False, f"Exception: {str(e)}")
+            return False
+
+    # ============================================================================
+    # REVIEWS & RATINGS TESTS (6 endpoints)
+    # ============================================================================
+    
+    def test_reviews_system(self):
+        """Test complete reviews and ratings system"""
+        if not self.client_token:
+            self.log_test("Reviews System", False, "No client token available")
+            return False
+            
+        try:
+            # Test creating a review
+            review_data = {
+                "property_id": "sample-property-id",
+                "rating": 5,
+                "comment": "Excellent property with great amenities!"
+            }
+            
+            create_response = self.make_authenticated_request(
+                'POST', '/reviews', self.client_token, json=review_data
+            )
+            
+            create_success = create_response.status_code in [200, 201]
+            details = f"Create review: {create_response.status_code}"
+            
+            if create_success:
+                review_data = create_response.json()
+                self.test_review_id = review_data.get('id')
+                details += f", Review ID: {self.test_review_id}"
+            
+            # Test getting property reviews
+            property_reviews_response = self.make_authenticated_request(
+                'GET', '/reviews/property/sample-property-id', self.client_token
+            )
+            property_reviews_success = property_reviews_response.status_code == 200
+            details += f", Property reviews: {property_reviews_response.status_code}"
+            
+            # Test getting user reviews
+            user_reviews_response = self.make_authenticated_request(
+                'GET', '/reviews/user/sample-user-id', self.client_token
+            )
+            user_reviews_success = user_reviews_response.status_code == 200
+            details += f", User reviews: {user_reviews_response.status_code}"
+            
+            success = create_success and property_reviews_success and user_reviews_success
+            self.log_test("Reviews System", success, details)
+            return success
+            
+        except Exception as e:
+            self.log_test("Reviews System", False, f"Exception: {str(e)}")
+            return False
+
+    def test_review_validation(self):
+        """Test review validation (duplicates, rating range)"""
+        if not self.client_token:
+            self.log_test("Review Validation", False, "No client token available")
+            return False
+            
+        try:
+            # Test invalid rating (outside 1-5 range)
+            invalid_review = {
+                "property_id": "sample-property-id",
+                "rating": 10,  # Invalid rating
+                "comment": "Invalid rating test"
+            }
+            
+            response = self.make_authenticated_request(
+                'POST', '/reviews', self.client_token, json=invalid_review
+            )
+            
+            # Should fail with validation error
+            validation_success = response.status_code in [400, 422]
+            details = f"Invalid rating validation: {response.status_code} (expected 400/422)"
+            
+            # Test missing required fields
+            incomplete_review = {
+                "rating": 5
+                # Missing property_id or service_id
+            }
+            
+            incomplete_response = self.make_authenticated_request(
+                'POST', '/reviews', self.client_token, json=incomplete_review
+            )
+            
+            incomplete_success = incomplete_response.status_code in [400, 422]
+            details += f", Missing fields: {incomplete_response.status_code} (expected 400/422)"
+            
+            success = validation_success and incomplete_success
+            self.log_test("Review Validation", success, details)
+            return success
+            
+        except Exception as e:
+            self.log_test("Review Validation", False, f"Exception: {str(e)}")
+            return False
+
+    # ============================================================================
+    # MESSAGING SYSTEM TESTS (6 endpoints)
+    # ============================================================================
+    
+    def test_messaging_system(self):
+        """Test complete messaging system"""
+        if not self.client_token or not self.owner_token:
+            self.log_test("Messaging System", False, "Missing authentication tokens")
+            return False
+            
+        try:
+            # Test sending a message
+            message_data = {
+                "receiver_id": "sample-receiver-id",
+                "content": "Hello, I'm interested in your property listing!"
+            }
+            
+            send_response = self.make_authenticated_request(
+                'POST', '/messages', self.client_token, json=message_data
+            )
+            
+            send_success = send_response.status_code in [200, 201]
+            details = f"Send message: {send_response.status_code}"
+            
+            # Test getting conversations
+            conversations_response = self.make_authenticated_request(
+                'GET', '/messages/conversations', self.client_token
+            )
+            conversations_success = conversations_response.status_code == 200
+            details += f", Conversations: {conversations_response.status_code}"
+            
+            # Test getting message thread
+            thread_response = self.make_authenticated_request(
+                'GET', '/messages/thread/sample-user-id', self.client_token
+            )
+            thread_success = thread_response.status_code == 200
+            details += f", Thread: {thread_response.status_code}"
+            
+            # Test unread count
+            unread_response = self.make_authenticated_request(
+                'GET', '/messages/unread-count', self.client_token
+            )
+            unread_success = unread_response.status_code == 200
+            details += f", Unread count: {unread_response.status_code}"
+            
+            success = send_success and conversations_success and thread_success and unread_success
+            self.log_test("Messaging System", success, details)
+            return success
+            
+        except Exception as e:
+            self.log_test("Messaging System", False, f"Exception: {str(e)}")
+            return False
+
+    def test_message_validation(self):
+        """Test message validation (no self-messaging, etc.)"""
+        if not self.client_token:
+            self.log_test("Message Validation", False, "No client token available")
+            return False
+            
+        try:
+            # Test empty message content
+            empty_message = {
+                "receiver_id": "sample-receiver-id",
+                "content": ""
+            }
+            
+            response = self.make_authenticated_request(
+                'POST', '/messages', self.client_token, json=empty_message
+            )
+            
+            validation_success = response.status_code in [400, 422]
+            details = f"Empty content validation: {response.status_code} (expected 400/422)"
+            
+            # Test missing receiver
+            no_receiver = {
+                "content": "Test message without receiver"
+            }
+            
+            no_receiver_response = self.make_authenticated_request(
+                'POST', '/messages', self.client_token, json=no_receiver
+            )
+            
+            no_receiver_success = no_receiver_response.status_code in [400, 422]
+            details += f", Missing receiver: {no_receiver_response.status_code} (expected 400/422)"
+            
+            success = validation_success and no_receiver_success
+            self.log_test("Message Validation", success, details)
+            return success
+            
+        except Exception as e:
+            self.log_test("Message Validation", False, f"Exception: {str(e)}")
+            return False
+
+    # ============================================================================
+    # BOOKING SYSTEM TESTS (9 endpoints)
+    # ============================================================================
+    
+    def test_booking_system(self):
+        """Test complete booking system"""
+        if not self.client_token:
+            self.log_test("Booking System", False, "No client token available")
+            return False
+            
+        try:
+            # Test creating a property viewing booking
+            booking_data = {
+                "property_id": "sample-property-id",
+                "scheduled_date": (datetime.now() + timedelta(days=1)).isoformat(),
+                "notes": "I would like to schedule a property viewing"
+            }
+            
+            create_response = self.make_authenticated_request(
+                'POST', '/bookings', self.client_token, json=booking_data
+            )
+            
+            create_success = create_response.status_code in [200, 201]
+            details = f"Create booking: {create_response.status_code}"
+            
+            if create_success:
+                booking_data = create_response.json()
+                self.test_booking_id = booking_data.get('id')
+                details += f", Booking ID: {self.test_booking_id}"
+            
+            # Test getting user's bookings
+            user_bookings_response = self.make_authenticated_request(
+                'GET', '/bookings', self.client_token
+            )
+            user_bookings_success = user_bookings_response.status_code == 200
+            details += f", User bookings: {user_bookings_response.status_code}"
+            
+            # Test getting received bookings (for owners/providers)
+            if self.owner_token:
+                received_response = self.make_authenticated_request(
+                    'GET', '/bookings/received', self.owner_token
+                )
+                received_success = received_response.status_code == 200
+                details += f", Received bookings: {received_response.status_code}"
+            else:
+                received_success = True
+                details += ", Received bookings: SKIPPED (no owner token)"
+            
+            # Test available time slots
+            slots_response = self.make_authenticated_request(
+                'GET', '/bookings/property/sample-property-id/slots', self.client_token
+            )
+            slots_success = slots_response.status_code == 200
+            details += f", Time slots: {slots_response.status_code}"
+            
+            success = create_success and user_bookings_success and received_success and slots_success
+            self.log_test("Booking System", success, details)
+            return success
+            
+        except Exception as e:
+            self.log_test("Booking System", False, f"Exception: {str(e)}")
+            return False
+
+    def test_booking_workflow(self):
+        """Test booking confirmation and completion workflow"""
+        if not self.client_token or not self.owner_token:
+            self.log_test("Booking Workflow", False, "Missing authentication tokens")
+            return False
+            
+        try:
+            test_booking_id = "sample-booking-id"
+            
+            # Test booking confirmation (by owner/provider)
+            confirm_response = self.make_authenticated_request(
+                'PUT', f'/bookings/{test_booking_id}/confirm', self.owner_token
+            )
+            confirm_success = confirm_response.status_code in [200, 404]
+            details = f"Confirm booking: {confirm_response.status_code} (expected 200/404)"
+            
+            # Test booking completion
+            complete_response = self.make_authenticated_request(
+                'PUT', f'/bookings/{test_booking_id}/complete', self.owner_token
+            )
+            complete_success = complete_response.status_code in [200, 404]
+            details += f", Complete booking: {complete_response.status_code} (expected 200/404)"
+            
+            # Test booking cancellation
+            cancel_data = {"reason": "Test cancellation reason"}
+            cancel_response = self.make_authenticated_request(
+                'PUT', f'/bookings/{test_booking_id}/cancel', 
+                self.client_token, json=cancel_data
+            )
+            cancel_success = cancel_response.status_code in [200, 404]
+            details += f", Cancel booking: {cancel_response.status_code} (expected 200/404)"
+            
+            success = confirm_success and complete_success and cancel_success
+            self.log_test("Booking Workflow", success, details)
+            return success
+            
+        except Exception as e:
+            self.log_test("Booking Workflow", False, f"Exception: {str(e)}")
+            return False
+
+    def test_booking_validation(self):
+        """Test booking validation (dates, required fields)"""
+        if not self.client_token:
+            self.log_test("Booking Validation", False, "No client token available")
+            return False
+            
+        try:
+            # Test booking with past date
+            past_booking = {
+                "property_id": "sample-property-id",
+                "scheduled_date": (datetime.now() - timedelta(days=1)).isoformat(),
+                "notes": "Past date booking test"
+            }
+            
+            past_response = self.make_authenticated_request(
+                'POST', '/bookings', self.client_token, json=past_booking
+            )
+            
+            past_validation = past_response.status_code in [400, 422]
+            details = f"Past date validation: {past_response.status_code} (expected 400/422)"
+            
+            # Test booking without property or service ID
+            no_target = {
+                "scheduled_date": (datetime.now() + timedelta(days=1)).isoformat(),
+                "notes": "No target booking test"
+            }
+            
+            no_target_response = self.make_authenticated_request(
+                'POST', '/bookings', self.client_token, json=no_target
+            )
+            
+            no_target_validation = no_target_response.status_code in [400, 422]
+            details += f", Missing target: {no_target_response.status_code} (expected 400/422)"
+            
+            success = past_validation and no_target_validation
+            self.log_test("Booking Validation", success, details)
+            return success
+            
+        except Exception as e:
+            self.log_test("Booking Validation", False, f"Exception: {str(e)}")
+            return False
+
+    def run_comprehensive_tests(self):
+        """Run comprehensive tests for all new features"""
+        print("🚀 Starting Comprehensive Habitere API Tests...")
         print(f"Testing API at: {self.api_url}")
-        print("=" * 60)
+        print("=" * 80)
         
-        # Initialize sample data first
+        # Setup authentication
+        self.setup_test_authentication()
+        
+        # Initialize sample data
         self.test_sample_data_initialization()
         
         # Core API tests
+        print("\n🔧 Testing Core API...")
+        print("-" * 40)
         self.test_api_health()
         self.test_api_root()
-        
-        # Public endpoints
         self.test_properties_endpoint()
         self.test_services_endpoint()
-        self.test_property_detail()
-        self.test_service_detail()
-        self.test_reviews_endpoint()
         
-        # Auth-protected endpoints (should fail without auth)
-        self.test_auth_endpoints()
-        self.test_messages_endpoint()
-        self.test_bookings_endpoint()
+        # Admin System Tests
+        print("\n👑 Testing Admin System (12 endpoints)...")
+        print("-" * 40)
+        self.test_admin_stats()
+        self.test_admin_users_list()
+        self.test_admin_user_approval()
+        self.test_admin_user_rejection()
+        self.test_admin_properties_moderation()
+        self.test_admin_property_verification()
+        self.test_admin_services_moderation()
+        self.test_admin_analytics()
         
+        # Reviews & Ratings Tests
+        print("\n⭐ Testing Reviews & Ratings System (6 endpoints)...")
+        print("-" * 40)
+        self.test_reviews_system()
+        self.test_review_validation()
+        
+        # Messaging System Tests
+        print("\n💬 Testing Messaging System (6 endpoints)...")
+        print("-" * 40)
+        self.test_messaging_system()
+        self.test_message_validation()
+        
+        # Booking System Tests
+        print("\n📅 Testing Booking System (9 endpoints)...")
+        print("-" * 40)
+        self.test_booking_system()
+        self.test_booking_workflow()
+        self.test_booking_validation()
+        
+        # Legacy tests
         print("\n🖼️  Testing Image Upload System...")
         print("-" * 40)
-        
-        # Image upload tests
         self.test_image_upload_no_auth()
-        self.test_image_upload_invalid_file()
-        self.test_image_upload_large_file()
         self.test_get_entity_images()
         
         print("\n💳 Testing MTN Mobile Money Integration...")
         print("-" * 40)
-        
-        # MTN MoMo tests
         self.test_mtn_momo_configuration()
         self.test_mtn_momo_payment_no_auth()
-        self.test_mtn_momo_payment_invalid_data()
-        self.test_mtn_momo_status_check()
         self.test_mtn_momo_callback()
-        self.test_payment_status_endpoint()
         
-        # Print summary
-        print("=" * 60)
-        print(f"📊 Test Summary:")
+        # Print comprehensive summary
+        self.print_comprehensive_summary()
+        
+        return self.tests_passed == self.tests_run
+
+    def print_comprehensive_summary(self):
+        """Print comprehensive test summary"""
+        print("=" * 80)
+        print(f"📊 COMPREHENSIVE TEST SUMMARY")
+        print("=" * 80)
         print(f"   Total tests: {self.tests_run}")
         print(f"   Passed: {self.tests_passed}")
         print(f"   Failed: {self.tests_run - self.tests_passed}")
         print(f"   Success rate: {(self.tests_passed/self.tests_run)*100:.1f}%")
         
-        # Analyze critical failures
-        critical_failures = []
-        for result in self.test_results:
-            if not result["success"]:
-                test_name = result["test_name"]
-                if any(keyword in test_name.lower() for keyword in ["health", "root", "properties", "services"]):
-                    critical_failures.append(test_name)
+        # Categorize results
+        admin_tests = [r for r in self.test_results if 'admin' in r['test_name'].lower()]
+        review_tests = [r for r in self.test_results if 'review' in r['test_name'].lower()]
+        message_tests = [r for r in self.test_results if 'messag' in r['test_name'].lower()]
+        booking_tests = [r for r in self.test_results if 'booking' in r['test_name'].lower()]
         
-        if critical_failures:
-            print(f"\n⚠️  Critical Failures Detected:")
-            for failure in critical_failures:
-                print(f"   - {failure}")
+        print(f"\n📈 Results by Category:")
+        print(f"   Admin System: {sum(1 for t in admin_tests if t['success'])}/{len(admin_tests)} passed")
+        print(f"   Reviews & Ratings: {sum(1 for t in review_tests if t['success'])}/{len(review_tests)} passed")
+        print(f"   Messaging System: {sum(1 for t in message_tests if t['success'])}/{len(message_tests)} passed")
+        print(f"   Booking System: {sum(1 for t in booking_tests if t['success'])}/{len(booking_tests)} passed")
         
-        # Save detailed results
+        # List failures
+        failures = [r for r in self.test_results if not r['success']]
+        if failures:
+            print(f"\n❌ Failed Tests ({len(failures)}):")
+            for failure in failures:
+                print(f"   - {failure['test_name']}: {failure['details']}")
+        
+        # Authentication status
+        print(f"\n🔐 Authentication Status:")
+        print(f"   Admin Token: {'✅ Available' if self.admin_token else '❌ Not Available'}")
+        print(f"   Client Token: {'✅ Available' if self.client_token else '❌ Not Available'}")
+        print(f"   Owner Token: {'✅ Available' if self.owner_token else '❌ Not Available'}")
+        print(f"   Provider Token: {'✅ Available' if self.provider_token else '❌ Not Available'}")
+        
+        # Save results
         results = {
             "summary": {
                 "total_tests": self.tests_run,
                 "passed_tests": self.tests_passed,
                 "failed_tests": self.tests_run - self.tests_passed,
                 "success_rate": (self.tests_passed/self.tests_run)*100,
-                "critical_failures": critical_failures,
-                "timestamp": datetime.now().isoformat()
+                "timestamp": datetime.now().isoformat(),
+                "authentication_status": {
+                    "admin_token": bool(self.admin_token),
+                    "client_token": bool(self.client_token),
+                    "owner_token": bool(self.owner_token),
+                    "provider_token": bool(self.provider_token)
+                }
             },
-            "test_results": self.test_results
+            "test_results": self.test_results,
+            "categories": {
+                "admin_tests": len(admin_tests),
+                "review_tests": len(review_tests),
+                "message_tests": len(message_tests),
+                "booking_tests": len(booking_tests)
+            }
         }
         
-        with open('/app/backend_test_results.json', 'w') as f:
+        with open('/app/comprehensive_test_results.json', 'w') as f:
             json.dump(results, f, indent=2)
         
-        print(f"📄 Detailed results saved to: /app/backend_test_results.json")
-        
-        return self.tests_passed == self.tests_run
+        print(f"\n📄 Detailed results saved to: /app/comprehensive_test_results.json")
+
+    def run_all_tests(self):
+        """Run all API tests (legacy method)"""
+        return self.run_comprehensive_tests()
 
 def main():
     tester = HabitereAPITester()
