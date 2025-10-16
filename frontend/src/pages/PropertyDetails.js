@@ -248,11 +248,11 @@ const PropertyDetails = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
           {/* Property Details */}
-          <div className="lg:col-span-2 space-y-8">
+          <div className="lg:col-span-2 space-y-4 sm:space-y-6 md:space-y-8">
             {/* Header */}
             <div>
-              <div className="flex items-center space-x-3 mb-4">
-                <span className={`badge ${
+              <div className="flex flex-wrap items-center gap-2 mb-3 sm:mb-4">
+                <span className={`badge text-xs sm:text-sm ${
                   property.listing_type === 'rent' ? 'badge-success' : 
                   property.listing_type === 'sale' ? 'badge-primary' : 'badge-warning'
                 }`}>
@@ -260,51 +260,53 @@ const PropertyDetails = () => {
                    property.listing_type === 'sale' ? 'For Sale' : 'For Lease'}
                 </span>
                 {property.verified && (
-                  <span className="badge badge-success flex items-center">
-                    <Shield className="w-3 h-3 mr-1" />
+                  <span className="badge badge-success flex items-center text-xs sm:text-sm">
+                    <Shield className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-0.5 sm:mr-1" />
                     Verified
                   </span>
                 )}
-                <span className="badge badge-secondary capitalize">
+                <span className="badge badge-secondary capitalize text-xs sm:text-sm">
                   {property.property_type}
                 </span>
               </div>
 
-              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-2 sm:mb-3">
                 {property.title}
               </h1>
 
-              <div className="flex items-center text-gray-600 mb-4">
-                <MapPin className="w-5 h-5 mr-2" />
-                {property.location}
+              <div className="flex items-center text-gray-600 mb-3 sm:mb-4 text-sm sm:text-base">
+                <MapPin className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2 flex-shrink-0" />
+                <span className="truncate">{property.location}</span>
               </div>
 
-              <div className="text-3xl md:text-4xl font-bold text-blue-600 mb-4">
+              <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-blue-600 mb-3 sm:mb-4">
                 {formatPrice(property.price)}
                 {property.listing_type === 'rent' && 
-                  <span className="text-lg text-gray-500 font-normal">/month</span>
+                  <span className="text-sm sm:text-base md:text-lg text-gray-500 font-normal">/month</span>
                 }
               </div>
 
               {/* Property stats */}
-              <div className="flex items-center space-x-6 text-gray-600">
+              <div className="flex flex-wrap items-center gap-3 sm:gap-4 md:gap-6 text-gray-600 text-sm sm:text-base">
                 {property.bedrooms > 0 && (
                   <div className="flex items-center">
-                    <BedDouble className="w-5 h-5 mr-2" />
+                    <BedDouble className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" />
                     <span className="font-medium">{property.bedrooms}</span>
-                    <span className="ml-1">bedrooms</span>
+                    <span className="ml-1 hidden sm:inline">bedrooms</span>
+                    <span className="ml-1 sm:hidden">beds</span>
                   </div>
                 )}
                 {property.bathrooms > 0 && (
                   <div className="flex items-center">
-                    <Bath className="w-5 h-5 mr-2" />
+                    <Bath className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" />
                     <span className="font-medium">{property.bathrooms}</span>
-                    <span className="ml-1">bathrooms</span>
+                    <span className="ml-1 hidden sm:inline">bathrooms</span>
+                    <span className="ml-1 sm:hidden">baths</span>
                   </div>
                 )}
                 {property.area_sqm && (
                   <div className="flex items-center">
-                    <Square className="w-5 h-5 mr-2" />
+                    <Square className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" />
                     <span className="font-medium">{property.area_sqm}</span>
                     <span className="ml-1">m²</span>
                   </div>
@@ -315,8 +317,8 @@ const PropertyDetails = () => {
             {/* Description */}
             <div className="card">
               <div className="card-body">
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">Description</h3>
-                <p className="text-gray-600 leading-relaxed whitespace-pre-wrap">
+                <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">Description</h3>
+                <p className="text-sm sm:text-base text-gray-600 leading-relaxed whitespace-pre-wrap">
                   {property.description}
                 </p>
               </div>
@@ -326,12 +328,12 @@ const PropertyDetails = () => {
             {property.amenities && property.amenities.length > 0 && (
               <div className="card">
                 <div className="card-body">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-4">Amenities</h3>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">Amenities</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 sm:gap-3">
                     {property.amenities.map((amenity, index) => (
-                      <div key={index} className="flex items-center text-gray-600">
-                        <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
-                        {amenity}
+                      <div key={index} className="flex items-center text-gray-600 text-sm sm:text-base">
+                        <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-500 rounded-full mr-2 sm:mr-3 flex-shrink-0"></div>
+                        <span className="truncate">{amenity}</span>
                       </div>
                     ))}
                   </div>
@@ -343,15 +345,15 @@ const PropertyDetails = () => {
             {images.length > 1 && (
               <div className="card">
                 <div className="card-body">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                  <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">
                     More Photos ({images.length})
                   </h3>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
                     {images.map((image, index) => (
                       <button
                         key={index}
                         onClick={() => setCurrentImageIndex(index)}
-                        className={`relative h-24 rounded-lg overflow-hidden border-2 transition-colors ${
+                        className={`relative h-20 sm:h-24 rounded-lg overflow-hidden border-2 transition-colors ${
                           index === currentImageIndex ? 'border-blue-500' : 'border-gray-200 hover:border-gray-300'
                         }`}
                       >
@@ -362,7 +364,7 @@ const PropertyDetails = () => {
                         />
                         {index === currentImageIndex && (
                           <div className="absolute inset-0 bg-blue-500 bg-opacity-20 flex items-center justify-center">
-                            <Eye className="w-6 h-6 text-blue-600" />
+                            <Eye className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
                           </div>
                         )}
                       </button>
