@@ -416,7 +416,7 @@ const Dashboard = () => {
 
         {/* Featured Properties Carousel - for property seekers */}
         {user?.role === 'property_seeker' && (
-          <div className="mt-8">
+          <div className="mt-6 sm:mt-8">
             <FeaturedProperties 
               title="Recommended Properties for You" 
               limit={6}
@@ -426,7 +426,7 @@ const Dashboard = () => {
         )}
 
         {/* Professional Services Carousel */}
-        <div className="mt-8">
+        <div className="mt-6 sm:mt-8">
           <ServicesCarousel 
             title={user?.role === 'property_seeker' ? "Professional Services You Might Need" : "Recommended Professional Services"}
             limit={10}
@@ -435,14 +435,14 @@ const Dashboard = () => {
         </div>
 
         {/* Role-specific tips */}
-        <div className="mt-8">
-          <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
-            <h3 className="text-lg font-semibold text-blue-900 mb-2">
+        <div className="mt-6 sm:mt-8">
+          <div className="bg-blue-50 border border-blue-200 rounded-lg sm:rounded-xl p-4 sm:p-5 md:p-6">
+            <h3 className="text-base sm:text-lg font-semibold text-blue-900 mb-2 sm:mb-3">
               Tips for {user?.role?.replace('_', ' ')}s
             </h3>
             <div className="text-blue-800">
               {user?.role === 'property_seeker' && (
-                <ul className="space-y-1 text-sm">
+                <ul className="space-y-1 text-xs sm:text-sm">
                   <li>• Use filters to narrow down your property search</li>
                   <li>• Save your favorite properties for quick access</li>
                   <li>• Contact property owners directly through messaging</li>
@@ -450,7 +450,7 @@ const Dashboard = () => {
               )}
               
               {canListProperties && (
-                <ul className="space-y-1 text-sm">
+                <ul className="space-y-1 text-xs sm:text-sm">
                   <li>• Upload high-quality photos to attract more inquiries</li>
                   <li>• Keep your property information updated</li>
                   <li>• Respond quickly to potential tenant messages</li>
@@ -458,7 +458,7 @@ const Dashboard = () => {
               )}
               
               {canProvideServices && (
-                <ul className="space-y-1 text-sm">
+                <ul className="space-y-1 text-xs sm:text-sm">
                   <li>• Showcase your best work with portfolio images</li>
                   <li>• Keep your service availability status updated</li>
                   <li>• Build trust by completing projects on time</li>
