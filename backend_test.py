@@ -1358,7 +1358,7 @@ class HabitereAPITester:
 
 def main():
     tester = HabitereAPITester()
-    success = tester.run_all_tests()
+    success = tester.run_comprehensive_tests()
     return 0 if success else 1
 
 if __name__ == "__main__":
