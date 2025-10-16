@@ -239,16 +239,16 @@ const Dashboard = () => {
         </div>
 
         {/* Quick Actions */}
-        <div className="mb-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Quick Actions</h2>
-          <div className="flex flex-wrap gap-4">
+        <div className="mb-6 sm:mb-8">
+          <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3 sm:mb-4">Quick Actions</h2>
+          <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2 sm:gap-3 md:gap-4">
             {canListProperties && (
               <Link
                 to="/properties/new"
-                className="btn-primary"
+                className="btn-primary inline-flex items-center justify-center w-full sm:w-auto px-4 py-2.5 sm:px-5 sm:py-3 text-sm sm:text-base"
                 data-testid="add-property-btn"
               >
-                <Plus className="w-5 h-5 mr-2" />
+                <Plus className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                 Add Property
               </Link>
             )}
@@ -256,29 +256,29 @@ const Dashboard = () => {
             {canProvideServices && (
               <Link
                 to="/services/new"
-                className="btn-primary"
+                className="btn-primary inline-flex items-center justify-center w-full sm:w-auto px-4 py-2.5 sm:px-5 sm:py-3 text-sm sm:text-base"
                 data-testid="add-service-btn"
               >
-                <Plus className="w-5 h-5 mr-2" />
+                <Plus className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                 Add Service
               </Link>
             )}
 
             <Link
               to="/properties"
-              className="btn-secondary"
+              className="btn-secondary inline-flex items-center justify-center w-full sm:w-auto px-4 py-2.5 sm:px-5 sm:py-3 text-sm sm:text-base"
               data-testid="browse-properties-btn"
             >
-              <Building className="w-5 h-5 mr-2" />
+              <Building className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
               Browse Properties
             </Link>
 
             <Link
               to="/services"
-              className="btn-secondary"
+              className="btn-secondary inline-flex items-center justify-center w-full sm:w-auto px-4 py-2.5 sm:px-5 sm:py-3 text-sm sm:text-base"
               data-testid="browse-services-btn"
             >
-              <Wrench className="w-5 h-5 mr-2" />
+              <Wrench className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
               Find Services
             </Link>
           </div>
