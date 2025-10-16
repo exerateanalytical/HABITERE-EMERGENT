@@ -219,9 +219,8 @@
 
 ## test_plan:
   current_focus:
+    - "Dashboard Responsiveness Enhancement"
     - "Mobile-First Responsive Design Optimization"
-    - "Image Upload System - Local Storage"
-    - "Enhanced Image Upload UI Components"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
