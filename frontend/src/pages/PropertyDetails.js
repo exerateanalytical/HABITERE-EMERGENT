@@ -480,6 +480,24 @@ const PropertyDetails = () => {
                         WhatsApp
                       </button>
                     </div>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 mt-3 sm:mt-4">
+                      <Link
+                        to={`/booking/property/${property.id}`}
+                        className="btn-primary w-full justify-center text-sm sm:text-base"
+                      >
+                        <Calendar className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" />
+                        Book Viewing
+                      </Link>
+                      
+                      <Link
+                        to={`/messages?userId=${property.owner_id}`}
+                        className="btn-outline w-full justify-center text-sm sm:text-base"
+                      >
+                        <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" />
+                        Message Owner
+                      </Link>
+                    </div>
                   </div>
                 ) : (
                   <div className="text-center">
