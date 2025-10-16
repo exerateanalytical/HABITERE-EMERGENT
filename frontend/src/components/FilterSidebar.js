@@ -102,16 +102,8 @@ const FilterSidebar = ({
     { value: 'popular', label: 'Most Popular' }
   ];
 
-  // Don't call onFiltersChange on mount - only when filters actually change
-  const isFirstRender = React.useRef(true);
-  
-  useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
-    }
-    onFiltersChange?.(filters);
-  }, [filters]);
+  // Remove automatic filter triggering to prevent infinite loops
+  // Filters will be applied when user clicks "Apply Filters" button
 
   const handleFilterChange = (key, value) => {
     setFilters(prev => ({
