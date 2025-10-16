@@ -447,6 +447,15 @@ async def get_current_user(
     
     return User(**user_doc)
 
+async def get_admin_user(current_user: User = Depends(get_current_user)) -> User:
+    """Verify that current user is an admin"""
+    if current_user.role != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Admin access required"
+        )
+    return current_user
+
 async def get_optional_user(
     request: Request,
     credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
