@@ -128,13 +128,13 @@ const PropertyDetails = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 py-8">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-gray-50 py-4 sm:py-6 md:py-8">
+        <div className="max-w-6xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
           <div className="animate-pulse">
-            <div className="h-96 bg-gray-300 rounded-xl mb-8"></div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <div className="space-y-4">
-                <div className="h-8 bg-gray-300 rounded w-3/4"></div>
+            <div className="h-64 sm:h-80 md:h-96 bg-gray-300 rounded-xl sm:rounded-2xl mb-4 sm:mb-6 md:mb-8"></div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="h-6 sm:h-8 bg-gray-300 rounded w-3/4"></div>
                 <div className="h-4 bg-gray-300 rounded w-1/2"></div>
                 <div className="space-y-2">
                   <div className="h-4 bg-gray-300 rounded"></div>
@@ -142,7 +142,7 @@ const PropertyDetails = () => {
                   <div className="h-4 bg-gray-300 rounded w-5/6"></div>
                 </div>
               </div>
-              <div className="h-64 bg-gray-300 rounded-xl"></div>
+              <div className="h-48 sm:h-64 bg-gray-300 rounded-xl"></div>
             </div>
           </div>
         </div>
