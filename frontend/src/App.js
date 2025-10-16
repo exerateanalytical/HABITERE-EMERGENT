@@ -30,6 +30,7 @@ import HelpCenter from './pages/HelpCenter';
 // Admin Pages
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminUsers from './pages/admin/AdminUsers';
+import AdminProperties from './pages/admin/AdminProperties';
 
 // New Auth Pages
 import LoginPage from './pages/auth/LoginPage';
