@@ -27,6 +27,10 @@ import Privacy from './pages/Privacy';
 import Terms from './pages/Terms';
 import HelpCenter from './pages/HelpCenter';
 
+// Admin Pages
+import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminUsers from './pages/admin/AdminUsers';
+
 // New Auth Pages
 import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
