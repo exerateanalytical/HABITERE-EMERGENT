@@ -1,0 +1,185 @@
+{
+  "summary": {
+    "total_tests": 29,
+    "passed_tests": 28,
+    "failed_tests": 1,
+    "success_rate": 96.55172413793103,
+    "timestamp": "2025-10-16T17:07:44.225874"
+  },
+  "results": [
+    {
+      "test_name": "API Root",
+      "success": true,
+      "details": "Status: 200 (expected 200), Message: Habitere API - Real Estate and Home Services Platform",
+      "timestamp": "2025-10-16T17:07:43.636162"
+    },
+    {
+      "test_name": "Health Check",
+      "success": true,
+      "details": "Status: 200 (expected 200)",
+      "timestamp": "2025-10-16T17:07:43.682389"
+    },
+    {
+      "test_name": "Initialize Sample Data",
+      "success": true,
+      "details": "Status: 200 (expected 200), Message: Sample data initialized",
+      "timestamp": "2025-10-16T17:07:43.692139"
+    },
+    {
+      "test_name": "Properties List",
+      "success": true,
+      "details": "Status: 200 (expected 200), Items: 4",
+      "timestamp": "2025-10-16T17:07:43.700395"
+    },
+    {
+      "test_name": "Services List",
+      "success": true,
+      "details": "Status: 200 (expected 200), Items: 6",
+      "timestamp": "2025-10-16T17:07:43.706748"
+    },
+    {
+      "test_name": "Reviews List",
+      "success": true,
+      "details": "Status: 200 (expected 200), Items: 0",
+      "timestamp": "2025-10-16T17:07:43.753560"
+    },
+    {
+      "test_name": "Admin Stats",
+      "success": true,
+      "details": "Status: 401 (expected 401)",
+      "timestamp": "2025-10-16T17:07:43.762152"
+    },
+    {
+      "test_name": "Admin Users List",
+      "success": true,
+      "details": "Status: 401 (expected 401)",
+      "timestamp": "2025-10-16T17:07:43.809257"
+    },
+    {
+      "test_name": "Admin Properties",
+      "success": true,
+      "details": "Status: 401 (expected 401)",
+      "timestamp": "2025-10-16T17:07:43.815013"
+    },
+    {
+      "test_name": "Admin Services",
+      "success": true,
+      "details": "Status: 401 (expected 401)",
+      "timestamp": "2025-10-16T17:07:43.862290"
+    },
+    {
+      "test_name": "Admin User Analytics",
+      "success": true,
+      "details": "Status: 401 (expected 401)",
+      "timestamp": "2025-10-16T17:07:43.867061"
+    },
+    {
+      "test_name": "Admin Property Analytics",
+      "success": true,
+      "details": "Status: 401 (expected 401)",
+      "timestamp": "2025-10-16T17:07:43.871622"
+    },
+    {
+      "test_name": "Create Review (No Auth)",
+      "success": true,
+      "details": "Status: 401 (expected 401)",
+      "timestamp": "2025-10-16T17:07:43.917433"
+    },
+    {
+      "test_name": "Get Property Reviews",
+      "success": true,
+      "details": "Status: 200 (expected 200)",
+      "timestamp": "2025-10-16T17:07:43.924771"
+    },
+    {
+      "test_name": "Get Service Reviews",
+      "success": true,
+      "details": "Status: 200 (expected 200)",
+      "timestamp": "2025-10-16T17:07:43.972965"
+    },
+    {
+      "test_name": "Get User Reviews",
+      "success": true,
+      "details": "Status: 200 (expected 200)",
+      "timestamp": "2025-10-16T17:07:43.979602"
+    },
+    {
+      "test_name": "Send Message (No Auth)",
+      "success": true,
+      "details": "Status: 401 (expected 401)",
+      "timestamp": "2025-10-16T17:07:43.986410"
+    },
+    {
+      "test_name": "Get Conversations",
+      "success": true,
+      "details": "Status: 401 (expected 401)",
+      "timestamp": "2025-10-16T17:07:44.034341"
+    },
+    {
+      "test_name": "Get Message Thread",
+      "success": true,
+      "details": "Status: 401 (expected 401)",
+      "timestamp": "2025-10-16T17:07:44.040172"
+    },
+    {
+      "test_name": "Get Unread Count",
+      "success": true,
+      "details": "Status: 401 (expected 401)",
+      "timestamp": "2025-10-16T17:07:44.086238"
+    },
+    {
+      "test_name": "Create Booking (No Auth)",
+      "success": true,
+      "details": "Status: 401 (expected 401)",
+      "timestamp": "2025-10-16T17:07:44.092221"
+    },
+    {
+      "test_name": "Get User Bookings",
+      "success": true,
+      "details": "Status: 401 (expected 401)",
+      "timestamp": "2025-10-16T17:07:44.097267"
+    },
+    {
+      "test_name": "Get Received Bookings",
+      "success": true,
+      "details": "Status: 401 (expected 401)",
+      "timestamp": "2025-10-16T17:07:44.144322"
+    },
+    {
+      "test_name": "Get Available Slots",
+      "success": false,
+      "details": "Status: 422 (expected 200)",
+      "timestamp": "2025-10-16T17:07:44.157734"
+    },
+    {
+      "test_name": "Get Current User (No Auth)",
+      "success": true,
+      "details": "Status: 401 (expected 401)",
+      "timestamp": "2025-10-16T17:07:44.162901"
+    },
+    {
+      "test_name": "Google OAuth URL",
+      "success": true,
+      "details": "Status: 200 (expected 200)",
+      "timestamp": "2025-10-16T17:07:44.208385"
+    },
+    {
+      "test_name": "Get Entity Images",
+      "success": true,
+      "details": "Status: 200 (expected 200), Items: 0",
+      "timestamp": "2025-10-16T17:07:44.214045"
+    },
+    {
+      "test_name": "MTN MoMo Payment (No Auth)",
+      "success": true,
+      "details": "Status: 401 (expected 401)",
+      "timestamp": "2025-10-16T17:07:44.220433"
+    },
+    {
+      "test_name": "MTN MoMo Callback",
+      "success": true,
+      "details": "Status: 200 (expected 200), Message: Payment not found",
+      "timestamp": "2025-10-16T17:07:44.225756"
+    }
+  ]
+}
