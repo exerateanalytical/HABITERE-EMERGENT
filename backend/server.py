@@ -680,7 +680,7 @@ async def google_callback(
         
         # Redirect to frontend dashboard
         from fastapi.responses import RedirectResponse
-        return RedirectResponse(url=f"https://habitere-realty.preview.emergentagent.com/dashboard")
+        return RedirectResponse(url=f"https://habitere-realestate.preview.emergentagent.com/dashboard")
         
     except Exception as e:
         logging.error(f"Google OAuth error: {str(e)}")
