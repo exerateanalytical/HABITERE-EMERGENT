@@ -572,6 +572,120 @@ async def register_user(
     user_doc.pop('password')
     user = User(**user_doc)
     
+
+@api_router.get("/auth/google/login")
+async def google_login(role: Optional[str] = None):
+    """Initiate Google OAuth flow"""
+    params = {
+        "client_id": GOOGLE_CLIENT_ID,
+        "redirect_uri": GOOGLE_REDIRECT_URI,
+        "scope": "openid email profile",
+        "response_type": "code",
+        "access_type": "offline",
+        "prompt": "select_account"
+    }
+    
+    # Store role in state parameter to retrieve after callback
+    if role:
+        params["state"] = role
+    
+    auth_url = f"{GOOGLE_AUTH_URL}?{urlencode(params)}"
+    return {"auth_url": auth_url}
+
+@api_router.get("/auth/google/callback")
+async def google_callback(
+    response: Response,
+    code: str,
+    state: Optional[str] = None
+):
+    """Handle Google OAuth callback"""
+    try:
+        # Exchange authorization code for tokens
+        token_data = {
+            "code": code,
+            "client_id": GOOGLE_CLIENT_ID,
+            "client_secret": GOOGLE_CLIENT_SECRET,
+            "redirect_uri": GOOGLE_REDIRECT_URI,
+            "grant_type": "authorization_code"
+        }
+        
+        async with httpx.AsyncClient() as client:
+            token_response = await client.post(GOOGLE_TOKEN_URL, data=token_data)
+            token_response.raise_for_status()
+            tokens = token_response.json()
+        
+        # Get user info
+        id_token_jwt = tokens.get("id_token")
+        access_token = tokens.get("access_token")
+        
+        async with httpx.AsyncClient() as client:
+            headers = {"Authorization": f"Bearer {access_token}"}
+            user_response = await client.get(GOOGLE_USER_INFO_URL, headers=headers)
+            user_response.raise_for_status()
+            google_user = user_response.json()
+        
+        # Check if user exists
+        email = google_user.get("email")
+        existing_user = await db.users.find_one({"email": email})
+        
+        if existing_user:
+            user_id = existing_user["id"]
+            # Update profile picture if changed
+            if google_user.get("picture") and google_user["picture"] != existing_user.get("picture"):
+                await db.users.update_one(
+                    {"id": user_id},
+                    {"$set": {"picture": google_user["picture"]}}
+                )
+        else:
+            # Create new user
+            user_id = str(uuid.uuid4())
+            # Use state parameter for role or default to property_seeker
+            role = state if state and state in USER_ROLES else "property_seeker"
+            
+            user_doc = {
+                "id": user_id,
+                "email": email,
+                "name": google_user.get("name", ""),
+                "picture": google_user.get("picture", ""),
+                "role": role,
+                "is_verified": google_user.get("verified_email", False),
+                "created_at": datetime.now(timezone.utc),
+                "auth_provider": "google"
+            }
+            await db.users.insert_one(user_doc)
+        
+        # Create session
+        session_token = str(uuid.uuid4())
+        expires_at = datetime.now(timezone.utc) + timedelta(days=7)
+        
+        session_doc = {
+            "user_id": user_id,
+            "session_token": session_token,
+            "expires_at": expires_at,
+            "created_at": datetime.now(timezone.utc)
+        }
+        await db.user_sessions.insert_one(session_doc)
+        
+        # Set cookie
+        response.set_cookie(
+            key="session_token",
+            value=session_token,
+            max_age=7 * 24 * 60 * 60,
+            httponly=True,
+            secure=True,
+            samesite="none",
+            path="/"
+        )
+        
+        # Redirect to frontend dashboard
+        from fastapi.responses import RedirectResponse
+        return RedirectResponse(url=f"https://habitere-realty.preview.emergentagent.com/dashboard")
+        
+    except Exception as e:
+        logging.error(f"Google OAuth error: {str(e)}")
+        raise HTTPException(status_code=400, detail=f"Authentication failed: {str(e)}")
+
+
     return {"user": serialize_doc(user.model_dump()), "message": "Registration successful"}
 
 
