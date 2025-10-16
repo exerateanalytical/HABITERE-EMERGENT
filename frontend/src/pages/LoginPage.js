@@ -83,7 +83,7 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex flex-col lg:flex-row items-center justify-center py-8 lg:py-12 px-4 sm:px-6 lg:px-8">
       <SEOHead
         title="Login to Habitere - Access Your Property Dashboard | Cameroon Real Estate"
         description="Login to Habitere to access your property dashboard, manage listings, connect with clients, and grow your real estate business in Cameroon."
