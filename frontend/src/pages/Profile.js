@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import axios from 'axios';
 import { 
   User, 
   Mail, 
@@ -12,12 +14,23 @@ import {
   X,
   Shield,
   Award,
-  Calendar
+  Calendar,
+  Home,
+  Eye,
+  Heart,
+  Plus
 } from 'lucide-react';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const API = `${BACKEND_URL}/api`;
 
 const Profile = () => {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
+  const [myProperties, setMyProperties] = useState([]);
+  const [myServices, setMyServices] = useState([]);
+  const [loadingProperties, setLoadingProperties] = useState(false);
   const [editData, setEditData] = useState({
     name: user?.name || '',
     phone: user?.phone || '',
