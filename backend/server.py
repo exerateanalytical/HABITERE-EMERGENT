@@ -1933,7 +1933,7 @@ app.include_router(api_router)
 # Support multiple domains for preview and production
 ALLOWED_ORIGINS = [
     "http://localhost:3000",  # Local development
-    "https://habitere-realestate.preview.emergentagent.com",  # Preview
+    "https://property-hub-136.preview.emergentagent.com",  # Preview
     "https://habitere.com",  # Production
     "https://www.habitere.com"  # Production with www
 ]

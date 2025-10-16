@@ -135,7 +135,7 @@
     {
       "test_name": "CORS Configuration",
       "success": true,
-      "details": "Preflight status: 200, CORS headers: {'Access-Control-Allow-Origin': 'https://habitere-realestate.preview.emergentagent.com', 'Access-Control-Allow-Credentials': 'true', 'Access-Control-Allow-Methods': 'DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT'}",
+      "details": "Preflight status: 200, CORS headers: {'Access-Control-Allow-Origin': 'https://property-hub-136.preview.emergentagent.com', 'Access-Control-Allow-Credentials': 'true', 'Access-Control-Allow-Methods': 'DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT'}",
       "response_data": null,
       "timestamp": "2025-10-16T14:05:46.404402"
     },
