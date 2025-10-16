@@ -1,0 +1,1692 @@
+from fastapi import FastAPI, APIRouter, Depends, HTTPException, status, Request, Response, Cookie, UploadFile, File, Form
+from fastapi.responses import RedirectResponse
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from fastapi.staticfiles import StaticFiles
+from motor.motor_asyncio import AsyncIOMotorClient
+from pydantic import BaseModel, Field, ConfigDict
+from typing import List, Optional, Dict, Any
+from datetime import datetime, timezone, timedelta
+from dotenv import load_dotenv
+from pathlib import Path
+import os
+import uuid
+import logging
+import httpx
+import json
+import base64
+import shutil
+import aiofiles
+from PIL import Image
+import mimetypes
+import requests
+from google.oauth2 import id_token
+from google.auth.transport import requests as google_requests
+from urllib.parse import urlencode
+
+# Load environment variables
+ROOT_DIR = Path(__file__).parent
+load_dotenv(ROOT_DIR / '.env')
+
+# MongoDB connection
+mongo_url = os.environ['MONGO_URL']
+client = AsyncIOMotorClient(mongo_url)
+db = client[os.environ['DB_NAME']]
+
+# Google OAuth configuration
+GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID')
+GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET')
+GOOGLE_REDIRECT_URI = os.environ.get('GOOGLE_REDIRECT_URI')
+GOOGLE_AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth"
+GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token"
+GOOGLE_USER_INFO_URL = "https://www.googleapis.com/oauth2/v2/userinfo"
+
+# Image upload configuration
+UPLOAD_DIR = ROOT_DIR / "uploads"
+UPLOAD_DIR.mkdir(exist_ok=True)
+
+# Create subdirectories for different image types
+(UPLOAD_DIR / "properties").mkdir(exist_ok=True)
+(UPLOAD_DIR / "services").mkdir(exist_ok=True)
+(UPLOAD_DIR / "profiles").mkdir(exist_ok=True)
+(UPLOAD_DIR / "chat").mkdir(exist_ok=True)
+(UPLOAD_DIR / "thumbnails").mkdir(exist_ok=True)
+
+# Image upload settings
+MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB
+ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/jpg", "image/png", "image/webp"}
+THUMBNAIL_SIZE = (300, 300)
+
+# Create the main app
+app = FastAPI(title="Habitere API", description="Real Estate and Home Services Platform for Cameroon")
+api_router = APIRouter(prefix="/api")
+
+# Mount static files for serving uploaded images
+app.mount("/uploads", StaticFiles(directory=str(UPLOAD_DIR)), name="uploads")
+
+# Security scheme
+security = HTTPBearer(auto_error=False)
+
+# User roles
+USER_ROLES = [
+    "property_seeker", "property_owner", "real_estate_agent", "real_estate_company",
+    "construction_company", "bricklayer", "plumber", "electrician", "interior_designer",
+    "borehole_driller", "cleaning_company", "painter", "architect", "carpenter",
+    "evaluator", "building_material_supplier", "furnishing_shop", "admin"
+]
+
+# Pydantic Models
+class User(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    email: str
+    name: str
+    picture: Optional[str] = None
+    role: str
+    phone: Optional[str] = None
+    location: Optional[str] = None
+    company_name: Optional[str] = None
+    bio: Optional[str] = None
+    is_verified: bool = False
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class UserSession(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    user_id: str
+    session_token: str
+    expires_at: datetime
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class Property(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    owner_id: str
+    title: str
+    description: str
+    price: float
+    currency: str = "XAF"
+    location: str
+    property_type: Optional[str] = None  # Keeping for backward compatibility
+    property_sector: Optional[str] = None  # Residential Properties, Commercial Properties, etc.
+    property_category: Optional[str] = None  # Houses for Sale, Apartments for Rent, etc.
+    listing_type: str  # sale, rent, lease, short_let, auction
+    bedrooms: Optional[int] = 0
+    bathrooms: Optional[int] = 0
+    area_sqm: Optional[float] = None
+    images: List[str] = []
+    amenities: List[str] = []
+    available: bool = True
+    verified: bool = False
+    views: int = 0
+    favorites: int = 0
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class ProfessionalService(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    provider_id: str
+    category: str
+    title: str
+    description: str
+    price_range: Optional[str] = None
+    location: str
+    images: List[str] = []
+    available: bool = True
+    verified: bool = False
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class Booking(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    client_id: str
+    property_id: Optional[str] = None
+    service_id: Optional[str] = None
+    scheduled_date: datetime
+    status: str = "pending"  # pending, confirmed, completed, cancelled
+    notes: Optional[str] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class Payment(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    booking_id: str
+    user_id: str
+    amount: float
+    currency: str = "XAF"
+    method: str  # mtn_momo, bank_transfer
+    status: str = "pending"  # pending, successful, failed
+    transaction_id: Optional[str] = None
+    reference_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class Review(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    reviewer_id: str
+    property_id: Optional[str] = None
+    service_id: Optional[str] = None
+    rating: int  # 1-5
+    comment: Optional[str] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class Message(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    sender_id: str
+    receiver_id: str
+    content: str
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    is_read: bool = False
+
+class ImageUpload(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    filename: str
+    original_filename: str
+    file_path: str
+    file_size: int
+    mime_type: str
+    uploaded_by: str
+    entity_type: str  # 'property', 'service', 'profile', 'chat'
+    entity_id: Optional[str] = None
+    is_primary: bool = False
+    alt_text: Optional[str] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+# Request Models
+class UserCreate(BaseModel):
+    email: str
+    name: str
+    role: str
+    phone: Optional[str] = None
+    location: Optional[str] = None
+    company_name: Optional[str] = None
+    bio: Optional[str] = None
+
+class PropertyCreate(BaseModel):
+    title: str
+    description: str
+    price: float
+    location: str
+    property_type: Optional[str] = None  # Keeping for backward compatibility
+    property_sector: Optional[str] = None  # New: Residential, Commercial, etc.
+    property_category: Optional[str] = None  # New: Specific category
+    listing_type: str
+    bedrooms: Optional[int] = 0
+    bathrooms: Optional[int] = 0
+    area_sqm: Optional[float] = None
+    images: List[str] = []
+    amenities: List[str] = []
+
+class ServiceCreate(BaseModel):
+    category: str
+    title: str
+    description: str
+    price_range: Optional[str] = None
+    location: str
+    images: List[str] = []
+
+class BookingCreate(BaseModel):
+    property_id: Optional[str] = None
+    service_id: Optional[str] = None
+    scheduled_date: datetime
+    notes: Optional[str] = None
+
+class PaymentCreate(BaseModel):
+    booking_id: str
+    amount: float
+    method: str
+    phone_number: Optional[str] = None  # For MTN MoMo
+
+class ReviewCreate(BaseModel):
+    property_id: Optional[str] = None
+    service_id: Optional[str] = None
+    rating: int
+    comment: Optional[str] = None
+
+class MessageCreate(BaseModel):
+    receiver_id: str
+    content: str
+
+# MTN MoMo Client Class
+class MTNMoMoClient:
+    def __init__(self):
+        self.base_url = "https://sandbox.momodeveloper.mtn.com"  # Change to production URL
+        self.subscription_key = os.getenv("MTN_SUBSCRIPTION_KEY")
+        self.api_user = os.getenv("MTN_API_USER")
+        self.api_key = os.getenv("MTN_API_KEY")
+        self.target_environment = "sandbox"  # Change to "mtncameroon" for production
+        
+    async def get_access_token(self):
+        """Get access token for MTN MoMo API"""
+        try:
+            auth_string = f"{self.api_user}:{self.api_key}"
+            auth_bytes = auth_string.encode('ascii')
+            auth_b64 = base64.b64encode(auth_bytes).decode('ascii')
+            
+            headers = {
+                "Authorization": f"Basic {auth_b64}",
+                "Ocp-Apim-Subscription-Key": self.subscription_key
+            }
+            
+            async with httpx.AsyncClient() as client:
+                response = await client.post(
+                    f"{self.base_url}/collection/token/",
+                    headers=headers
+                )
+                
+                if response.status_code == 200:
+                    return response.json()["access_token"]
+                else:
+                    raise HTTPException(status_code=500, detail="Failed to get MTN MoMo access token")
+                    
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"MTN MoMo auth error: {str(e)}")
+    
+    async def request_to_pay(self, amount: float, phone_number: str, external_id: str):
+        """Request payment from customer"""
+        try:
+            access_token = await self.get_access_token()
+            reference_id = str(uuid.uuid4())
+            
+            headers = {
+                "Authorization": f"Bearer {access_token}",
+                "X-Reference-Id": reference_id,
+                "X-Target-Environment": self.target_environment,
+                "Ocp-Apim-Subscription-Key": self.subscription_key,
+                "Content-Type": "application/json"
+            }
+            
+            payload = {
+                "amount": str(amount),
+                "currency": "EUR",  # Change to "XAF" for production
+                "externalId": external_id,
+                "payer": {
+                    "partyIdType": "MSISDN",
+                    "partyId": phone_number
+                },
+                "payerMessage": "Payment for Habitere booking",
+                "payeeNote": "Habitere payment"
+            }
+            
+            async with httpx.AsyncClient() as client:
+                response = await client.post(
+                    f"{self.base_url}/collection/v1_0/requesttopay",
+                    headers=headers,
+                    json=payload
+                )
+                
+                if response.status_code == 202:
+                    return {"reference_id": reference_id, "status": "pending"}
+                else:
+                    raise HTTPException(status_code=500, detail="Payment request failed")
+                    
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Payment error: {str(e)}")
+    
+    async def get_payment_status(self, reference_id: str):
+        """Check payment status"""
+        try:
+            access_token = await self.get_access_token()
+            
+            headers = {
+                "Authorization": f"Bearer {access_token}",
+                "X-Target-Environment": self.target_environment,
+                "Ocp-Apim-Subscription-Key": self.subscription_key
+            }
+            
+            async with httpx.AsyncClient() as client:
+                response = await client.get(
+                    f"{self.base_url}/collection/v1_0/requesttopay/{reference_id}",
+                    headers=headers
+                )
+                
+                if response.status_code == 200:
+                    return response.json()
+                else:
+                    raise HTTPException(status_code=404, detail="Payment not found")
+                    
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Status check error: {str(e)}")
+
+# Initialize MTN MoMo client
+mtn_client = MTNMoMoClient()
+
+# Authentication functions
+async def get_current_user(
+    request: Request,
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
+    session_token: Optional[str] = Cookie(None)
+) -> User:
+    """Get current authenticated user"""
+    token = None
+    
+    # First try to get token from cookie
+    if session_token:
+        token = session_token
+    # Then try Authorization header
+    elif credentials:
+        token = credentials.credentials
+    
+    if not token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated"
+        )
+    
+    # Find session in database
+    session_doc = await db.user_sessions.find_one({
+        "session_token": token,
+        "expires_at": {"$gt": datetime.now(timezone.utc)}
+    })
+    
+    if not session_doc:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or expired session"
+        )
+    
+    # Get user
+    user_doc = await db.users.find_one({"id": session_doc["user_id"]})
+    if not user_doc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+    
+    return User(**user_doc)
+
+async def get_optional_user(
+    request: Request,
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
+    session_token: Optional[str] = Cookie(None)
+) -> Optional[User]:
+    """Get current user if authenticated, None otherwise"""
+    try:
+        return await get_current_user(request, credentials, session_token)
+    except HTTPException:
+        return None
+
+# Helper functions
+def serialize_doc(doc):
+    """Convert MongoDB document to JSON serializable format"""
+    if doc is None:
+        return None
+    if isinstance(doc, list):
+        return [serialize_doc(item) for item in doc]
+    if isinstance(doc, dict):
+        serialized = {}
+        for key, value in doc.items():
+            if key == "_id":
+                continue  # Skip MongoDB _id
+            elif isinstance(value, datetime):
+                serialized[key] = value.isoformat()
+            elif isinstance(value, (dict, list)):
+                serialized[key] = serialize_doc(value)
+            else:
+                serialized[key] = value
+        return serialized
+    return doc
+
+# Authentication Routes
+@api_router.get("/auth/session-data")
+async def get_session_data(request: Request):
+    """Get session data from emergent auth"""
+    session_id = request.headers.get("X-Session-ID")
+    if not session_id:
+        raise HTTPException(status_code=400, detail="Session ID required")
+    
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                "https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data",
+                headers={"X-Session-ID": session_id}
+            )
+            
+            if response.status_code == 200:
+                return response.json()
+            else:
+                raise HTTPException(status_code=400, detail="Invalid session ID")
+                
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Session validation error: {str(e)}")
+
+@api_router.post("/auth/complete")
+async def complete_authentication(
+    request: Request,
+    response: Response,
+    user_data: dict,
+    role: str
+):
+    """Complete authentication and create/update user"""
+    if role not in USER_ROLES:
+        raise HTTPException(status_code=400, detail="Invalid role")
+    
+    # Check if user exists
+    existing_user = await db.users.find_one({"email": user_data["email"]})
+    
+    if existing_user:
+        user = User(**existing_user)
+    else:
+        # Create new user
+        user_doc = {
+            "id": user_data["id"],
+            "email": user_data["email"],
+            "name": user_data["name"],
+            "picture": user_data.get("picture"),
+            "role": role,
+            "created_at": datetime.now(timezone.utc)
+        }
+        await db.users.insert_one(user_doc)
+        user = User(**user_doc)
+    
+    # Create session
+    session_token = user_data["session_token"]
+    expires_at = datetime.now(timezone.utc) + timedelta(days=7)
+    
+    session_doc = {
+        "user_id": user.id,
+        "session_token": session_token,
+        "expires_at": expires_at,
+        "created_at": datetime.now(timezone.utc)
+    }
+    await db.user_sessions.insert_one(session_doc)
+    
+    # Set cookie
+    response.set_cookie(
+        key="session_token",
+        value=session_token,
+        max_age=7 * 24 * 60 * 60,  # 7 days
+        httponly=True,
+        secure=True,
+        samesite="none",
+        path="/"
+    )
+    
+    return {"user": serialize_doc(user.model_dump()), "message": "Authentication complete"}
+
+
+@api_router.post("/auth/register")
+async def register_user(
+    response: Response,
+    email: str = Form(...),
+    password: str = Form(...),
+    name: str = Form(...),
+    role: str = Form(...),
+    phone: Optional[str] = Form(None),
+    company_name: Optional[str] = Form(None)
+):
+    """Register a new user with email and password"""
+    import bcrypt
+    
+    if role not in USER_ROLES:
+        raise HTTPException(status_code=400, detail="Invalid role")
+    
+    # Check if user already exists
+    existing_user = await db.users.find_one({"email": email})
+    if existing_user:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    
+    # Hash password
+    hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+    
+    # Create new user
+    user_id = str(uuid.uuid4())
+    user_doc = {
+        "id": user_id,
+        "email": email,
+        "password": hashed_password.decode('utf-8'),
+        "name": name,
+        "role": role,
+        "phone": phone,
+        "company_name": company_name,
+        "is_verified": False,
+        "created_at": datetime.now(timezone.utc)
+    }
+    
+    await db.users.insert_one(user_doc)
+    
+    # Create session
+    session_token = str(uuid.uuid4())
+    expires_at = datetime.now(timezone.utc) + timedelta(days=7)
+    
+    session_doc = {
+        "user_id": user_id,
+        "session_token": session_token,
+        "expires_at": expires_at,
+        "created_at": datetime.now(timezone.utc)
+    }
+    await db.user_sessions.insert_one(session_doc)
+    
+    # Set cookie
+    response.set_cookie(
+        key="session_token",
+        value=session_token,
+        max_age=7 * 24 * 60 * 60,  # 7 days
+        httponly=True,
+        secure=True,
+        samesite="none",
+        path="/"
+    )
+    
+    # Remove password from response
+    user_doc.pop('password')
+    user = User(**user_doc)
+    
+
+@api_router.get("/auth/google/login")
+async def google_login(role: Optional[str] = None):
+    """Initiate Google OAuth flow"""
+    params = {
+        "client_id": GOOGLE_CLIENT_ID,
+        "redirect_uri": GOOGLE_REDIRECT_URI,
+        "scope": "openid email profile",
+        "response_type": "code",
+        "access_type": "offline",
+        "prompt": "select_account"
+    }
+    
+    # Store role in state parameter to retrieve after callback
+    if role:
+        params["state"] = role
+    
+    auth_url = f"{GOOGLE_AUTH_URL}?{urlencode(params)}"
+    return {"auth_url": auth_url}
+
+@api_router.get("/auth/google/callback")
+async def google_callback(
+    response: Response,
+    code: str,
+    state: Optional[str] = None
+):
+    """Handle Google OAuth callback"""
+    try:
+        # Exchange authorization code for tokens
+        token_data = {
+            "code": code,
+            "client_id": GOOGLE_CLIENT_ID,
+            "client_secret": GOOGLE_CLIENT_SECRET,
+            "redirect_uri": GOOGLE_REDIRECT_URI,
+            "grant_type": "authorization_code"
+        }
+        
+        async with httpx.AsyncClient() as client:
+            token_response = await client.post(GOOGLE_TOKEN_URL, data=token_data)
+            token_response.raise_for_status()
+            tokens = token_response.json()
+        
+        # Get user info
+        id_token_jwt = tokens.get("id_token")
+        access_token = tokens.get("access_token")
+        
+        async with httpx.AsyncClient() as client:
+            headers = {"Authorization": f"Bearer {access_token}"}
+            user_response = await client.get(GOOGLE_USER_INFO_URL, headers=headers)
+            user_response.raise_for_status()
+            google_user = user_response.json()
+        
+        # Check if user exists
+        email = google_user.get("email")
+        existing_user = await db.users.find_one({"email": email})
+        
+        if existing_user:
+            user_id = existing_user["id"]
+            # Update profile picture if changed
+            if google_user.get("picture") and google_user["picture"] != existing_user.get("picture"):
+                await db.users.update_one(
+                    {"id": user_id},
+                    {"$set": {"picture": google_user["picture"]}}
+                )
+        else:
+            # Create new user
+            user_id = str(uuid.uuid4())
+            # Use state parameter for role or default to property_seeker
+            role = state if state and state in USER_ROLES else "property_seeker"
+            
+            user_doc = {
+                "id": user_id,
+                "email": email,
+                "name": google_user.get("name", ""),
+                "picture": google_user.get("picture", ""),
+                "role": role,
+                "is_verified": google_user.get("verified_email", False),
+                "created_at": datetime.now(timezone.utc),
+                "auth_provider": "google"
+            }
+            await db.users.insert_one(user_doc)
+        
+        # Create session
+        session_token = str(uuid.uuid4())
+        expires_at = datetime.now(timezone.utc) + timedelta(days=7)
+        
+        session_doc = {
+            "user_id": user_id,
+            "session_token": session_token,
+            "expires_at": expires_at,
+            "created_at": datetime.now(timezone.utc)
+        }
+        await db.user_sessions.insert_one(session_doc)
+        
+        # Set cookie
+        response.set_cookie(
+            key="session_token",
+            value=session_token,
+            max_age=7 * 24 * 60 * 60,
+            httponly=True,
+            secure=True,
+            samesite="none",
+            path="/"
+        )
+        
+        # Redirect to frontend dashboard
+        from fastapi.responses import RedirectResponse
+        return RedirectResponse(url=f"https://habitere-realestate.preview.emergentagent.com/dashboard")
+        
+    except Exception as e:
+        logging.error(f"Google OAuth error: {str(e)}")
+        raise HTTPException(status_code=400, detail=f"Authentication failed: {str(e)}")
+
+
+    return {"user": serialize_doc(user.model_dump()), "message": "Registration successful"}
+
+
+@api_router.get("/auth/me", response_model=Dict[str, Any])
+async def get_current_user_info(current_user: User = Depends(get_current_user)):
+    """Get current user information"""
+    return serialize_doc(current_user.model_dump())
+
+
+@api_router.get("/users/{user_id}", response_model=Dict[str, Any])
+async def get_user_by_id(user_id: str):
+    """Get user information by ID (public endpoint for displaying user names)"""
+    try:
+        user_doc = await db.users.find_one({"id": user_id})
+        if not user_doc:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        # Return only public information
+        public_info = {
+            "id": user_doc.get("id"),
+            "name": user_doc.get("name", "User"),
+            "email": user_doc.get("email", ""),
+            "role": user_doc.get("role", ""),
+            "picture": user_doc.get("picture", ""),
+            "company_name": user_doc.get("company_name", "")
+        }
+        return public_info
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error fetching user: {e}")
+        raise HTTPException(status_code=500, detail="Failed to fetch user")
+
+
+@api_router.post("/auth/logout")
+async def logout(
+    response: Response,
+    current_user: User = Depends(get_current_user),
+    session_token: Optional[str] = Cookie(None)
+):
+    """Logout user"""
+    if session_token:
+        await db.user_sessions.delete_one({"session_token": session_token})
+    
+    response.delete_cookie(
+        key="session_token",
+        path="/",
+        secure=True,
+        samesite="none"
+    )
+    
+    return {"message": "Logged out successfully"}
+
+# Property Routes
+@api_router.get("/properties", response_model=List[Dict[str, Any]])
+async def get_properties(
+    property_type: Optional[str] = None,
+    listing_type: Optional[str] = None,
+    location: Optional[str] = None,
+    min_price: Optional[float] = None,
+    max_price: Optional[float] = None,
+    skip: int = 0,
+    limit: int = 20
+):
+    """Get properties with filtering"""
+    filters = {"available": True}
+    
+    if property_type:
+        filters["property_type"] = property_type
+    if listing_type:
+        filters["listing_type"] = listing_type
+    if location:
+        filters["location"] = {"$regex": location, "$options": "i"}
+    if min_price is not None:
+        filters["price"] = {"$gte": min_price}
+    if max_price is not None:
+        if "price" in filters:
+            filters["price"]["$lte"] = max_price
+        else:
+            filters["price"] = {"$lte": max_price}
+    
+    properties = await db.properties.find(filters).skip(skip).limit(limit).to_list(1000)
+    return [serialize_doc(prop) for prop in properties]
+
+@api_router.get("/properties/{property_id}", response_model=Dict[str, Any])
+async def get_property(property_id: str):
+    """Get single property"""
+    property_doc = await db.properties.find_one({"id": property_id})
+    if not property_doc:
+        raise HTTPException(status_code=404, detail="Property not found")
+    return serialize_doc(property_doc)
+
+@api_router.post("/properties", response_model=Dict[str, Any])
+async def create_property(
+    property_data: PropertyCreate,
+    current_user: User = Depends(get_current_user)
+):
+    """Create new property"""
+    if current_user.role not in ["property_owner", "real_estate_agent", "real_estate_company", "admin"]:
+        raise HTTPException(status_code=403, detail="Not authorized to create properties")
+    
+    property_doc = property_data.model_dump()
+    property_doc["id"] = str(uuid.uuid4())
+    property_doc["owner_id"] = current_user.id
+    property_doc["created_at"] = datetime.now(timezone.utc)
+    
+    await db.properties.insert_one(property_doc)
+    return serialize_doc(property_doc)
+
+@api_router.put("/properties/{property_id}", response_model=Dict[str, Any])
+async def update_property(
+    property_id: str,
+    property_data: PropertyCreate,
+    current_user: User = Depends(get_current_user)
+):
+    """Update property"""
+    property_doc = await db.properties.find_one({"id": property_id})
+    if not property_doc:
+        raise HTTPException(status_code=404, detail="Property not found")
+    
+    if property_doc["owner_id"] != current_user.id and current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Not authorized")
+    
+    update_data = property_data.model_dump()
+    await db.properties.update_one({"id": property_id}, {"$set": update_data})
+    
+    updated_doc = await db.properties.find_one({"id": property_id})
+    return serialize_doc(updated_doc)
+
+@api_router.delete("/properties/{property_id}")
+async def delete_property(
+    property_id: str,
+    current_user: User = Depends(get_current_user)
+):
+    """Delete property"""
+    property_doc = await db.properties.find_one({"id": property_id})
+    if not property_doc:
+        raise HTTPException(status_code=404, detail="Property not found")
+    
+    if property_doc["owner_id"] != current_user.id and current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Not authorized")
+    
+    await db.properties.delete_one({"id": property_id})
+    return {"message": "Property deleted"}
+
+# Service Routes
+@api_router.get("/services", response_model=List[Dict[str, Any]])
+async def get_services(
+    category: Optional[str] = None,
+    location: Optional[str] = None,
+    skip: int = 0,
+    limit: int = 20
+):
+    """Get professional services"""
+    filters = {"available": True}
+    
+    if category:
+        filters["category"] = category
+    if location:
+        filters["location"] = {"$regex": location, "$options": "i"}
+    
+    services = await db.services.find(filters).skip(skip).limit(limit).to_list(1000)
+    return [serialize_doc(service) for service in services]
+
+@api_router.get("/services/{service_id}", response_model=Dict[str, Any])
+async def get_service(service_id: str):
+    """Get single service"""
+    service_doc = await db.services.find_one({"id": service_id})
+    if not service_doc:
+        raise HTTPException(status_code=404, detail="Service not found")
+    return serialize_doc(service_doc)
+
+@api_router.post("/services", response_model=Dict[str, Any])
+async def create_service(
+    service_data: ServiceCreate,
+    current_user: User = Depends(get_current_user)
+):
+    """Create new service"""
+    service_provider_roles = [
+        "construction_company", "bricklayer", "plumber", "electrician", 
+        "interior_designer", "borehole_driller", "cleaning_company", 
+        "painter", "architect", "carpenter", "evaluator", 
+        "building_material_supplier", "furnishing_shop"
+    ]
+    
+    if current_user.role not in service_provider_roles and current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Not authorized to create services")
+    
+    service_doc = service_data.model_dump()
+    service_doc["id"] = str(uuid.uuid4())
+    service_doc["provider_id"] = current_user.id
+    service_doc["created_at"] = datetime.now(timezone.utc)
+    
+    await db.services.insert_one(service_doc)
+    return serialize_doc(service_doc)
+
+# Booking Routes
+@api_router.get("/bookings", response_model=List[Dict[str, Any]])
+async def get_bookings(current_user: User = Depends(get_current_user)):
+    """Get user's bookings"""
+    bookings = await db.bookings.find({"client_id": current_user.id}).to_list(1000)
+    return [serialize_doc(booking) for booking in bookings]
+
+@api_router.post("/bookings", response_model=Dict[str, Any])
+async def create_booking(
+    booking_data: BookingCreate,
+    current_user: User = Depends(get_current_user)
+):
+    """Create new booking"""
+    booking_doc = booking_data.model_dump()
+    booking_doc["id"] = str(uuid.uuid4())
+    booking_doc["client_id"] = current_user.id
+    booking_doc["created_at"] = datetime.now(timezone.utc)
+    
+    await db.bookings.insert_one(booking_doc)
+    return serialize_doc(booking_doc)
+
+# Payment Routes
+# MTN Mobile Money Configuration and Models
+class MTNMoMoConfig:
+    def __init__(self):
+        self.api_user_id = os.getenv('MTN_MOMO_API_USER_ID', '')
+        self.api_key = os.getenv('MTN_MOMO_API_KEY', '')
+        self.subscription_key = os.getenv('MTN_MOMO_SUBSCRIPTION_KEY', '')
+        self.target_environment = os.getenv('MTN_MOMO_TARGET_ENVIRONMENT', 'sandbox')
+        self.base_url = os.getenv('MTN_MOMO_BASE_URL', 'https://sandbox.momodeveloper.mtn.com')
+        self.callback_url = os.getenv('MTN_MOMO_CALLBACK_URL', '')
+
+mtn_config = MTNMoMoConfig()
+
+class MTNMoMoTokenManager:
+    def __init__(self):
+        self.access_token = None
+        self.token_expires_at = None
+    
+    async def get_access_token(self):
+        """Get valid access token, refresh if needed"""
+        if self.access_token and self.token_expires_at and datetime.now(timezone.utc) < self.token_expires_at:
+            return self.access_token
+        
+        # Request new token
+        auth = (mtn_config.api_user_id, mtn_config.api_key)
+        headers = {
+            'Ocp-Apim-Subscription-Key': mtn_config.subscription_key,
+            'X-Target-Environment': mtn_config.target_environment
+        }
+        
+        try:
+            import requests
+            response = requests.post(
+                f"{mtn_config.base_url}/collection/token/",
+                auth=auth,
+                headers=headers,
+                timeout=30
+            )
+            
+            if response.status_code == 200:
+                token_data = response.json()
+                self.access_token = token_data['access_token']
+                expires_in = token_data.get('expires_in', 3600)  # Default 1 hour
+                self.token_expires_at = datetime.now(timezone.utc) + timedelta(seconds=expires_in - 60)  # 1 min buffer
+                return self.access_token
+            else:
+                logger.error(f"MTN MoMo token request failed: {response.status_code} - {response.text}")
+                return None
+                
+        except Exception as e:
+            logger.error(f"MTN MoMo token request error: {e}")
+            return None
+
+# Global token manager instance
+token_manager = MTNMoMoTokenManager()
+
+class PaymentRequest(BaseModel):
+    amount: str
+    currency: str = "EUR"  # EUR for sandbox, XAF for production
+    external_id: str
+    payer_message: str
+    payee_note: str
+    phone: str
+    
+class PaymentResponse(BaseModel):
+    success: bool
+    payment_id: str
+    reference_id: str
+    status: str
+    message: str
+    
+@api_router.post("/payments/mtn-momo", response_model=PaymentResponse)
+async def process_mtn_momo_payment(
+    payment_request: PaymentRequest,
+    user: User = Depends(get_current_user)
+):
+    """Process MTN Mobile Money payment using sandbox API"""
+    try:
+        # Get access token
+        access_token = await token_manager.get_access_token()
+        if not access_token:
+            raise HTTPException(status_code=500, detail="Failed to authenticate with MTN MoMo API")
+        
+        # Generate reference ID
+        reference_id = str(uuid.uuid4())
+        
+        # Prepare request payload
+        payload = {
+            "amount": payment_request.amount,
+            "currency": payment_request.currency,
+            "externalId": payment_request.external_id,
+            "payer": {
+                "partyIdType": "MSISDN",
+                "partyId": payment_request.phone
+            },
+            "payerMessage": payment_request.payer_message,
+            "payeeNote": payment_request.payee_note
+        }
+        
+        # Prepare headers
+        headers = {
+            'Authorization': f'Bearer {access_token}',
+            'X-Reference-Id': reference_id,
+            'X-Target-Environment': mtn_config.target_environment,
+            'Ocp-Apim-Subscription-Key': mtn_config.subscription_key,
+            'Content-Type': 'application/json'
+        }
+        
+        if mtn_config.callback_url:
+            headers['X-Callback-Url'] = mtn_config.callback_url
+        
+        # Create payment record in database
+        payment_data = {
+            "id": str(uuid.uuid4()),
+            "user_id": user.id,
+            "amount": float(payment_request.amount),
+            "currency": payment_request.currency,
+            "method": "mtn_momo",
+            "status": "pending",
+            "reference_id": reference_id,
+            "external_id": payment_request.external_id,
+            "phone": payment_request.phone,
+            "created_at": datetime.now(timezone.utc)
+        }
+        
+        # Send request to MTN MoMo API
+        import requests
+        response = requests.post(
+            f"{mtn_config.base_url}/collection/v1_0/requesttopay",
+            json=payload,
+            headers=headers,
+            timeout=30
+        )
+        
+        if response.status_code == 202:
+            # Payment request accepted
+            await db.payments.insert_one(payment_data)
+            
+            return PaymentResponse(
+                success=True,
+                payment_id=payment_data["id"],
+                reference_id=reference_id,
+                status="pending",
+                message="Payment request sent to customer's mobile phone"
+            )
+        else:
+            logger.error(f"MTN MoMo payment request failed: {response.status_code} - {response.text}")
+            raise HTTPException(
+                status_code=400, 
+                detail=f"Payment request failed: {response.text}"
+            )
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"MTN MoMo payment error: {e}")
+        raise HTTPException(status_code=500, detail="Payment processing failed")
+
+@api_router.get("/payments/mtn-momo/status/{reference_id}")
+async def check_mtn_momo_payment_status(
+    reference_id: str,
+    user: User = Depends(get_current_user)
+):
+    """Check MTN Mobile Money payment status"""
+    try:
+        # Get access token
+        access_token = await token_manager.get_access_token()
+        if not access_token:
+            raise HTTPException(status_code=500, detail="Failed to authenticate with MTN MoMo API")
+        
+        # Prepare headers
+        headers = {
+            'Authorization': f'Bearer {access_token}',
+            'X-Target-Environment': mtn_config.target_environment,
+            'Ocp-Apim-Subscription-Key': mtn_config.subscription_key
+        }
+        
+        # Check status with MTN MoMo API
+        import requests
+        response = requests.get(
+            f"{mtn_config.base_url}/collection/v1_0/requesttopay/{reference_id}",
+            headers=headers,
+            timeout=30
+        )
+        
+        if response.status_code == 200:
+            status_data = response.json()
+            
+            # Update local payment record
+            await db.payments.update_one(
+                {"reference_id": reference_id},
+                {
+                    "$set": {
+                        "status": status_data["status"].lower(),
+                        "transaction_id": status_data.get("financialTransactionId"),
+                        "updated_at": datetime.now(timezone.utc)
+                    }
+                }
+            )
+            
+            return {
+                "success": True,
+                "reference_id": reference_id,
+                "status": status_data["status"].lower(),
+                "amount": status_data["amount"],
+                "currency": status_data["currency"],
+                "financial_transaction_id": status_data.get("financialTransactionId"),
+                "reason": status_data.get("reason")
+            }
+        else:
+            logger.error(f"MTN MoMo status check failed: {response.status_code} - {response.text}")
+            raise HTTPException(
+                status_code=400,
+                detail=f"Status check failed: {response.text}"
+            )
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"MTN MoMo status check error: {e}")
+        raise HTTPException(status_code=500, detail="Status check failed")
+
+@api_router.post("/payments/mtn-momo/callback")
+async def mtn_momo_callback(request: Request):
+    """Handle MTN Mobile Money callback notifications"""
+    try:
+        callback_data = await request.json()
+        
+        # Extract reference ID and status
+        reference_id = callback_data.get("referenceId")
+        status = callback_data.get("status", "").lower()
+        
+        if not reference_id:
+            raise HTTPException(status_code=400, detail="Missing reference ID in callback")
+        
+        # Update payment record
+        update_data = {
+            "status": status,
+            "updated_at": datetime.now(timezone.utc)
+        }
+        
+        if callback_data.get("financialTransactionId"):
+            update_data["transaction_id"] = callback_data["financialTransactionId"]
+        
+        if callback_data.get("reason"):
+            update_data["failure_reason"] = callback_data["reason"]
+        
+        result = await db.payments.update_one(
+            {"reference_id": reference_id},
+            {"$set": update_data}
+        )
+        
+        if result.matched_count > 0:
+            logger.info(f"MTN MoMo callback processed for reference {reference_id}: {status}")
+            return {"success": True, "message": "Callback processed"}
+        else:
+            logger.warning(f"No payment found for reference ID: {reference_id}")
+            return {"success": False, "message": "Payment not found"}
+            
+    except Exception as e:
+        logger.error(f"MTN MoMo callback error: {e}")
+        raise HTTPException(status_code=500, detail="Callback processing failed")
+
+@api_router.get("/payments/{payment_id}/status")
+async def get_payment_status(
+    payment_id: str,
+    current_user: User = Depends(get_current_user)
+):
+    """Get payment status"""
+    payment_doc = await db.payments.find_one({"id": payment_id, "user_id": current_user.id})
+    if not payment_doc:
+        raise HTTPException(status_code=404, detail="Payment not found")
+    
+    if payment_doc["method"] == "mtn_momo" and payment_doc["transaction_id"]:
+        try:
+            mtn_status = await mtn_client.get_payment_status(payment_doc["transaction_id"])
+            
+            # Update local status based on MTN response
+            new_status = "pending"
+            if mtn_status["status"] == "SUCCESSFUL":
+                new_status = "successful"
+            elif mtn_status["status"] in ["FAILED", "REJECTED"]:
+                new_status = "failed"
+            
+            if new_status != payment_doc["status"]:
+                await db.payments.update_one(
+                    {"id": payment_id},
+                    {"$set": {"status": new_status}}
+                )
+            
+            return {
+                "payment_id": payment_id,
+                "status": new_status,
+                "amount": payment_doc["amount"],
+                "mtn_status": mtn_status
+            }
+            
+        except Exception as e:
+            return {
+                "payment_id": payment_id,
+                "status": payment_doc["status"],
+                "error": str(e)
+            }
+    
+    return serialize_doc(payment_doc)
+
+# Review Routes
+@api_router.get("/reviews", response_model=List[Dict[str, Any]])
+async def get_reviews(
+    property_id: Optional[str] = None,
+    service_id: Optional[str] = None,
+    skip: int = 0,
+    limit: int = 20
+):
+    """Get reviews"""
+    filters = {}
+    if property_id:
+        filters["property_id"] = property_id
+    if service_id:
+        filters["service_id"] = service_id
+    
+    reviews = await db.reviews.find(filters).skip(skip).limit(limit).to_list(1000)
+    return [serialize_doc(review) for review in reviews]
+
+@api_router.post("/reviews", response_model=Dict[str, Any])
+async def create_review(
+    review_data: ReviewCreate,
+    current_user: User = Depends(get_current_user)
+):
+    """Create new review"""
+    review_doc = review_data.model_dump()
+    review_doc["id"] = str(uuid.uuid4())
+    review_doc["reviewer_id"] = current_user.id
+    review_doc["created_at"] = datetime.now(timezone.utc)
+    
+    await db.reviews.insert_one(review_doc)
+    return serialize_doc(review_doc)
+
+# Message Routes
+@api_router.get("/messages", response_model=List[Dict[str, Any]])
+async def get_messages(current_user: User = Depends(get_current_user)):
+    """Get user's messages"""
+    messages = await db.messages.find({
+        "$or": [
+            {"sender_id": current_user.id},
+            {"receiver_id": current_user.id}
+        ]
+    }).sort("timestamp", -1).to_list(1000)
+    
+    return [serialize_doc(msg) for msg in messages]
+
+@api_router.post("/messages", response_model=Dict[str, Any])
+async def send_message(
+    message_data: MessageCreate,
+    current_user: User = Depends(get_current_user)
+):
+    """Send message"""
+    message_doc = message_data.model_dump()
+    message_doc["id"] = str(uuid.uuid4())
+    message_doc["sender_id"] = current_user.id
+    message_doc["timestamp"] = datetime.now(timezone.utc)
+    
+    await db.messages.insert_one(message_doc)
+    return serialize_doc(message_doc)
+
+# Sample data initialization
+async def init_sample_data():
+    """Initialize sample services for demonstration"""
+    # Sample properties
+    sample_properties = [
+        {
+            "id": str(uuid.uuid4()),
+            "owner_id": "sample-owner-1",
+            "title": "Modern 3-Bedroom Apartment in Douala",
+            "description": "Beautiful modern apartment with city views, fully furnished, close to shopping centers and business district. Features include air conditioning, modern kitchen, and secure parking.",
+            "price": 180000,
+            "currency": "XAF",
+            "location": "Akwa, Douala, Littoral",
+            "property_type": "apartment",
+            "listing_type": "rent",
+            "bedrooms": 3,
+            "bathrooms": 2,
+            "area_sqm": 120,
+            "images": ["https://images.unsplash.com/photo-1560448204-e02f11c3d0e2", "https://images.unsplash.com/photo-1571055107559-3e67626fa8be"],
+            "amenities": ["Air Conditioning", "Furnished", "Parking", "Security", "Internet"],
+            "available": True,
+            "verified": True,
+            "created_at": datetime.now(timezone.utc)
+        },
+        {
+            "id": str(uuid.uuid4()),
+            "owner_id": "sample-owner-2", 
+            "title": "Spacious Family House for Sale",
+            "description": "Large family house with garden, perfect for growing families. Located in quiet residential area with good access to schools and healthcare facilities.",
+            "price": 45000000,
+            "currency": "XAF",
+            "location": "Bastos, Yaoundé, Centre",
+            "property_type": "house",
+            "listing_type": "sale",
+            "bedrooms": 4,
+            "bathrooms": 3,
+            "area_sqm": 250,
+            "images": ["https://images.unsplash.com/photo-1580587771525-78b9dba3b914", "https://images.unsplash.com/photo-1605146769289-440113cc3d00"],
+            "amenities": ["Garden", "Garage", "Modern Kitchen", "Study Room", "Guest Room"],
+            "available": True,
+            "verified": True,
+            "created_at": datetime.now(timezone.utc)
+        },
+        {
+            "id": str(uuid.uuid4()),
+            "owner_id": "sample-owner-3",
+            "title": "Commercial Office Space",
+            "description": "Prime commercial office space in business district, suitable for companies and startups. Modern facilities with meeting rooms and parking.",
+            "price": 350000,
+            "currency": "XAF", 
+            "location": "Bonanjo, Douala, Littoral",
+            "property_type": "commercial",
+            "listing_type": "rent",
+            "bedrooms": 0,
+            "bathrooms": 2,
+            "area_sqm": 180,
+            "images": ["https://images.unsplash.com/photo-1497366216548-37526070297c", "https://images.unsplash.com/photo-1497366811353-6870744d04b2"],
+            "amenities": ["Meeting Rooms", "Parking", "Internet", "Reception Area", "Security"],
+            "available": True,
+            "verified": True,
+            "created_at": datetime.now(timezone.utc)
+        },
+        {
+            "id": str(uuid.uuid4()),
+            "owner_id": "sample-owner-4",
+            "title": "Cozy Studio Apartment",
+            "description": "Perfect studio for students or young professionals. Located near university campus with easy access to public transportation.",
+            "price": 85000,
+            "currency": "XAF",
+            "location": "Ngoa-Ekelle, Yaoundé, Centre", 
+            "property_type": "apartment",
+            "listing_type": "rent",
+            "bedrooms": 1,
+            "bathrooms": 1,
+            "area_sqm": 45,
+            "images": ["https://images.unsplash.com/photo-1522708323590-d24dbb6b0267", "https://images.unsplash.com/photo-1560448075-bb485b067938"],
+            "amenities": ["Furnished", "Internet", "Near Campus", "Public Transport"],
+            "available": True,
+            "verified": True,
+            "created_at": datetime.now(timezone.utc)
+        }
+    ]
+
+    sample_services = [
+        {
+            "id": str(uuid.uuid4()),
+            "provider_id": "sample-provider-1",
+            "category": "plumbing",
+            "title": "Expert Plumbing Services",
+            "description": "Professional plumbing installation, repair, and maintenance services for residential and commercial properties.",
+            "price_range": "15,000 - 75,000 XAF",
+            "location": "Douala, Littoral",
+            "images": ["https://images.unsplash.com/photo-1621905252507-b35492cc74b4"],
+            "available": True,
+            "verified": True,
+            "created_at": datetime.now(timezone.utc)
+        },
+        {
+            "id": str(uuid.uuid4()),
+            "provider_id": "sample-provider-2", 
+            "category": "electrical",
+            "title": "Licensed Electrician Services",
+            "description": "Certified electrical installations, repairs, and safety inspections for homes and businesses.",
+            "price_range": "20,000 - 100,000 XAF",
+            "location": "Yaoundé, Centre",
+            "images": ["https://images.unsplash.com/photo-1621905251918-48416bd8575a"],
+            "available": True,
+            "verified": True,
+            "created_at": datetime.now(timezone.utc)
+        },
+        {
+            "id": str(uuid.uuid4()),
+            "provider_id": "sample-provider-3",
+            "category": "construction",
+            "title": "Premium Construction Company",
+            "description": "Full-service construction company specializing in residential and commercial building projects.",
+            "price_range": "Contact for quote",
+            "location": "Bafoussam, Ouest",
+            "images": ["https://images.unsplash.com/photo-1504307651254-35680f356dfd"],
+            "available": True,
+            "verified": True,
+            "created_at": datetime.now(timezone.utc)
+        },
+        {
+            "id": str(uuid.uuid4()),
+            "provider_id": "sample-provider-4",
+            "category": "interior_design",
+            "title": "Modern Interior Design Studio", 
+            "description": "Creative interior design solutions for homes, offices, and commercial spaces with modern aesthetics.",
+            "price_range": "50,000 - 500,000 XAF",
+            "location": "Douala, Littoral",
+            "images": ["https://images.unsplash.com/photo-1586023492125-27b2c045efd7"],
+            "available": True,
+            "verified": True,
+            "created_at": datetime.now(timezone.utc)
+        },
+        {
+            "id": str(uuid.uuid4()),
+            "provider_id": "sample-provider-5",
+            "category": "painting",
+            "title": "Professional Painting Services",
+            "description": "High-quality interior and exterior painting services for residential and commercial properties.",
+            "price_range": "25,000 - 150,000 XAF",
+            "location": "Bamenda, Nord-Ouest",
+            "images": ["https://images.unsplash.com/photo-1562259949-e8e7689d7828"],
+            "available": True,
+            "verified": True,
+            "created_at": datetime.now(timezone.utc)
+        },
+        {
+            "id": str(uuid.uuid4()),
+            "provider_id": "sample-provider-6",
+            "category": "carpentry",
+            "title": "Custom Carpentry & Woodwork",
+            "description": "Skilled carpentry services including custom furniture, cabinets, and wooden structures.",
+            "price_range": "30,000 - 200,000 XAF",
+            "location": "Garoua, Nord",
+            "images": ["https://images.unsplash.com/photo-1503387762-592deb58ef4e"],
+            "available": True,
+            "verified": True,
+            "created_at": datetime.now(timezone.utc)
+        }
+    ]
+    
+    # Check if properties already exist
+    existing_properties = await db.properties.count_documents({})
+    if existing_properties == 0:
+        await db.properties.insert_many(sample_properties)
+        logger.info(f"Inserted {len(sample_properties)} sample properties")
+    
+    # Check if services already exist
+    existing_services = await db.services.count_documents({})
+    if existing_services == 0:
+        await db.services.insert_many(sample_services)
+        logger.info(f"Inserted {len(sample_services)} sample services")
+
+# Image Upload Helper Functions
+async def create_thumbnail(image_path: Path, thumbnail_path: Path):
+    """Create a thumbnail from an image"""
+    try:
+        with Image.open(image_path) as img:
+            img.thumbnail(THUMBNAIL_SIZE, Image.Resampling.LANCZOS)
+            img.save(thumbnail_path, optimize=True, quality=85)
+        return True
+    except Exception as e:
+        logger.error(f"Error creating thumbnail: {e}")
+        return False
+
+def validate_image_file(file: UploadFile) -> tuple[bool, str]:
+    """Validate uploaded image file"""
+    # Check file size
+    if file.size and file.size > MAX_FILE_SIZE:
+        return False, f"File size {file.size / 1024 / 1024:.1f}MB exceeds {MAX_FILE_SIZE / 1024 / 1024}MB limit"
+    
+    # Check mime type
+    if file.content_type not in ALLOWED_IMAGE_TYPES:
+        return False, f"File type {file.content_type} not supported. Allowed: {', '.join(ALLOWED_IMAGE_TYPES)}"
+    
+    return True, ""
+
+# Image Upload Routes
+@api_router.post("/upload/images", response_model=Dict[str, Any])
+async def upload_images(
+    files: List[UploadFile] = File(...),
+    entity_type: str = Form(...),  # 'property', 'service', 'profile', 'chat'
+    entity_id: Optional[str] = Form(None),
+    user: User = Depends(get_current_user)
+):
+    """Upload multiple images with automatic thumbnail generation"""
+    logger.info(f"Image upload request from user {user.email} for {entity_type}")
+    try:
+        if len(files) > 10:  # Max 10 files at once
+            raise HTTPException(status_code=400, detail="Maximum 10 files allowed per upload")
+        
+        uploaded_images = []
+        
+        for file in files:
+            # Validate file
+            is_valid, error_message = validate_image_file(file)
+            if not is_valid:
+                raise HTTPException(status_code=400, detail=f"{file.filename}: {error_message}")
+            
+            # Generate unique filename
+            file_ext = Path(file.filename).suffix.lower()
+            if not file_ext:
+                file_ext = mimetypes.guess_extension(file.content_type) or '.jpg'
+            
+            unique_filename = f"{uuid.uuid4()}{file_ext}"
+            
+            # Determine upload path based on entity type
+            entity_dir = UPLOAD_DIR / entity_type.lower()
+            entity_dir.mkdir(parents=True, exist_ok=True)  # Ensure directory exists
+            
+            file_path = entity_dir / unique_filename
+            thumbnail_path = UPLOAD_DIR / "thumbnails" / f"thumb_{unique_filename}"
+            
+            # Save original file
+            content = await file.read()
+            async with aiofiles.open(file_path, 'wb') as f:
+                await f.write(content)
+            
+            # Create thumbnail
+            await create_thumbnail(file_path, thumbnail_path)
+            
+            # Create image record
+            image_data = {
+                "id": str(uuid.uuid4()),
+                "filename": unique_filename,
+                "original_filename": file.filename,
+                "file_path": str(file_path.relative_to(ROOT_DIR)),
+                "thumbnail_path": str(thumbnail_path.relative_to(ROOT_DIR)),
+                "file_size": file.size or len(content),
+                "mime_type": file.content_type,
+                "uploaded_by": user.id,
+                "entity_type": entity_type.lower(),
+                "entity_id": entity_id,
+                "is_primary": False,
+                "created_at": datetime.now(timezone.utc)
+            }
+            
+            # Save to database
+            result = await db.images.insert_one(image_data)
+            image_data["_id"] = str(result.inserted_id)
+            
+            uploaded_images.append({
+                "id": image_data["id"],
+                "filename": image_data["filename"],
+                "original_filename": image_data["original_filename"],
+                "url": f"/uploads/{entity_type.lower()}/{unique_filename}",
+                "thumbnail_url": f"/uploads/thumbnails/thumb_{unique_filename}",
+                "file_size": image_data["file_size"],
+                "mime_type": image_data["mime_type"]
+            })
+        
+        return {
+            "success": True,
+            "message": f"Successfully uploaded {len(uploaded_images)} images",
+            "images": uploaded_images
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error uploading images: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Failed to upload images: {str(e)}")
+
+@api_router.get("/images/{entity_type}/{entity_id}", response_model=List[Dict[str, Any]])
+async def get_entity_images(entity_type: str, entity_id: str):
+    """Get all images for a specific entity"""
+    try:
+        images = await db.images.find({
+            "entity_type": entity_type.lower(),
+            "entity_id": entity_id
+        }).sort("created_at", 1).to_list(length=None)
+        
+        return [{
+            "id": img["id"],
+            "filename": img["filename"],
+            "original_filename": img["original_filename"],
+            "url": f"/uploads/{entity_type.lower()}/{img['filename']}",
+            "thumbnail_url": f"/uploads/thumbnails/thumb_{img['filename']}",
+            "is_primary": img.get("is_primary", False),
+            "alt_text": img.get("alt_text"),
+            "created_at": img["created_at"].isoformat()
+        } for img in images]
+        
+    except Exception as e:
+        logger.error(f"Error fetching images: {e}")
+        raise HTTPException(status_code=500, detail="Failed to fetch images")
+
+@api_router.put("/images/{image_id}/primary")
+async def set_primary_image(image_id: str, user: User = Depends(get_current_user)):
+    """Set an image as primary for its entity"""
+    try:
+        # Get the image
+        image = await db.images.find_one({"id": image_id})
+        if not image:
+            raise HTTPException(status_code=404, detail="Image not found")
+        
+        # Check ownership or admin
+        if image["uploaded_by"] != user.id and user.role != "admin":
+            raise HTTPException(status_code=403, detail="Not authorized")
+        
+        # Remove primary status from other images of the same entity
+        await db.images.update_many(
+            {
+                "entity_type": image["entity_type"],
+                "entity_id": image["entity_id"]
+            },
+            {"$set": {"is_primary": False}}
+        )
+        
+        # Set this image as primary
+        await db.images.update_one(
+            {"id": image_id},
+            {"$set": {"is_primary": True}}
+        )
+        
+        return {"success": True, "message": "Primary image updated"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error setting primary image: {e}")
+        raise HTTPException(status_code=500, detail="Failed to update primary image")
+
+@api_router.delete("/images/{image_id}")
+async def delete_image(image_id: str, user: User = Depends(get_current_user)):
+    """Delete an uploaded image"""
+    try:
+        # Get the image
+        image = await db.images.find_one({"id": image_id})
+        if not image:
+            raise HTTPException(status_code=404, detail="Image not found")
+        
+        # Check ownership or admin
+        if image["uploaded_by"] != user.id and user.role != "admin":
+            raise HTTPException(status_code=403, detail="Not authorized")
+        
+        # Delete physical files
+        file_path = ROOT_DIR / image["file_path"]
+        thumbnail_path = ROOT_DIR / image.get("thumbnail_path", "")
+        
+        try:
+            if file_path.exists():
+                file_path.unlink()
+            if thumbnail_path.exists():
+                thumbnail_path.unlink()
+        except Exception as e:
+            logger.warning(f"Error deleting physical files: {e}")
+        
+        # Delete database record
+        await db.images.delete_one({"id": image_id})
+        
+        return {"success": True, "message": "Image deleted successfully"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting image: {e}")
+        raise HTTPException(status_code=500, detail="Failed to delete image")
+
+# Utility Routes
+@api_router.get("/")
+async def root():
+    """API root"""
+    return {"message": "Habitere API - Real Estate and Home Services Platform"}
+
+@api_router.get("/health")
+async def health_check():
+    """Health check"""
+    return {"status": "healthy", "timestamp": datetime.now(timezone.utc).isoformat()}
+
+@api_router.post("/init-sample-data")
+async def initialize_sample_data():
+    """Initialize sample data for demonstration"""
+    await init_sample_data()
+    return {"message": "Sample data initialized"}
+
+# Include router
+app.include_router(api_router)
+
+# CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Configure appropriately for production
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Logging configuration
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
+
+@app.on_event("shutdown")
+async def shutdown_db_client():
+    client.close()
