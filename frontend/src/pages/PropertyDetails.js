@@ -29,6 +29,7 @@ const PropertyDetails = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [property, setProperty] = useState(null);
+  const [owner, setOwner] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
