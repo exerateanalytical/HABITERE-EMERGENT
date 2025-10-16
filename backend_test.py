@@ -5,9 +5,10 @@ import sys
 import json
 import os
 import io
-from datetime import datetime
-from typing import Dict, Any
+from datetime import datetime, timedelta
+from typing import Dict, Any, Optional
 from PIL import Image
+import uuid
 
 class HabitereAPITester:
     def __init__(self, base_url="https://property-hub-136.preview.emergentagent.com"):
@@ -21,6 +22,19 @@ class HabitereAPITester:
         self.tests_run = 0
         self.tests_passed = 0
         self.test_results = []
+        
+        # Authentication tokens
+        self.admin_token = None
+        self.client_token = None
+        self.owner_token = None
+        self.provider_token = None
+        
+        # Test data IDs
+        self.test_property_id = None
+        self.test_service_id = None
+        self.test_booking_id = None
+        self.test_review_id = None
+        self.test_message_id = None
 
     def log_test(self, test_name: str, success: bool, details: str = "", response_data: Any = None):
         """Log test result"""
