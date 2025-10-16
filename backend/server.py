@@ -1452,6 +1452,7 @@ async def upload_images(
     user: User = Depends(get_current_user)
 ):
     """Upload multiple images with automatic thumbnail generation"""
+    logger.info(f"Image upload request from user {user.email} for {entity_type}")
     try:
         if len(files) > 10:  # Max 10 files at once
             raise HTTPException(status_code=400, detail="Maximum 10 files allowed per upload")
