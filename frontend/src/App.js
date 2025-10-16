@@ -18,6 +18,14 @@ import BookingPage from './pages/BookingPage';
 import Messages from './pages/Messages';
 import Profile from './pages/Profile';
 
+// Content Pages
+import About from './pages/About';
+import Contact from './pages/Contact';
+import FAQ from './pages/FAQ';
+import Privacy from './pages/Privacy';
+import Terms from './pages/Terms';
+import HelpCenter from './pages/HelpCenter';
+
 // New Auth Pages
 import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
