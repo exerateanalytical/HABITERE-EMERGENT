@@ -211,6 +211,28 @@ class ImageUpload(BaseModel):
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 # Request Models
+class UserRegister(BaseModel):
+    email: str
+    name: str
+    password: str
+
+class UserLogin(BaseModel):
+    email: str
+    password: str
+
+class EmailVerification(BaseModel):
+    token: str
+
+class PasswordResetRequest(BaseModel):
+    email: str
+
+class PasswordReset(BaseModel):
+    token: str
+    new_password: str
+
+class RoleSelection(BaseModel):
+    role: str
+
 class UserCreate(BaseModel):
     email: str
     name: str
