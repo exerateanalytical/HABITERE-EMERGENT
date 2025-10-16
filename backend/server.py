@@ -23,6 +23,9 @@ import requests
 from google.oauth2 import id_token
 from google.auth.transport import requests as google_requests
 from urllib.parse import urlencode
+import bcrypt
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
 
 # Load environment variables
 ROOT_DIR = Path(__file__).parent
@@ -40,6 +43,12 @@ GOOGLE_REDIRECT_URI = os.environ.get('GOOGLE_REDIRECT_URI')
 GOOGLE_AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth"
 GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token"
 GOOGLE_USER_INFO_URL = "https://www.googleapis.com/oauth2/v2/userinfo"
+
+# SendGrid Email configuration
+SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY')
+SENDGRID_FROM_EMAIL = os.environ.get('SENDGRID_FROM_EMAIL', 'noreply@habitere.com')
+SENDGRID_FROM_NAME = os.environ.get('SENDGRID_FROM_NAME', 'Habitere')
+FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:3000')
 
 # Image upload configuration
 UPLOAD_DIR = ROOT_DIR / "uploads"
