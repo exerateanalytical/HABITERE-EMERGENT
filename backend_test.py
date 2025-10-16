@@ -381,14 +381,14 @@ class HabitereAPITester:
             register_response = self.session.post(f"{self.api_url}/auth/register", json=register_data)
             
             if register_response.status_code == 200:
-                print("   📝 Admin user registered successfully")
-                return True
+                print("   📝 Admin user registered successfully (needs email verification)")
+                return "registered"
             elif register_response.status_code == 400:
                 # User might already exist
                 error_data = register_response.json()
                 if "already registered" in error_data.get('detail', ''):
                     print("   ✅ Admin user already exists")
-                    return True
+                    return "exists"
             
             print(f"   ❌ Failed to register admin user: {register_response.status_code}")
             return False
