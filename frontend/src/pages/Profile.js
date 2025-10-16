@@ -376,12 +376,12 @@ const Profile = () => {
                   
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Properties Listed</span>
-                    <span className="font-semibold">0</span>
+                    <span className="font-semibold">{myProperties.length}</span>
                   </div>
                   
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Services Offered</span>
-                    <span className="font-semibold">0</span>
+                    <span className="font-semibold">{myServices.length}</span>
                   </div>
                   
                   <div className="flex justify-between items-center">
