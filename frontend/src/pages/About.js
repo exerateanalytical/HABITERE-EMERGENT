@@ -37,8 +37,29 @@ const About = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <SEOHead 
-        title="About Habitere - Leading Real Estate Platform in Cameroon"
-        description="Learn about Habitere's mission to revolutionize real estate in Cameroon. Discover how we connect property seekers with their dream homes."
+        title="About Habitere - Leading Real Estate Platform in Cameroon | Trusted Property Services"
+        description="Habitere is Cameroon's premier real estate platform connecting property seekers with verified homes and professional services. Over 1,000 properties, 5,000+ happy users across Douala, Yaoundé, and beyond."
+        keywords="about habitere, real estate cameroon, property platform cameroon, douala real estate, yaoundé properties, cameroon housing, verified properties cameroon"
+        focusKeyword="about habitere cameroon"
+        canonicalUrl="https://habitere.com/about"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          "name": "Habitere",
+          "url": "https://habitere.com",
+          "logo": "https://habitere.com/logo.png",
+          "description": "Cameroon's leading real estate and home services platform",
+          "address": {
+            "@type": "PostalAddress",
+            "addressCountry": "CM",
+            "addressLocality": "Douala"
+          },
+          "sameAs": [
+            "https://facebook.com/habitere",
+            "https://twitter.com/habitere",
+            "https://instagram.com/habitere"
+          ]
+        }}
       />
 
       {/* Hero Section */}
