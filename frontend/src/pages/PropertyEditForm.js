@@ -159,6 +159,9 @@ const PropertyEditForm = () => {
         console.log('Images uploaded:', imageUrls);
       }
 
+      // Combine existing images with newly uploaded ones
+      const allImages = [...existingImages, ...imageUrls];
+
       const propertyData = {
         title: formData.title,
         description: formData.description,
@@ -170,17 +173,17 @@ const PropertyEditForm = () => {
         bedrooms: parseInt(formData.bedrooms) || 0,
         bathrooms: parseInt(formData.bathrooms) || 0,
         area_sqm: parseFloat(formData.area_sqm) || 0,
-        images: imageUrls,
+        images: allImages,
         amenities: []
       };
 
-      console.log('Creating property with data:', propertyData);
-      const response = await axios.post(`${API}/properties`, propertyData);
-      console.log('Property created successfully:', response.data);
+      console.log('Updating property with data:', propertyData);
+      const response = await axios.put(`${API}/properties/${id}`, propertyData);
+      console.log('Property updated successfully:', response.data);
       
       if (response.data) {
-        alert(`Property created successfully! ID: ${response.data.id}`);
-        navigate(`/properties/${response.data.id}`);
+        alert(`Property updated successfully!`);
+        navigate(`/properties/${id}`);
       }
     } catch (err) {
       console.error('Error creating property:', err);
