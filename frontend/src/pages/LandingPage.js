@@ -334,11 +334,11 @@ const LandingPage = () => {
             </div>
             
             {/* Quick filters - Mobile optimized */}
-            <div className="mt-6 flex flex-wrap gap-2 sm:gap-3 justify-center">
-              <span className="text-sm font-medium text-gray-600 leading-loose">Popular:</span>
-              <button className="px-4 py-2 bg-white hover:bg-blue-50 active:bg-blue-100 border-2 border-gray-200 hover:border-blue-300 active:border-blue-400 rounded-full text-sm font-medium text-gray-700 hover:text-blue-700 active:text-blue-800 transition-all duration-200 touch-manipulation min-h-[40px]">Houses in Douala</button>
-              <button className="px-4 py-2 bg-white hover:bg-blue-50 active:bg-blue-100 border-2 border-gray-200 hover:border-blue-300 active:border-blue-400 rounded-full text-sm font-medium text-gray-700 hover:text-blue-700 active:text-blue-800 transition-all duration-200 touch-manipulation min-h-[40px]">Apartments</button>
-              <button className="px-4 py-2 bg-white hover:bg-blue-50 active:bg-blue-100 border-2 border-gray-200 hover:border-blue-300 active:border-blue-400 rounded-full text-sm font-medium text-gray-700 hover:text-blue-700 active:text-blue-800 transition-all duration-200 touch-manipulation min-h-[40px]">Land for Sale</button>
+            <div className="mt-6 flex flex-wrap gap-2 sm:gap-3 justify-center items-center">
+              <span className="text-sm font-medium text-gray-600">Popular:</span>
+              <button className="px-5 py-3 bg-white hover:bg-blue-50 active:bg-blue-100 border-2 border-gray-200 hover:border-blue-300 active:border-blue-400 rounded-full text-sm sm:text-base font-semibold text-gray-700 hover:text-blue-700 active:text-blue-800 transition-all duration-200 touch-manipulation min-h-[44px] shadow-sm hover:shadow-md">Houses in Douala</button>
+              <button className="px-5 py-3 bg-white hover:bg-blue-50 active:bg-blue-100 border-2 border-gray-200 hover:border-blue-300 active:border-blue-400 rounded-full text-sm sm:text-base font-semibold text-gray-700 hover:text-blue-700 active:text-blue-800 transition-all duration-200 touch-manipulation min-h-[44px] shadow-sm hover:shadow-md">Apartments</button>
+              <button className="px-5 py-3 bg-white hover:bg-blue-50 active:bg-blue-100 border-2 border-gray-200 hover:border-blue-300 active:border-blue-400 rounded-full text-sm sm:text-base font-semibold text-gray-700 hover:text-blue-700 active:text-blue-800 transition-all duration-200 touch-manipulation min-h-[44px] shadow-sm hover:shadow-md">Land for Sale</button>
             </div>
           </div>
         </div>
