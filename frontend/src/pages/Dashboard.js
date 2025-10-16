@@ -164,13 +164,13 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-50" data-testid="dashboard">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6 md:py-8">
         {/* Welcome Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">
             Welcome back, {user?.name}!
           </h1>
-          <p className="text-gray-600 mt-1 capitalize">
+          <p className="text-sm sm:text-base text-gray-600 mt-1 capitalize">
             {user?.role?.replace('_', ' ')} Dashboard
           </p>
         </div>
