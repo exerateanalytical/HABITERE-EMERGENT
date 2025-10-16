@@ -538,6 +538,7 @@ const PropertyEditForm = () => {
               </button>
             </div>
           </form>
+            </>
           )}
         </div>
       </div>
