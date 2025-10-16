@@ -943,8 +943,8 @@ async def google_callback(response: Response, code: str):
             value=session_token,
             max_age=7 * 24 * 60 * 60,
             httponly=True,
-            secure=True,  # Production with HTTPS
-            samesite="None",  # Required for cross-site cookies
+            secure=COOKIE_SECURE,  # Environment-aware
+            samesite=COOKIE_SAMESITE,  # Environment-aware
             path="/"
         )
         
