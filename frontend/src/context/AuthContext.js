@@ -56,12 +56,13 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Email/Password Registration
-  const register = async (email, password, name) => {
+  const register = async (email, password, name, phone) => {
     try {
       const response = await axios.post(`${API}/auth/register`, {
         email,
         password,
-        name
+        name,
+        phone
       }, { withCredentials: true });
       
       return { 
