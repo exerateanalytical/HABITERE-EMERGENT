@@ -1008,8 +1008,8 @@ async def logout(
     response.delete_cookie(
         key="session_token",
         path="/",
-        secure=True,  # Production with HTTPS
-        samesite="None"  # Required for cross-site cookies
+        secure=COOKIE_SECURE,  # Environment-aware
+        samesite=COOKIE_SAMESITE  # Environment-aware
     )
     
     return {"message": "Logged out successfully"}
