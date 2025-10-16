@@ -26,8 +26,7 @@ const Navbar = () => {
   };
 
   const handleLogin = () => {
-    const redirectUrl = user ? '/dashboard' : `${window.location.origin}/auth/callback`;
-    window.location.href = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(redirectUrl)}`;
+    navigate('/auth/login');
   };
 
   return (
