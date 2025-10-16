@@ -96,23 +96,20 @@ function AppContent() {
           } 
         />
         
-        <Route path="/auth/callback" element={<AuthCallback />} />
+        {/* Auth Routes */}
+        <Route path="/auth/login" element={<LoginPage />} />
+        <Route path="/auth/register" element={<RegisterPage />} />
+        <Route path="/auth/verify-email" element={<VerifyEmailPage />} />
+        <Route path="/auth/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/auth/reset-password" element={<ResetPasswordPage />} />
         
-        {/* Authentication Routes */}
+        {/* Role Selection (Protected but allows users without roles) */}
         <Route 
-          path="/login" 
+          path="/choose-role" 
           element={
-            <PublicRoute>
-              <LoginPage />
-            </PublicRoute>
-          } 
-        />
-        <Route 
-          path="/register" 
-          element={
-            <PublicRoute>
-              <RegisterPage />
-            </PublicRoute>
+            <ProtectedRoute>
+              <RoleSelectionPage />
+            </ProtectedRoute>
           } 
         />
         
