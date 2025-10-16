@@ -19,6 +19,9 @@ import aiofiles
 from PIL import Image
 import mimetypes
 import requests
+from google.oauth2 import id_token
+from google.auth.transport import requests as google_requests
+from urllib.parse import urlencode
 
 # Load environment variables
 ROOT_DIR = Path(__file__).parent
