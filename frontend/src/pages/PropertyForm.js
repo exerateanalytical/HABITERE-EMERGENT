@@ -93,9 +93,12 @@ const PropertyForm = () => {
     e.preventDefault();
     
     if (!user) {
+      console.log('No user found, redirecting to login');
       navigate('/login');
       return;
     }
+
+    console.log('User authenticated:', user.email, 'Role:', user.role);
 
     try {
       setLoading(true);
@@ -104,7 +107,9 @@ const PropertyForm = () => {
       // Upload images first if any
       let imageUrls = [];
       if (selectedFiles.length > 0) {
+        console.log(`Uploading ${selectedFiles.length} images...`);
         imageUrls = await uploadImages();
+        console.log('Images uploaded:', imageUrls);
       }
 
       const propertyData = {
@@ -119,14 +124,21 @@ const PropertyForm = () => {
         verified: false
       };
 
+      console.log('Creating property with data:', propertyData);
       const response = await axios.post(`${API}/properties`, propertyData);
+      console.log('Property created successfully:', response.data);
       
       if (response.data) {
+        alert(`Property created successfully! ID: ${response.data.id}`);
         navigate(`/properties/${response.data.id}`);
       }
     } catch (err) {
       console.error('Error creating property:', err);
-      setError(err.response?.data?.detail || 'Failed to create property. Please try again.');
+      console.error('Error response:', err.response?.data);
+      console.error('Error status:', err.response?.status);
+      const errorMessage = err.response?.data?.detail || err.message || 'Failed to create property. Please try again.';
+      setError(errorMessage);
+      alert(`Error: ${errorMessage}`);
     } finally {
       setLoading(false);
     }
