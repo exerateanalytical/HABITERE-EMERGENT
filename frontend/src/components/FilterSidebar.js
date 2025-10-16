@@ -374,36 +374,102 @@ const FilterSidebar = ({
             </div>
           </FilterSection>
 
-          {/* Property Type or Service Category */}
-          <FilterSection
-            title={type === 'properties' ? 'Property Type' : 'Service Category'}
-            isExpanded={expandedSections.type}
-            onToggle={() => toggleSection('type')}
-          >
-            <div className="space-y-2">
-              {(type === 'properties' ? propertyTypes : serviceCategories).map((item) => (
-                <label key={item.value} className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors duration-200">
-                  <div className="flex items-center space-x-3">
+          {/* Property Sectors (Properties only) */}
+          {type === 'properties' && (
+            <FilterSection
+              title="Property Sectors"
+              isExpanded={expandedSections.sector}
+              onToggle={() => toggleSection('sector')}
+            >
+              <div className="space-y-2">
+                {PROPERTY_CATEGORIES.map((sector) => (
+                  <label key={sector.sector} className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors duration-200">
                     <input
                       type="radio"
-                      name={type === 'properties' ? 'propertyType' : 'serviceCategory'}
-                      value={item.value}
-                      checked={filters[type === 'properties' ? 'propertyType' : 'serviceCategory'] === item.value}
-                      onChange={(e) => handleFilterChange(
-                        type === 'properties' ? 'propertyType' : 'serviceCategory',
-                        e.target.value
-                      )}
+                      name="property_sector"
+                      value={sector.sector}
+                      checked={filters.property_sector === sector.sector}
+                      onChange={(e) => {
+                        handleFilterChange('property_sector', e.target.value);
+                        handleFilterChange('property_category', ''); // Reset category
+                      }}
                       className="w-4 h-4 text-blue-600 focus:ring-blue-500"
                     />
-                    <span className="text-gray-700 font-medium text-sm">{item.label}</span>
-                  </div>
-                  <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-                    {item.count}
-                  </span>
-                </label>
-              ))}
-            </div>
-          </FilterSection>
+                    <span className="text-xl">{sector.icon}</span>
+                    <span className="text-gray-700 font-medium text-sm">{sector.sector}</span>
+                  </label>
+                ))}
+                {filters.property_sector && (
+                  <button
+                    onClick={() => {
+                      handleFilterChange('property_sector', '');
+                      handleFilterChange('property_category', '');
+                    }}
+                    className="text-xs text-blue-600 hover:text-blue-700 mt-2"
+                  >
+                    Clear sector
+                  </button>
+                )}
+              </div>
+            </FilterSection>
+          )}
+
+          {/* Property Categories (only if sector is selected) */}
+          {type === 'properties' && filters.property_sector && (
+            <FilterSection
+              title="Property Categories"
+              isExpanded={expandedSections.category}
+              onToggle={() => toggleSection('category')}
+            >
+              <div className="space-y-2 max-h-64 overflow-y-auto">
+                {PROPERTY_CATEGORIES
+                  .find(s => s.sector === filters.property_sector)
+                  ?.categories.map((category) => (
+                    <label key={category} className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors duration-200">
+                      <input
+                        type="radio"
+                        name="property_category"
+                        value={category}
+                        checked={filters.property_category === category}
+                        onChange={(e) => handleFilterChange('property_category', e.target.value)}
+                        className="w-4 h-4 text-blue-600 focus:ring-blue-500"
+                      />
+                      <span className="text-gray-700 text-sm">{category}</span>
+                    </label>
+                  ))}
+              </div>
+            </FilterSection>
+          )}
+
+          {/* Service Category (Services only) */}
+          {type === 'services' && (
+            <FilterSection
+              title="Service Category"
+              isExpanded={expandedSections.type}
+              onToggle={() => toggleSection('type')}
+            >
+              <div className="space-y-2">
+                {serviceCategories.map((item) => (
+                  <label key={item.value} className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors duration-200">
+                    <div className="flex items-center space-x-3">
+                      <input
+                        type="radio"
+                        name="serviceCategory"
+                        value={item.value}
+                        checked={filters.serviceCategory === item.value}
+                        onChange={(e) => handleFilterChange('serviceCategory', e.target.value)}
+                        className="w-4 h-4 text-blue-600 focus:ring-blue-500"
+                      />
+                      <span className="text-gray-700 font-medium text-sm">{item.label}</span>
+                    </div>
+                    <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                      {item.count}
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </FilterSection>
+          )}
 
           {/* Bedrooms & Bathrooms (Properties only) */}
           {type === 'properties' && (
