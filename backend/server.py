@@ -3295,12 +3295,12 @@ async def get_available_slots(property_id: str, date: str):
 # Include router
 app.include_router(api_router)
 
-# CORS middleware - Production Configuration
-# Allow all origins temporarily to debug CORS issue
+# CORS middleware - Production Configuration  
+# Proper CORS configuration to avoid duplicate headers
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # Allow all origins
-    allow_credentials=True,
+    allow_credentials=False,  # Must be False when using wildcard
     allow_methods=["*"],
     allow_headers=["*"],
     expose_headers=["*"]
