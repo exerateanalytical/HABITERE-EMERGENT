@@ -105,6 +105,10 @@ class User(BaseModel):
     company_name: Optional[str] = None
     bio: Optional[str] = None
     is_verified: bool = False
+    verification_status: str = "pending"  # pending, approved, rejected
+    verified_by: Optional[str] = None  # Admin user ID who verified
+    verified_at: Optional[datetime] = None
+    rejection_reason: Optional[str] = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class UserSession(BaseModel):
