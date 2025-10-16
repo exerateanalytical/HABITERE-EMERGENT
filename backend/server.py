@@ -660,8 +660,8 @@ async def verify_email(response: Response, verification: EmailVerification):
         value=session_token,
         max_age=7 * 24 * 60 * 60,
         httponly=True,
-        secure=False,  # Set to True in production with HTTPS
-        samesite="lax",  # Changed from "none" to "lax" for localhost
+        secure=True,  # Production with HTTPS
+        samesite="None",  # Required for cross-site cookies
         path="/"
     )
     
@@ -743,8 +743,8 @@ async def login_user(response: Response, user_login: UserLogin):
         value=session_token,
         max_age=7 * 24 * 60 * 60,
         httponly=True,
-        secure=False,  # Set to True in production with HTTPS
-        samesite="lax",  # Changed from "none" to "lax" for localhost
+        secure=True,  # Production with HTTPS
+        samesite="None",  # Required for cross-site cookies
         path="/"
     )
     
