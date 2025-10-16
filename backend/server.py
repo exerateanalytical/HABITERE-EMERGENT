@@ -192,7 +192,9 @@ class PropertyCreate(BaseModel):
     description: str
     price: float
     location: str
-    property_type: str
+    property_type: Optional[str] = None  # Keeping for backward compatibility
+    property_sector: Optional[str] = None  # New: Residential, Commercial, etc.
+    property_category: Optional[str] = None  # New: Specific category
     listing_type: str
     bedrooms: Optional[int] = 0
     bathrooms: Optional[int] = 0
