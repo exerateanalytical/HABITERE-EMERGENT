@@ -478,67 +478,78 @@ const LandingPage = () => {
             </p>
           </div>
 
-          {/* Mobile: Horizontal scroll, Desktop: Grid */}
-          <div className="md:hidden">
-            <div className="flex overflow-x-auto scrollbar-hide gap-4 pb-4 snap-x snap-mandatory touch-action-pan-x">
-              {testimonials.map((testimonial, index) => (
-                <div key={index} className="flex-none w-80 card hover-lift snap-start" data-testid={`testimonial-${index}`}>
-                  <div className="card-body p-4">
-                    <div className="flex items-center mb-3">
-                      {[...Array(testimonial.rating)].map((_, i) => (
-                        <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />
-                      ))}
-                    </div>
-                    
-                    <p className="text-sm text-gray-600 mb-4 italic leading-relaxed">
-                      "{testimonial.content}"
-                    </p>
-                    
-                    <div className="flex items-center">
-                      <img 
-                        src={testimonial.image}
-                        alt={testimonial.name}
-                        className="w-10 h-10 rounded-full object-cover mr-3"
-                      />
-                      <div>
-                        <h4 className="font-medium text-gray-900 text-sm">{testimonial.name}</h4>
-                        <p className="text-xs text-gray-600">{testimonial.role}, {testimonial.location}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="flex justify-center mt-4">
-              <div className="swipe-indicator" />
-            </div>
-          </div>
 
-          {/* Desktop Grid */}
-          <div className="hidden md:grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-            {testimonials.map((testimonial, index) => (
-              <div key={index} className="card hover-lift" data-testid={`testimonial-${index}`}>
-                <div className="card-body">
-                  <div className="flex items-center mb-4">
+          {/* Testimonial Cards - Native Swipe on Mobile */}
+          <div className="md:hidden">
+            <div className="flex overflow-x-auto gap-4 pb-4 snap-x snap-mandatory -mx-4 px-4 scrollbar-hide">
+              {testimonials.map((testimonial, index) => (
+                <div 
+                  key={index} 
+                  className="flex-none w-[85%] sm:w-80 bg-white rounded-3xl p-6 shadow-lg snap-center touch-manipulation"
+                  data-testid={`testimonial-${index}`}
+                >
+                  {/* Rating */}
+                  <div className="flex items-center gap-1 mb-4">
                     {[...Array(testimonial.rating)].map((_, i) => (
                       <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
                     ))}
                   </div>
                   
-                  <p className="text-gray-600 mb-6 italic">
+                  {/* Content */}
+                  <p className="text-base text-gray-700 mb-6 leading-relaxed">
                     "{testimonial.content}"
                   </p>
                   
-                  <div className="flex items-center">
-                    <img 
-                      src={testimonial.image}
-                      alt={testimonial.name}
-                      className="w-12 h-12 rounded-full object-cover mr-4"
-                    />
-                    <div>
-                      <h4 className="font-semibold text-gray-900">{testimonial.name}</h4>
-                      <p className="text-sm text-gray-600">{testimonial.role}, {testimonial.location}</p>
+                  {/* Author */}
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-lg">
+                      {testimonial.name.charAt(0)}
                     </div>
+                    <div>
+                      <h4 className="font-bold text-gray-900">{testimonial.name}</h4>
+                      <p className="text-sm text-gray-600">{testimonial.role}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            {/* Swipe Indicator */}
+            <div className="flex justify-center gap-2 mt-4">
+              {testimonials.map((_, index) => (
+                <div key={index} className="w-2 h-2 rounded-full bg-gray-300"></div>
+              ))}
+            </div>
+          </div>
+
+          {/* Desktop Grid */}
+          <div className="hidden md:grid grid-cols-1 md:grid-cols-3 gap-6">
+            {testimonials.map((testimonial, index) => (
+              <div 
+                key={index} 
+                className="bg-white rounded-3xl p-8 shadow-md border border-gray-100"
+                data-testid={`testimonial-${index}`}
+              >
+                {/* Rating */}
+                <div className="flex items-center gap-1 mb-4">
+                  {[...Array(testimonial.rating)].map((_, i) => (
+                    <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
+                  ))}
+                </div>
+                
+                {/* Content */}
+                <p className="text-gray-700 mb-6 leading-relaxed">
+                  "{testimonial.content}"
+                </p>
+                
+                {/* Author */}
+                <div className="flex items-center gap-4">
+                  <div className="w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-xl">
+                    {testimonial.name.charAt(0)}
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-gray-900">{testimonial.name}</h4>
+                    <p className="text-sm text-gray-600">{testimonial.role}</p>
                   </div>
                 </div>
               </div>
