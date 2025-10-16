@@ -503,23 +503,23 @@ const PropertyDetails = () => {
                   <img
                     src={`https://images.unsplash.com/photo-156044820${index}-e02f11c3d0e2`}
                     alt={`Similar property ${index}`}
-                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="w-full h-40 sm:h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                   />
-                  <div className="absolute top-3 left-3">
-                    <span className="badge badge-primary">For Rent</span>
+                  <div className="absolute top-2 sm:top-3 left-2 sm:left-3">
+                    <span className="badge badge-primary text-xs">For Rent</span>
                   </div>
                 </div>
                 <div className="card-body">
-                  <h3 className="font-semibold text-gray-900 mb-2">
+                  <h3 className="font-semibold text-sm sm:text-base text-gray-900 mb-1 sm:mb-2 truncate">
                     Similar Property {index}
                   </h3>
-                  <div className="flex items-center text-gray-500 text-sm mb-3">
-                    <MapPin className="w-4 h-4 mr-1" />
-                    Douala, Cameroon
+                  <div className="flex items-center text-gray-500 text-xs sm:text-sm mb-2 sm:mb-3">
+                    <MapPin className="w-3 h-3 sm:w-4 sm:h-4 mr-1 flex-shrink-0" />
+                    <span className="truncate">Douala, Cameroon</span>
                   </div>
-                  <div className="text-lg font-bold text-blue-600">
+                  <div className="text-base sm:text-lg font-bold text-blue-600">
                     {formatPrice(property.price * (0.8 + index * 0.2))}
-                    <span className="text-sm text-gray-500 font-normal">/month</span>
+                    <span className="text-xs sm:text-sm text-gray-500 font-normal">/month</span>
                   </div>
                 </div>
               </div>
