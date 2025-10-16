@@ -261,10 +261,42 @@ const PropertyEditForm = () => {
               />
             </div>
 
+            {/* Existing Images */}
+            {existingImages.length > 0 && (
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Current Images ({existingImages.length})
+                </label>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                  {existingImages.map((imageUrl, index) => (
+                    <div key={index} className="relative group">
+                      <img
+                        src={getPropertyImageUrl(imageUrl)}
+                        alt={`Property ${index + 1}`}
+                        className="w-full h-32 object-cover rounded-lg border-2 border-gray-200"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setExistingImages(prev => prev.filter((_, i) => i !== index))}
+                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                      {index === 0 && (
+                        <div className="absolute bottom-2 left-2 bg-blue-600 text-white text-xs px-2 py-1 rounded">
+                          Primary
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Image Upload */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Property Images (Max 10)
+                Add More Images (Max {10 - existingImages.length} more)
               </label>
               <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-blue-400 transition-colors">
                 <input
