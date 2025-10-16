@@ -56,8 +56,17 @@ const Profile = () => {
     try {
       setLoadingProperties(true);
       const response = await axios.get(`${API}/properties`);
+      console.log('All properties:', response.data);
+      console.log('Current user ID:', user?.id);
+      console.log('Current user email:', user?.email);
+      
       // Filter properties owned by current user
-      const userProperties = response.data.filter(prop => prop.owner_id === user?.id);
+      const userProperties = response.data.filter(prop => {
+        console.log(`Checking property: ${prop.title}, owner_id: ${prop.owner_id}`);
+        return prop.owner_id === user?.id;
+      });
+      
+      console.log('User properties found:', userProperties.length);
       setMyProperties(userProperties);
     } catch (error) {
       console.error('Error fetching properties:', error);
