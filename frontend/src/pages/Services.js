@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { getServiceImageUrl } from '../utils/imageUtils';
 import SEOHead from '../components/SEOHead';
 import { generateSEOData, generateStructuredData } from '../utils/seoData';
 import ServiceCard from '../components/ServiceCard';
