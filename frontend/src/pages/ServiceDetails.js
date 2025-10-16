@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
+import Reviews from '../components/Reviews';
+import StarRating from '../components/StarRating';
 import { 
   MapPin, 
   Star, 
