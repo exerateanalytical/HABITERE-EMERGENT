@@ -1947,6 +1947,477 @@ async def initialize_sample_data():
     await init_sample_data()
     return {"message": "Sample data initialized"}
 
+# ============================================================================
+# ADMIN ENDPOINTS
+# ============================================================================
+
+@api_router.get("/admin/stats")
+async def get_admin_stats(admin: User = Depends(get_admin_user)):
+    """Get dashboard statistics for admin"""
+    try:
+        # Count users by status
+        total_users = await db.users.count_documents({})
+        pending_users = await db.users.count_documents({"verification_status": "pending", "role": {"$ne": "admin"}})
+        approved_users = await db.users.count_documents({"verification_status": "approved"})
+        
+        # Count properties by status
+        total_properties = await db.properties.count_documents({})
+        pending_properties = await db.properties.count_documents({"verification_status": "pending"})
+        verified_properties = await db.properties.count_documents({"verification_status": "verified"})
+        
+        # Count services by status
+        total_services = await db.professional_services.count_documents({})
+        pending_services = await db.professional_services.count_documents({"verification_status": "pending"})
+        verified_services = await db.professional_services.count_documents({"verification_status": "verified"})
+        
+        # Count bookings
+        total_bookings = await db.bookings.count_documents({})
+        pending_bookings = await db.bookings.count_documents({"status": "pending"})
+        
+        # Calculate revenue (from successful payments)
+        pipeline = [
+            {"$match": {"status": "successful"}},
+            {"$group": {"_id": None, "total": {"$sum": "$amount"}}}
+        ]
+        revenue_result = await db.payments.aggregate(pipeline).to_list(length=1)
+        total_revenue = revenue_result[0]["total"] if revenue_result else 0
+        
+        # Recent activity - last 7 days
+        seven_days_ago = datetime.now(timezone.utc) - timedelta(days=7)
+        new_users_week = await db.users.count_documents({"created_at": {"$gte": seven_days_ago}})
+        new_properties_week = await db.properties.count_documents({"created_at": {"$gte": seven_days_ago}})
+        new_bookings_week = await db.bookings.count_documents({"created_at": {"$gte": seven_days_ago}})
+        
+        return {
+            "users": {
+                "total": total_users,
+                "pending": pending_users,
+                "approved": approved_users,
+                "new_this_week": new_users_week
+            },
+            "properties": {
+                "total": total_properties,
+                "pending": pending_properties,
+                "verified": verified_properties,
+                "new_this_week": new_properties_week
+            },
+            "services": {
+                "total": total_services,
+                "pending": pending_services,
+                "verified": verified_services
+            },
+            "bookings": {
+                "total": total_bookings,
+                "pending": pending_bookings,
+                "new_this_week": new_bookings_week
+            },
+            "revenue": {
+                "total": total_revenue,
+                "currency": "XAF"
+            }
+        }
+    except Exception as e:
+        logger.error(f"Error fetching admin stats: {e}")
+        raise HTTPException(status_code=500, detail="Failed to fetch statistics")
+
+@api_router.get("/admin/users")
+async def get_all_users(
+    admin: User = Depends(get_admin_user),
+    skip: int = 0,
+    limit: int = 50,
+    role: Optional[str] = None,
+    verification_status: Optional[str] = None,
+    search: Optional[str] = None
+):
+    """Get all users with filters"""
+    try:
+        query = {"role": {"$ne": "admin"}}  # Don't show admin users
+        
+        if role:
+            query["role"] = role
+        if verification_status:
+            query["verification_status"] = verification_status
+        if search:
+            query["$or"] = [
+                {"name": {"$regex": search, "$options": "i"}},
+                {"email": {"$regex": search, "$options": "i"}},
+                {"company_name": {"$regex": search, "$options": "i"}}
+            ]
+        
+        total = await db.users.count_documents(query)
+        users_cursor = db.users.find(query).sort("created_at", -1).skip(skip).limit(limit)
+        users = await users_cursor.to_list(length=limit)
+        
+        # Remove sensitive fields
+        for user in users:
+            user.pop("password_hash", None)
+            user.pop("email_verification_token", None)
+            user.pop("password_reset_token", None)
+        
+        return {
+            "total": total,
+            "users": [User(**user) for user in users],
+            "skip": skip,
+            "limit": limit
+        }
+    except Exception as e:
+        logger.error(f"Error fetching users: {e}")
+        raise HTTPException(status_code=500, detail="Failed to fetch users")
+
+@api_router.put("/admin/users/{user_id}/approve")
+async def approve_user(user_id: str, admin: User = Depends(get_admin_user)):
+    """Approve a user account"""
+    try:
+        user = await db.users.find_one({"id": user_id})
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        result = await db.users.update_one(
+            {"id": user_id},
+            {
+                "$set": {
+                    "verification_status": "approved",
+                    "is_verified": True,
+                    "verified_by": admin.id,
+                    "verified_at": datetime.now(timezone.utc),
+                    "rejection_reason": None
+                }
+            }
+        )
+        
+        if result.modified_count:
+            return {"message": "User approved successfully", "user_id": user_id}
+        raise HTTPException(status_code=400, detail="Failed to approve user")
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error approving user: {e}")
+        raise HTTPException(status_code=500, detail="Failed to approve user")
+
+@api_router.put("/admin/users/{user_id}/reject")
+async def reject_user(
+    user_id: str,
+    reason: str,
+    admin: User = Depends(get_admin_user)
+):
+    """Reject a user account"""
+    try:
+        user = await db.users.find_one({"id": user_id})
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        result = await db.users.update_one(
+            {"id": user_id},
+            {
+                "$set": {
+                    "verification_status": "rejected",
+                    "is_verified": False,
+                    "verified_by": admin.id,
+                    "verified_at": datetime.now(timezone.utc),
+                    "rejection_reason": reason
+                }
+            }
+        )
+        
+        if result.modified_count:
+            return {"message": "User rejected", "user_id": user_id}
+        raise HTTPException(status_code=400, detail="Failed to reject user")
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error rejecting user: {e}")
+        raise HTTPException(status_code=500, detail="Failed to reject user")
+
+@api_router.get("/admin/properties")
+async def get_all_properties_admin(
+    admin: User = Depends(get_admin_user),
+    skip: int = 0,
+    limit: int = 50,
+    verification_status: Optional[str] = None,
+    property_type: Optional[str] = None,
+    search: Optional[str] = None
+):
+    """Get all properties for admin moderation"""
+    try:
+        query = {}
+        
+        if verification_status:
+            query["verification_status"] = verification_status
+        if property_type:
+            query["listing_type"] = property_type
+        if search:
+            query["$or"] = [
+                {"title": {"$regex": search, "$options": "i"}},
+                {"location": {"$regex": search, "$options": "i"}},
+                {"description": {"$regex": search, "$options": "i"}}
+            ]
+        
+        total = await db.properties.count_documents(query)
+        properties_cursor = db.properties.find(query).sort("created_at", -1).skip(skip).limit(limit)
+        properties = await properties_cursor.to_list(length=limit)
+        
+        # Fetch owner info for each property
+        for prop in properties:
+            owner = await db.users.find_one({"id": prop["owner_id"]})
+            prop["owner_name"] = owner["name"] if owner else "Unknown"
+            prop["owner_email"] = owner["email"] if owner else "Unknown"
+        
+        return {
+            "total": total,
+            "properties": [Property(**prop) for prop in properties],
+            "skip": skip,
+            "limit": limit
+        }
+    except Exception as e:
+        logger.error(f"Error fetching properties: {e}")
+        raise HTTPException(status_code=500, detail="Failed to fetch properties")
+
+@api_router.put("/admin/properties/{property_id}/verify")
+async def verify_property(property_id: str, admin: User = Depends(get_admin_user)):
+    """Verify/approve a property listing"""
+    try:
+        prop = await db.properties.find_one({"id": property_id})
+        if not prop:
+            raise HTTPException(status_code=404, detail="Property not found")
+        
+        result = await db.properties.update_one(
+            {"id": property_id},
+            {
+                "$set": {
+                    "verification_status": "verified",
+                    "verified": True,
+                    "verified_by": admin.id,
+                    "verified_at": datetime.now(timezone.utc),
+                    "rejection_reason": None
+                }
+            }
+        )
+        
+        if result.modified_count:
+            return {"message": "Property verified successfully", "property_id": property_id}
+        raise HTTPException(status_code=400, detail="Failed to verify property")
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error verifying property: {e}")
+        raise HTTPException(status_code=500, detail="Failed to verify property")
+
+@api_router.put("/admin/properties/{property_id}/reject")
+async def reject_property(
+    property_id: str,
+    reason: str,
+    admin: User = Depends(get_admin_user)
+):
+    """Reject a property listing"""
+    try:
+        prop = await db.properties.find_one({"id": property_id})
+        if not prop:
+            raise HTTPException(status_code=404, detail="Property not found")
+        
+        result = await db.properties.update_one(
+            {"id": property_id},
+            {
+                "$set": {
+                    "verification_status": "rejected",
+                    "verified": False,
+                    "verified_by": admin.id,
+                    "verified_at": datetime.now(timezone.utc),
+                    "rejection_reason": reason
+                }
+            }
+        )
+        
+        if result.modified_count:
+            return {"message": "Property rejected", "property_id": property_id}
+        raise HTTPException(status_code=400, detail="Failed to reject property")
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error rejecting property: {e}")
+        raise HTTPException(status_code=500, detail="Failed to reject property")
+
+@api_router.get("/admin/services")
+async def get_all_services_admin(
+    admin: User = Depends(get_admin_user),
+    skip: int = 0,
+    limit: int = 50,
+    verification_status: Optional[str] = None,
+    category: Optional[str] = None,
+    search: Optional[str] = None
+):
+    """Get all professional services for admin moderation"""
+    try:
+        query = {}
+        
+        if verification_status:
+            query["verification_status"] = verification_status
+        if category:
+            query["category"] = category
+        if search:
+            query["$or"] = [
+                {"title": {"$regex": search, "$options": "i"}},
+                {"description": {"$regex": search, "$options": "i"}},
+                {"location": {"$regex": search, "$options": "i"}}
+            ]
+        
+        total = await db.professional_services.count_documents(query)
+        services_cursor = db.professional_services.find(query).sort("created_at", -1).skip(skip).limit(limit)
+        services = await services_cursor.to_list(length=limit)
+        
+        # Fetch provider info for each service
+        for service in services:
+            provider = await db.users.find_one({"id": service["provider_id"]})
+            service["provider_name"] = provider["name"] if provider else "Unknown"
+            service["provider_email"] = provider["email"] if provider else "Unknown"
+        
+        return {
+            "total": total,
+            "services": [ProfessionalService(**service) for service in services],
+            "skip": skip,
+            "limit": limit
+        }
+    except Exception as e:
+        logger.error(f"Error fetching services: {e}")
+        raise HTTPException(status_code=500, detail="Failed to fetch services")
+
+@api_router.put("/admin/services/{service_id}/verify")
+async def verify_service(service_id: str, admin: User = Depends(get_admin_user)):
+    """Verify/approve a professional service"""
+    try:
+        service = await db.professional_services.find_one({"id": service_id})
+        if not service:
+            raise HTTPException(status_code=404, detail="Service not found")
+        
+        result = await db.professional_services.update_one(
+            {"id": service_id},
+            {
+                "$set": {
+                    "verification_status": "verified",
+                    "verified": True,
+                    "verified_by": admin.id,
+                    "verified_at": datetime.now(timezone.utc),
+                    "rejection_reason": None
+                }
+            }
+        )
+        
+        if result.modified_count:
+            return {"message": "Service verified successfully", "service_id": service_id}
+        raise HTTPException(status_code=400, detail="Failed to verify service")
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error verifying service: {e}")
+        raise HTTPException(status_code=500, detail="Failed to verify service")
+
+@api_router.put("/admin/services/{service_id}/reject")
+async def reject_service(
+    service_id: str,
+    reason: str,
+    admin: User = Depends(get_admin_user)
+):
+    """Reject a professional service"""
+    try:
+        service = await db.professional_services.find_one({"id": service_id})
+        if not service:
+            raise HTTPException(status_code=404, detail="Service not found")
+        
+        result = await db.professional_services.update_one(
+            {"id": service_id},
+            {
+                "$set": {
+                    "verification_status": "rejected",
+                    "verified": False,
+                    "verified_by": admin.id,
+                    "verified_at": datetime.now(timezone.utc),
+                    "rejection_reason": reason
+                }
+            }
+        )
+        
+        if result.modified_count:
+            return {"message": "Service rejected", "service_id": service_id}
+        raise HTTPException(status_code=400, detail="Failed to reject service")
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error rejecting service: {e}")
+        raise HTTPException(status_code=500, detail="Failed to reject service")
+
+@api_router.get("/admin/analytics/users")
+async def get_user_analytics(admin: User = Depends(get_admin_user), days: int = 30):
+    """Get user registration analytics"""
+    try:
+        start_date = datetime.now(timezone.utc) - timedelta(days=days)
+        
+        # User registration trend
+        pipeline = [
+            {"$match": {"created_at": {"$gte": start_date}}},
+            {
+                "$group": {
+                    "_id": {"$dateToString": {"format": "%Y-%m-%d", "date": "$created_at"}},
+                    "count": {"$sum": 1}
+                }
+            },
+            {"$sort": {"_id": 1}}
+        ]
+        registrations = await db.users.aggregate(pipeline).to_list(length=days)
+        
+        # User distribution by role
+        role_pipeline = [
+            {"$group": {"_id": "$role", "count": {"$sum": 1}}},
+            {"$sort": {"count": -1}}
+        ]
+        role_distribution = await db.users.aggregate(role_pipeline).to_list(length=None)
+        
+        return {
+            "registration_trend": registrations,
+            "role_distribution": role_distribution,
+            "period_days": days
+        }
+    except Exception as e:
+        logger.error(f"Error fetching user analytics: {e}")
+        raise HTTPException(status_code=500, detail="Failed to fetch analytics")
+
+@api_router.get("/admin/analytics/properties")
+async def get_property_analytics(admin: User = Depends(get_admin_user), days: int = 30):
+    """Get property listing analytics"""
+    try:
+        start_date = datetime.now(timezone.utc) - timedelta(days=days)
+        
+        # Property listing trend
+        pipeline = [
+            {"$match": {"created_at": {"$gte": start_date}}},
+            {
+                "$group": {
+                    "_id": {"$dateToString": {"format": "%Y-%m-%d", "date": "$created_at"}},
+                    "count": {"$sum": 1}
+                }
+            },
+            {"$sort": {"_id": 1}}
+        ]
+        listings_trend = await db.properties.aggregate(pipeline).to_list(length=days)
+        
+        # Property distribution by type
+        type_pipeline = [
+            {"$group": {"_id": "$listing_type", "count": {"$sum": 1}}},
+            {"$sort": {"count": -1}}
+        ]
+        type_distribution = await db.properties.aggregate(type_pipeline).to_list(length=None)
+        
+        # Most viewed properties
+        most_viewed = await db.properties.find().sort("views", -1).limit(10).to_list(length=10)
+        
+        return {
+            "listings_trend": listings_trend,
+            "type_distribution": type_distribution,
+            "most_viewed_properties": [Property(**prop) for prop in most_viewed],
+            "period_days": days
+        }
+    except Exception as e:
+        logger.error(f"Error fetching property analytics: {e}")
+        raise HTTPException(status_code=500, detail="Failed to fetch analytics")
+
 # Include router
 app.include_router(api_router)
 
