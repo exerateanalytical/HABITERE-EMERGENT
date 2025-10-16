@@ -27,6 +27,12 @@ import {
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
+// Helper function to get proper image URL
+const getImageUrl = (url) => {
+  if (!url) return 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80';
+  return url.startsWith('/uploads/') ? `${BACKEND_URL}${url}` : url;
+};
+
 const Properties = () => {
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
