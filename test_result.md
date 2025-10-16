@@ -368,6 +368,9 @@
         - working: true
           agent: "testing"
           comment: "BACKEND TESTED - Advanced booking system backend fully functional. ✅ POST /bookings - Create booking endpoint properly secured (401 without auth). ✅ GET /bookings - User bookings endpoint secured (401 without auth). ✅ GET /bookings/received - Received bookings endpoint secured (401 without auth). ✅ GET /bookings/property/{id}/slots - Available time slots endpoint working (200 OK with date parameter). ✅ All booking endpoints properly protected with authentication middleware. ✅ Time slot management system implemented (9 AM - 6 PM). ✅ Enhanced Booking model with booking_type, scheduled_time, duration_hours. ✅ Status lifecycle (pending → confirmed → completed/cancelled) implemented. ✅ Role-based authorization for booking operations. Backend ready for frontend integration with authenticated users."
+        - working: false
+          agent: "testing"
+          comment: "FRONTEND TESTED - Booking system frontend inaccessible due to authentication issues. ❌ Book Viewing buttons on property details pages correctly redirect to authentication (/auth/callback) when not logged in, but login system is not working. ❌ Cannot access booking pages (/booking/property/{id}) due to authentication requirements. ❌ Booking form, time slot selection, and booking submission cannot be tested without authenticated session. ✅ Booking flow properly protected with authentication checks. ✅ BookingPage component structure and UI design implemented correctly. Booking system frontend is blocked by authentication system issues and needs retesting after authentication fixes."
 
 ## metadata:
   created_by: "main_agent"
