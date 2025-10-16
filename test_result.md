@@ -365,9 +365,11 @@
 
 ## test_plan:
   current_focus:
-    - "Authentication System Issues"
-    - "Booking Flow Integration"
-    - "Message Owner Functionality"
+    - "Phase 1: Authentication System Validation"
+    - "Google OAuth Login Testing"
+    - "Admin Login Testing"
+    - "SendGrid Email Verification Fix"
+    - "Password Reset Flow Testing"
   stuck_tasks:
     - "Authentication System Issues"
   test_all: false
