@@ -23,6 +23,7 @@ import {
   Dumbbell,
   Shield
 } from 'lucide-react';
+import { PROPERTY_CATEGORIES } from '../utils/propertyCategories';
 
 const FilterSidebar = ({ 
   type = 'properties', // 'properties' or 'services'
