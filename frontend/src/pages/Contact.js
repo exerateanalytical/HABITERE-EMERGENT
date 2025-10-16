@@ -66,8 +66,26 @@ const Contact = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <SEOHead 
-        title="Contact Habitere - Get In Touch With Us"
-        description="Have questions about properties in Cameroon? Contact Habitere's support team. We're here to help with all your real estate needs."
+        title="Contact Habitere - Real Estate Support in Cameroon | Get Help Now"
+        description="Need help finding a property in Cameroon? Contact Habitere's expert support team in Douala & Yaoundé. Email, phone, and live chat support available Mon-Sat."
+        keywords="contact habitere, habitere support, real estate help cameroon, property support douala, yaoundé real estate contact, cameroon housing help"
+        focusKeyword="contact habitere cameroon"
+        canonicalUrl="https://habitere.com/contact"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "ContactPage",
+          "name": "Contact Habitere",
+          "description": "Get in touch with Habitere for real estate inquiries",
+          "url": "https://habitere.com/contact",
+          "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "+237-6XX-XXX-XXX",
+            "contactType": "customer service",
+            "email": "support@habitere.com",
+            "areaServed": "CM",
+            "availableLanguage": ["en", "fr"]
+          }
+        }}
       />
 
       {/* Hero Section */}
