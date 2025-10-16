@@ -34,16 +34,19 @@ body {
 }
 
 .form-input {
-  @apply block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200;
+  @apply block w-full px-4 py-3.5 sm:py-4 border-2 border-gray-300 rounded-xl shadow-sm placeholder-gray-400 text-base sm:text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-400 transition-all duration-200 touch-manipulation;
+  min-height: 56px;
 }
 
 .form-select {
-  @apply block w-full px-4 py-3 pr-8 border border-gray-300 rounded-lg shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200;
+  @apply block w-full px-4 py-3.5 sm:py-4 pr-10 border-2 border-gray-300 rounded-xl shadow-sm bg-white text-base sm:text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-400 transition-all duration-200 touch-manipulation;
+  min-height: 56px;
 }
 
 .form-textarea {
-  @apply block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200;
+  @apply block w-full px-4 py-3.5 sm:py-4 border-2 border-gray-300 rounded-xl shadow-sm placeholder-gray-400 text-base sm:text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-400 transition-all duration-200 touch-manipulation;
   resize: vertical;
+  min-height: 120px;
 }
 
 /* Card styles */
