@@ -299,7 +299,7 @@ const Dashboard = () => {
                   {recentProperties.map((property) => (
                     <div key={property.id} className="flex items-start space-x-3 p-3 hover:bg-gray-50 rounded-lg transition-colors">
                       <img
-                        src={property.images?.[0] || 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2'}
+                        src={getPropertyImageUrl(property.images?.[0])}
                         alt={property.title}
                         className="w-16 h-16 object-cover rounded-lg"
                       />
