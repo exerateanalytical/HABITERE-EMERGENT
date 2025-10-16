@@ -212,30 +212,6 @@ const LandingPage = () => {
           </div>
         </div>
       </section>
-                    <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                    <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                    <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                    <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                    <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                  </div>
-                  <span className="text-sm font-semibold text-gray-900">4.9 Rating</span>
-                </div>
-              </div>
-              
-              {/* Mobile money badge */}
-              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-xl shadow-2xl border-2 border-white/20 zoom-in">
-                <div className="flex items-center space-x-2">
-                  <div className="w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center">
-                    <span className="text-xs font-bold text-gray-900">M</span>
-                  </div>
-                  <span className="text-sm font-semibold">MTN MoMo</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
 
       {/* Search Section - Mobile Native Design */}
       <section className="py-8 sm:py-12 bg-white">
