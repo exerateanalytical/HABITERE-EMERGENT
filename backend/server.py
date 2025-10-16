@@ -144,6 +144,8 @@ class Property(BaseModel):
     rejection_reason: Optional[str] = None
     views: int = 0
     favorites: int = 0
+    average_rating: float = 0.0
+    review_count: int = 0
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class ProfessionalService(BaseModel):
