@@ -214,14 +214,14 @@ const Navbar = () => {
                 ) : (
                   <div className="space-y-3">
                     <Link
-                      to="/login"
+                      to="/auth/login"
                       className="block w-full text-center px-4 py-3 border border-gray-200 rounded-2xl font-medium text-gray-700 hover:bg-gray-50 transition-colors duration-200"
                       onClick={() => setIsOpen(false)}
                     >
                       Sign In
                     </Link>
                     <Link
-                      to="/register"
+                      to="/auth/register"
                       className="block w-full btn-primary text-center"
                       onClick={() => setIsOpen(false)}
                     >
