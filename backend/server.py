@@ -467,6 +467,83 @@ def serialize_doc(doc):
         return serialized
     return doc
 
+def hash_password(password: str) -> str:
+    """Hash a password using bcrypt"""
+    salt = bcrypt.gensalt()
+    return bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')
+
+def verify_password(password: str, hashed: str) -> bool:
+    """Verify a password against its hash"""
+    return bcrypt.checkpw(password.encode('utf-8'), hashed.encode('utf-8'))
+
+async def send_verification_email(email: str, name: str, token: str):
+    """Send email verification email"""
+    verification_url = f"{FRONTEND_URL}/auth/verify-email?token={token}"
+    
+    message = Mail(
+        from_email=(SENDGRID_FROM_EMAIL, SENDGRID_FROM_NAME),
+        to_emails=email,
+        subject='Verify your Habitere account',
+        html_content=f'''
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2 style="color: #2563eb;">Welcome to Habitere, {name}!</h2>
+            <p>Thank you for registering. Please verify your email address to complete your registration.</p>
+            <p>Click the button below to verify your email:</p>
+            <a href="{verification_url}" style="display: inline-block; background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; margin: 20px 0;">
+                Verify Email
+            </a>
+            <p>Or copy and paste this link into your browser:</p>
+            <p style="color: #6b7280; word-break: break-all;">{verification_url}</p>
+            <p style="color: #6b7280; font-size: 14px; margin-top: 40px;">
+                This link will expire in 24 hours. If you didn't create this account, you can safely ignore this email.
+            </p>
+        </div>
+        '''
+    )
+    
+    try:
+        sg = SendGridAPIClient(SENDGRID_API_KEY)
+        response = sg.send(message)
+        logging.info(f"Verification email sent to {email}, status code: {response.status_code}")
+        return True
+    except Exception as e:
+        logging.error(f"Error sending verification email: {str(e)}")
+        return False
+
+async def send_password_reset_email(email: str, name: str, token: str):
+    """Send password reset email"""
+    reset_url = f"{FRONTEND_URL}/auth/reset-password?token={token}"
+    
+    message = Mail(
+        from_email=(SENDGRID_FROM_EMAIL, SENDGRID_FROM_NAME),
+        to_emails=email,
+        subject='Reset your Habitere password',
+        html_content=f'''
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2 style="color: #2563eb;">Password Reset Request</h2>
+            <p>Hello {name},</p>
+            <p>We received a request to reset your password. Click the button below to create a new password:</p>
+            <a href="{reset_url}" style="display: inline-block; background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; margin: 20px 0;">
+                Reset Password
+            </a>
+            <p>Or copy and paste this link into your browser:</p>
+            <p style="color: #6b7280; word-break: break-all;">{reset_url}</p>
+            <p style="color: #6b7280; font-size: 14px; margin-top: 40px;">
+                This link will expire in 1 hour. If you didn't request a password reset, you can safely ignore this email.
+            </p>
+        </div>
+        '''
+    )
+    
+    try:
+        sg = SendGridAPIClient(SENDGRID_API_KEY)
+        response = sg.send(message)
+        logging.info(f"Password reset email sent to {email}, status code: {response.status_code}")
+        return True
+    except Exception as e:
+        logging.error(f"Error sending password reset email: {str(e)}")
+        return False
+
 # Authentication Routes
 @api_router.get("/auth/session-data")
 async def get_session_data(request: Request):
