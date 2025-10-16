@@ -299,6 +299,16 @@ const PropertyDetails = () => {
                 <span className="truncate">{property.location}</span>
               </div>
 
+              {/* Rating Display */}
+              {property.average_rating > 0 && (
+                <div className="flex items-center mb-3 sm:mb-4">
+                  <StarRating rating={property.average_rating} size="md" />
+                  <span className="ml-2 text-gray-600 text-sm">
+                    {property.average_rating} ({property.review_count} {property.review_count === 1 ? 'review' : 'reviews'})
+                  </span>
+                </div>
+              )}
+
               <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-blue-600 mb-3 sm:mb-4">
                 {formatPrice(property.price)}
                 {property.listing_type === 'rent' && 
