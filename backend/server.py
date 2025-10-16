@@ -487,6 +487,77 @@ async def complete_authentication(
     
     return {"user": serialize_doc(user.model_dump()), "message": "Authentication complete"}
 
+
+@api_router.post("/auth/register")
+async def register_user(
+    response: Response,
+    email: str = Form(...),
+    password: str = Form(...),
+    name: str = Form(...),
+    role: str = Form(...),
+    phone: Optional[str] = Form(None),
+    company_name: Optional[str] = Form(None)
+):
+    """Register a new user with email and password"""
+    import bcrypt
+    
+    if role not in USER_ROLES:
+        raise HTTPException(status_code=400, detail="Invalid role")
+    
+    # Check if user already exists
+    existing_user = await db.users.find_one({"email": email})
+    if existing_user:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    
+    # Hash password
+    hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+    
+    # Create new user
+    user_id = str(uuid.uuid4())
+    user_doc = {
+        "id": user_id,
+        "email": email,
+        "password": hashed_password.decode('utf-8'),
+        "name": name,
+        "role": role,
+        "phone": phone,
+        "company_name": company_name,
+        "is_verified": False,
+        "created_at": datetime.now(timezone.utc)
+    }
+    
+    await db.users.insert_one(user_doc)
+    
+    # Create session
+    session_token = str(uuid.uuid4())
+    expires_at = datetime.now(timezone.utc) + timedelta(days=7)
+    
+    session_doc = {
+        "user_id": user_id,
+        "session_token": session_token,
+        "expires_at": expires_at,
+        "created_at": datetime.now(timezone.utc)
+    }
+    await db.user_sessions.insert_one(session_doc)
+    
+    # Set cookie
+    response.set_cookie(
+        key="session_token",
+        value=session_token,
+        max_age=7 * 24 * 60 * 60,  # 7 days
+        httponly=True,
+        secure=True,
+        samesite="none",
+        path="/"
+    )
+    
+    # Remove password from response
+    user_doc.pop('password')
+    user = User(**user_doc)
+    
+    return {"user": serialize_doc(user.model_dump()), "message": "Registration successful"}
+
+
 @api_router.get("/auth/me", response_model=Dict[str, Any])
 async def get_current_user_info(current_user: User = Depends(get_current_user)):
     """Get current user information"""
