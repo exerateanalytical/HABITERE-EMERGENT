@@ -41,7 +41,7 @@ export const AuthProvider = ({ children }) => {
 
   const checkExistingSession = async () => {
     try {
-      const response = await axios.get(`${API}/auth/me`);
+      const response = await axios.get(`${API}/auth/me`, { withCredentials: true });
       if (response.data) {
         setUser(response.data);
       } else {
@@ -49,47 +49,26 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       console.log('No existing session found');
-      setUser(null); // Clear user state if session is invalid
+      setUser(null);
     } finally {
       setLoading(false);
     }
   };
 
-  const login = (redirectUrl) => {
-    const authUrl = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(redirectUrl)}`;
-    window.location.href = authUrl;
-  };
-
-  const completeAuth = async (userData, role) => {
+  // Email/Password Registration
+  const register = async (email, password, name) => {
     try {
-      const response = await axios.post(`${API}/auth/complete`, userData, {
-        params: { role }
-      });
+      const response = await axios.post(`${API}/auth/register`, {
+        email,
+        password,
+        name
+      }, { withCredentials: true });
       
-      if (response.data.user) {
-        setUser(response.data.user);
-        return true;
-      }
-      return false;
-    } catch (error) {
-      console.error('Authentication completion failed:', error);
-      return false;
-    }
-  };
-
-  const register = async (formData) => {
-    try {
-      const response = await axios.post(`${API}/auth/register`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-      
-      if (response.data.user) {
-        setUser(response.data.user);
-        return { success: true, user: response.data.user };
-      }
-      return { success: false, error: 'Registration failed' };
+      return { 
+        success: true, 
+        message: response.data.message,
+        email: response.data.email
+      };
     } catch (error) {
       console.error('Registration error:', error);
       return { 
@@ -99,9 +78,146 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Email/Password Login
+  const login = async (email, password) => {
+    try {
+      const response = await axios.post(`${API}/auth/login`, {
+        email,
+        password
+      }, { withCredentials: true });
+      
+      if (response.data.user) {
+        setUser(response.data.user);
+        return { 
+          success: true, 
+          user: response.data.user,
+          needsRoleSelection: response.data.needs_role_selection
+        };
+      }
+      return { success: false, error: 'Login failed' };
+    } catch (error) {
+      console.error('Login error:', error);
+      return { 
+        success: false, 
+        error: error.response?.data?.detail || 'Login failed. Please try again.' 
+      };
+    }
+  };
+
+  // Google OAuth Login
+  const loginWithGoogle = async () => {
+    try {
+      const response = await axios.get(`${API}/auth/google/login`);
+      if (response.data.auth_url) {
+        window.location.href = response.data.auth_url;
+      }
+    } catch (error) {
+      console.error('Google login error:', error);
+      return { 
+        success: false, 
+        error: 'Failed to initiate Google login' 
+      };
+    }
+  };
+
+  // Email Verification
+  const verifyEmail = async (token) => {
+    try {
+      const response = await axios.post(`${API}/auth/verify-email`, {
+        token
+      }, { withCredentials: true });
+      
+      if (response.data.user) {
+        setUser(response.data.user);
+        return { 
+          success: true, 
+          message: response.data.message,
+          needsRoleSelection: response.data.needs_role_selection
+        };
+      }
+      return { success: true, message: response.data.message };
+    } catch (error) {
+      console.error('Email verification error:', error);
+      return { 
+        success: false, 
+        error: error.response?.data?.detail || 'Verification failed' 
+      };
+    }
+  };
+
+  // Resend Verification Email
+  const resendVerification = async (email) => {
+    try {
+      const response = await axios.post(`${API}/auth/resend-verification`, {
+        email
+      });
+      return { success: true, message: response.data.message };
+    } catch (error) {
+      console.error('Resend verification error:', error);
+      return { 
+        success: false, 
+        error: error.response?.data?.detail || 'Failed to resend verification email' 
+      };
+    }
+  };
+
+  // Forgot Password
+  const forgotPassword = async (email) => {
+    try {
+      const response = await axios.post(`${API}/auth/forgot-password`, {
+        email
+      });
+      return { success: true, message: response.data.message };
+    } catch (error) {
+      console.error('Forgot password error:', error);
+      return { 
+        success: false, 
+        error: error.response?.data?.detail || 'Failed to send reset email' 
+      };
+    }
+  };
+
+  // Reset Password
+  const resetPassword = async (token, newPassword) => {
+    try {
+      const response = await axios.post(`${API}/auth/reset-password`, {
+        token,
+        new_password: newPassword
+      });
+      return { success: true, message: response.data.message };
+    } catch (error) {
+      console.error('Reset password error:', error);
+      return { 
+        success: false, 
+        error: error.response?.data?.detail || 'Failed to reset password' 
+      };
+    }
+  };
+
+  // Select Role
+  const selectRole = async (role) => {
+    try {
+      const response = await axios.post(`${API}/auth/select-role`, {
+        role
+      }, { withCredentials: true });
+      
+      if (response.data.user) {
+        setUser(response.data.user);
+        return { success: true, user: response.data.user };
+      }
+      return { success: false, error: 'Failed to select role' };
+    } catch (error) {
+      console.error('Role selection error:', error);
+      return { 
+        success: false, 
+        error: error.response?.data?.detail || 'Failed to select role' 
+      };
+    }
+  };
+
   const logout = async () => {
     try {
-      await axios.post(`${API}/auth/logout`);
+      await axios.post(`${API}/auth/logout`, {}, { withCredentials: true });
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
@@ -115,7 +231,12 @@ export const AuthProvider = ({ children }) => {
     loading,
     login,
     register,
-    completeAuth,
+    loginWithGoogle,
+    verifyEmail,
+    resendVerification,
+    forgotPassword,
+    resetPassword,
+    selectRole,
     logout,
     checkExistingSession
   };
