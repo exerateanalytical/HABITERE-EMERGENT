@@ -377,34 +377,34 @@ const PropertyDetails = () => {
 
           {/* Booking Card */}
           <div className="lg:col-span-1">
-            <div className="card sticky top-8">
+            <div className="card lg:sticky lg:top-8">
               <div className="card-body">
-                <div className="text-center mb-6">
-                  <div className="text-2xl font-bold text-blue-600 mb-1">
+                <div className="text-center mb-4 sm:mb-6">
+                  <div className="text-xl sm:text-2xl font-bold text-blue-600 mb-1">
                     {formatPrice(property.price)}
                   </div>
                   {property.listing_type === 'rent' && (
-                    <div className="text-gray-500">per month</div>
+                    <div className="text-sm sm:text-base text-gray-500">per month</div>
                   )}
                 </div>
 
                 {user ? (
-                  <div className="space-y-3">
+                  <div className="space-y-2 sm:space-y-3">
                     {/* Show Edit and Delete buttons if user is the owner */}
                     {user.id === property.owner_id ? (
                       <>
                         <button
                           onClick={() => navigate(`/properties/edit/${property.id}`)}
-                          className="btn-primary w-full justify-center bg-green-600 hover:bg-green-700"
+                          className="btn-primary w-full justify-center bg-green-600 hover:bg-green-700 text-sm sm:text-base"
                         >
-                          <Edit className="w-5 h-5 mr-2" />
+                          <Edit className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" />
                           Edit Property
                         </button>
                         <button
                           onClick={handleDelete}
-                          className="btn-secondary w-full justify-center bg-red-600 hover:bg-red-700 text-white border-red-600"
+                          className="btn-secondary w-full justify-center bg-red-600 hover:bg-red-700 text-white border-red-600 text-sm sm:text-base"
                         >
-                          <Trash2 className="w-5 h-5 mr-2" />
+                          <Trash2 className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" />
                           Delete Property
                         </button>
                       </>
@@ -412,69 +412,69 @@ const PropertyDetails = () => {
                       <>
                         <button
                           onClick={handleBooking}
-                          className="btn-primary w-full justify-center"
+                          className="btn-primary w-full justify-center text-sm sm:text-base"
                           data-testid="book-viewing-btn"
                         >
-                          <Calendar className="w-5 h-5 mr-2" />
+                          <Calendar className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" />
                           Book Viewing
                         </button>
 
                         <button
                           onClick={handleMessage}
-                          className="btn-secondary w-full justify-center"
+                          className="btn-secondary w-full justify-center text-sm sm:text-base"
                           data-testid="message-owner-btn"
                         >
-                          <MessageSquare className="w-5 h-5 mr-2" />
+                          <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" />
                           Message Owner
                         </button>
                       </>
                     )}
 
-                    <button className="btn-outline w-full justify-center">
-                      <Phone className="w-5 h-5 mr-2" />
+                    <button className="btn-outline w-full justify-center text-sm sm:text-base">
+                      <Phone className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" />
                       Call Owner
                     </button>
                   </div>
                 ) : (
                   <div className="text-center">
-                    <p className="text-gray-600 mb-4">
-                      Sign in to book a viewing or contact the owner
+                    <p className="text-sm sm:text-base text-gray-600 mb-3 sm:mb-4">
+                      Sign in to book or contact
                     </p>
-                    <Link to="/auth/callback" className="btn-primary w-full justify-center">
-                      Sign In to Contact
+                    <Link to="/auth/callback" className="btn-primary w-full justify-center text-sm sm:text-base">
+                      Sign In
                     </Link>
                   </div>
                 )}
 
                 {/* Owner info */}
-                <div className="border-t border-gray-200 mt-6 pt-6">
-                  <div className="flex items-center space-x-4">
+                <div className="border-t border-gray-200 mt-4 sm:mt-6 pt-4 sm:pt-6">
+                  <div className="flex items-center space-x-3 sm:space-x-4">
                     {owner?.picture ? (
                       <img 
                         src={owner.picture} 
                         alt={owner.name}
-                        className="w-14 h-14 rounded-full object-cover border-2 border-gray-200"
+                        className="w-12 h-12 sm:w-14 sm:h-14 rounded-full object-cover border-2 border-gray-200 flex-shrink-0"
                       />
                     ) : (
-                      <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-xl font-bold">
-                        {owner?.name?.charAt(0)?.toUpperCase() || <User className="w-7 h-7" />}
+                      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-lg sm:text-xl font-bold flex-shrink-0">
+                        {owner?.name?.charAt(0)?.toUpperCase() || <User className="w-6 h-6 sm:w-7 sm:h-7" />}
                       </div>
                     )}
-                    <div>
-                      <p className="text-sm text-gray-600">Listed by</p>
-                      <h4 className="font-semibold text-gray-900">{owner?.name || 'Property Owner'}</h4>
-                      <p className="text-xs text-gray-500">{owner?.role?.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) || 'Verified Seller'}</p>
+                    <div className="min-w-0">
+                      <p className="text-xs sm:text-sm text-gray-600">Listed by</p>
+                      <h4 className="font-semibold text-sm sm:text-base text-gray-900 truncate">{owner?.name || 'Property Owner'}</h4>
+                      <p className="text-xs text-gray-500 truncate">{owner?.role?.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) || 'Verified Seller'}</p>
                     </div>
                   </div>
                 </div>
 
                 {/* Safety note */}
-                <div className="border-t border-gray-200 mt-6 pt-6">
-                  <div className="flex items-start space-x-3">
-                    <Shield className="w-5 h-5 text-green-500 mt-0.5" />
-                    <div className="text-sm text-gray-600">
+                <div className="border-t border-gray-200 mt-4 sm:mt-6 pt-4 sm:pt-6">
+                  <div className="flex items-start space-x-2 sm:space-x-3">
+                    <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-green-500 mt-0.5 flex-shrink-0" />
+                    <div className="text-xs sm:text-sm text-gray-600">
                       <p className="font-medium text-gray-900 mb-1">Your safety matters</p>
-                      <p>Always meet in person and verify the property before making any payments.</p>
+                      <p>Always meet in person and verify before payment.</p>
                     </div>
                   </div>
                 </div>
@@ -484,7 +484,7 @@ const PropertyDetails = () => {
         </div>
 
         {/* Professional Services Carousel */}
-        <div className="mt-12">
+        <div className="mt-8 sm:mt-10 md:mt-12">
           <ServicesCarousel 
             title="Professional Services for Your Property" 
             limit={8}
@@ -493,9 +493,9 @@ const PropertyDetails = () => {
         </div>
 
         {/* Similar Properties */}
-        <div className="mt-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Similar Properties</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="mt-8 sm:mt-10 md:mt-12">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">Similar Properties</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
             {/* Placeholder for similar properties */}
             {[1, 2, 3].map((index) => (
               <div key={index} className="card group">
