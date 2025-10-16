@@ -156,25 +156,27 @@ const LandingPage = () => {
                 </p>
               </div>
               
-              <div className="flex flex-col sm:flex-row gap-3 md:gap-4 max-w-lg mx-auto lg:mx-0">
+              <div className="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto lg:mx-0">
                 <button
                   onClick={handleGetStarted}
-                  className="group relative overflow-hidden bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold px-8 py-4 rounded-2xl shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 text-base md:text-lg touch-action-manipulation"
+                  className="group relative overflow-hidden bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 active:from-blue-800 active:to-purple-800 text-white font-bold px-6 sm:px-8 py-4 sm:py-5 rounded-xl sm:rounded-2xl shadow-lg hover:shadow-2xl active:shadow-xl transform hover:-translate-y-1 active:translate-y-0 transition-all duration-200 text-base sm:text-lg touch-manipulation min-h-[56px] w-full sm:w-auto"
                   data-testid="get-started-btn"
+                  aria-label="Get started for free"
                 >
-                  <span className="relative z-10 flex items-center justify-center">
-                    Get Started Free
-                    <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
+                  <span className="relative z-10 flex items-center justify-center gap-2">
+                    <span>Get Started Free</span>
+                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-200" />
                   </span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
                 </button>
                 <a 
                   href="/properties" 
-                  className="group bg-white/90 backdrop-blur-sm hover:bg-white border-2 border-gray-200 hover:border-blue-300 text-gray-700 hover:text-blue-700 font-semibold px-8 py-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 text-base md:text-lg touch-action-manipulation flex items-center justify-center"
+                  className="group bg-white hover:bg-gray-50 active:bg-gray-100 border-2 border-gray-300 hover:border-blue-400 active:border-blue-500 text-gray-800 hover:text-blue-700 active:text-blue-800 font-bold px-6 sm:px-8 py-4 sm:py-5 rounded-xl sm:rounded-2xl shadow-md hover:shadow-xl active:shadow-lg transition-all duration-200 text-base sm:text-lg touch-manipulation flex items-center justify-center gap-2 min-h-[56px] w-full sm:w-auto"
                   data-testid="browse-properties-btn"
+                  aria-label="Browse available properties"
                 >
-                  Browse Properties
-                  <Home className="ml-2 w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
+                  <span>Browse Properties</span>
+                  <Home className="w-5 h-5 group-hover:scale-110 transition-transform duration-200" />
                 </a>
               </div>
 
