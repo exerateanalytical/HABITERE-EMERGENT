@@ -39,6 +39,38 @@ const Profile = () => {
     bio: user?.bio || ''
   });
 
+  useEffect(() => {
+    if (user) {
+      fetchMyProperties();
+      fetchMyServices();
+    }
+  }, [user]);
+
+  const fetchMyProperties = async () => {
+    try {
+      setLoadingProperties(true);
+      const response = await axios.get(`${API}/properties`);
+      // Filter properties owned by current user
+      const userProperties = response.data.filter(prop => prop.owner_id === user?.id);
+      setMyProperties(userProperties);
+    } catch (error) {
+      console.error('Error fetching properties:', error);
+    } finally {
+      setLoadingProperties(false);
+    }
+  };
+
+  const fetchMyServices = async () => {
+    try {
+      const response = await axios.get(`${API}/services`);
+      // Filter services owned by current user
+      const userServices = response.data.filter(service => service.provider_id === user?.id);
+      setMyServices(userServices);
+    } catch (error) {
+      console.error('Error fetching services:', error);
+    }
+  };
+
   const handleSave = async () => {
     try {
       // In a real app, this would make an API call to update the user profile
