@@ -136,9 +136,16 @@ const PropertyForm = () => {
       console.error('Error creating property:', err);
       console.error('Error response:', err.response?.data);
       console.error('Error status:', err.response?.status);
-      const errorMessage = err.response?.data?.detail || err.message || 'Failed to create property. Please try again.';
-      setError(errorMessage);
-      alert(`Error: ${errorMessage}`);
+      
+      if (err.response?.status === 401) {
+        setError('Your session has expired. Please log in again.');
+        setTimeout(() => navigate('/login'), 2000);
+      } else if (err.response?.status === 403) {
+        setError('You are not authorized to list properties. Please upgrade your account.');
+      } else {
+        const errorMessage = err.response?.data?.detail || err.message || 'Failed to create property. Please try again.';
+        setError(errorMessage);
+      }
     } finally {
       setLoading(false);
     }
