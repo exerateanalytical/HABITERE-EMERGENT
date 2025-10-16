@@ -85,7 +85,7 @@ const Services = () => {
     }
   };
 
-  const handleFilterChange = (newFilters) => {
+  const handleFilterChange = useCallback((newFilters) => {
     // Handle both old format (key, value) and new format (filters object)
     if (typeof newFilters === 'object' && newFilters !== null) {
       setFilters(prev => ({
@@ -94,7 +94,7 @@ const Services = () => {
       }));
       setSearchQuery(newFilters.search || '');
     }
-  };
+  }, []);
 
   const handleOldFilterChange = (key, value) => {
     setFilters(prev => ({
