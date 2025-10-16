@@ -21,8 +21,9 @@ const PropertyForm = () => {
     description: '',
     price: '',
     location: '',
-    property_type: 'apartment',
-    listing_type: 'rent',
+    property_category: '',
+    property_sector: '',
+    listing_type: 'sale',
     bedrooms: '',
     bathrooms: '',
     area_sqm: ''
