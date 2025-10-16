@@ -935,8 +935,8 @@ async def google_callback(response: Response, code: str):
             value=session_token,
             max_age=7 * 24 * 60 * 60,
             httponly=True,
-            secure=True,
-            samesite="none",
+            secure=False,  # Set to True in production with HTTPS
+            samesite="lax",  # Changed from "none" to "lax" for localhost
             path="/"
         )
         
