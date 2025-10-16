@@ -236,73 +236,80 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Premium Search Section */}
-      <section className="py-8 md:py-12 bg-white relative -mt-8 md:-mt-12">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-gradient-to-br from-white via-blue-50/30 to-purple-50/30 rounded-3xl shadow-2xl border border-white/20 backdrop-blur-sm p-6 md:p-8 hover:shadow-3xl transition-all duration-500">
+
+      {/* Search Section - Mobile Native Design */}
+      <section className="py-8 sm:py-12 bg-white">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6">
+          <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-5 sm:p-6 md:p-8">
+            {/* Header */}
             <div className="text-center mb-6">
-              <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
                 Find Your Dream Property
               </h2>
-              <p className="text-sm md:text-base text-gray-600">Search from over 1,000 verified properties across Cameroon</p>
+              <p className="text-base text-gray-600">1,000+ verified properties</p>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {/* Search Form - Mobile Optimized Stack */}
+            <div className="space-y-4">
+              {/* Property Type */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Property Type</label>
-                <select className="w-full px-4 py-3 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-2xl shadow-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 text-base appearance-none cursor-pointer hover:shadow-xl" data-testid="search-type">
+                <label className="block text-sm font-semibold text-gray-700">Property Type</label>
+                <select className="w-full px-4 py-4 bg-white border-2 border-gray-200 rounded-2xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 active:border-blue-400 transition-all duration-100 text-base appearance-none cursor-pointer touch-manipulation min-h-[56px]" data-testid="search-type">
                   <option>All Types</option>
                   <option>🏠 House</option>
                   <option>🏢 Apartment</option>
                   <option>🏞️ Land</option>
                   <option>🏪 Commercial</option>
-                  <option>🏨 Hotel</option>
                 </select>
               </div>
+              
+              {/* Location */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Location</label>
-                <select className="w-full px-4 py-3 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-2xl shadow-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 text-base appearance-none cursor-pointer hover:shadow-xl" data-testid="search-location">
+                <label className="block text-sm font-semibold text-gray-700">Location</label>
+                <select className="w-full px-4 py-4 bg-white border-2 border-gray-200 rounded-2xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 active:border-blue-400 transition-all duration-100 text-base appearance-none cursor-pointer touch-manipulation min-h-[56px]" data-testid="search-location">
                   <option>All Locations</option>
                   <option>📍 Douala</option>
                   <option>📍 Yaoundé</option>
                   <option>📍 Bafoussam</option>
                   <option>📍 Bamenda</option>
-                  <option>📍 Garoua</option>
-                  <option>📍 Maroua</option>
                 </select>
               </div>
+              
+              {/* Price Range */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Price Range</label>
-                <select className="w-full px-4 py-3 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-2xl shadow-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 text-base appearance-none cursor-pointer hover:shadow-xl" data-testid="search-price">
+                <label className="block text-sm font-semibold text-gray-700">Price Range</label>
+                <select className="w-full px-4 py-4 bg-white border-2 border-gray-200 rounded-2xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 active:border-blue-400 transition-all duration-100 text-base appearance-none cursor-pointer touch-manipulation min-h-[56px]" data-testid="search-price">
                   <option>Any Price</option>
                   <option>💰 Under 100K XAF</option>
                   <option>💰 100K - 500K XAF</option>
                   <option>💰 500K - 1M XAF</option>
-                  <option>💰 1M - 5M XAF</option>
-                  <option>💰 Over 5M XAF</option>
+                  <option>💰 Over 1M XAF</option>
                 </select>
               </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Search</label>
-                <button 
-                  className="group w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 active:from-blue-800 active:to-purple-800 text-white font-bold px-6 py-4 rounded-xl shadow-lg hover:shadow-2xl active:shadow-lg transform hover:-translate-y-1 active:translate-y-0 transition-all duration-200 text-base sm:text-lg touch-manipulation min-h-[56px]" 
-                  data-testid="search-btn"
-                  aria-label="Search properties"
-                >
-                  <div className="flex items-center justify-center gap-2">
-                    <Search className="w-5 h-5 sm:w-6 sm:h-6 group-hover:scale-110 transition-transform duration-200" />
-                    <span>Search Properties</span>
-                  </div>
-                </button>
-              </div>
+              
+              {/* Search Button */}
+              <button 
+                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 active:from-blue-700 active:to-purple-700 text-white font-bold px-8 py-5 rounded-2xl shadow-lg active:shadow-md transform active:scale-95 transition-all duration-100 text-lg touch-manipulation flex items-center justify-center gap-2" 
+                data-testid="search-btn"
+                aria-label="Search properties"
+              >
+                <Search className="w-6 h-6" />
+                <span>Search Properties</span>
+              </button>
             </div>
             
-            {/* Quick filters - Mobile optimized */}
-            <div className="mt-6 flex flex-wrap gap-2 sm:gap-3 justify-center items-center">
-              <span className="text-sm font-medium text-gray-600">Popular:</span>
-              <button className="px-5 py-3 bg-white hover:bg-blue-50 active:bg-blue-100 border-2 border-gray-200 hover:border-blue-300 active:border-blue-400 rounded-full text-sm sm:text-base font-semibold text-gray-700 hover:text-blue-700 active:text-blue-800 transition-all duration-200 touch-manipulation min-h-[44px] shadow-sm hover:shadow-md">Houses in Douala</button>
-              <button className="px-5 py-3 bg-white hover:bg-blue-50 active:bg-blue-100 border-2 border-gray-200 hover:border-blue-300 active:border-blue-400 rounded-full text-sm sm:text-base font-semibold text-gray-700 hover:text-blue-700 active:text-blue-800 transition-all duration-200 touch-manipulation min-h-[44px] shadow-sm hover:shadow-md">Apartments</button>
-              <button className="px-5 py-3 bg-white hover:bg-blue-50 active:bg-blue-100 border-2 border-gray-200 hover:border-blue-300 active:border-blue-400 rounded-full text-sm sm:text-base font-semibold text-gray-700 hover:text-blue-700 active:text-blue-800 transition-all duration-200 touch-manipulation min-h-[44px] shadow-sm hover:shadow-md">Land for Sale</button>
+            {/* Quick Filters - Native Mobile Pills */}
+            <div className="mt-6 flex flex-wrap gap-2 justify-center">
+              <span className="text-sm font-medium text-gray-500 py-2">Popular:</span>
+              <button className="px-5 py-2.5 bg-gray-50 active:bg-blue-50 border-2 border-gray-200 active:border-blue-400 rounded-full text-sm font-semibold text-gray-700 active:text-blue-700 transition-all duration-100 touch-manipulation min-h-[48px] transform active:scale-95">
+                Houses in Douala
+              </button>
+              <button className="px-5 py-2.5 bg-gray-50 active:bg-blue-50 border-2 border-gray-200 active:border-blue-400 rounded-full text-sm font-semibold text-gray-700 active:text-blue-700 transition-all duration-100 touch-manipulation min-h-[48px] transform active:scale-95">
+                Apartments
+              </button>
+              <button className="px-5 py-2.5 bg-gray-50 active:bg-blue-50 border-2 border-gray-200 active:border-blue-400 rounded-full text-sm font-semibold text-gray-700 active:text-blue-700 transition-all duration-100 touch-manipulation min-h-[48px] transform active:scale-95">
+                Land for Sale
+              </button>
             </div>
           </div>
         </div>
