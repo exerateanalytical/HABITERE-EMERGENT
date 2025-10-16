@@ -368,9 +368,40 @@ class HabitereAPITester:
     # PHASE 1: AUTHENTICATION SYSTEM VALIDATION TESTS
     # ============================================================================
     
+    def create_admin_user(self):
+        """Create admin user if it doesn't exist"""
+        try:
+            # First try to register admin user
+            register_data = {
+                "email": "admin@habitere.com",
+                "name": "Admin User",
+                "password": "admin123"
+            }
+            
+            register_response = self.session.post(f"{self.api_url}/auth/register", json=register_data)
+            
+            if register_response.status_code == 200:
+                print("   📝 Admin user registered successfully")
+                return True
+            elif register_response.status_code == 400:
+                # User might already exist
+                error_data = register_response.json()
+                if "already registered" in error_data.get('detail', ''):
+                    print("   ✅ Admin user already exists")
+                    return True
+            
+            print(f"   ❌ Failed to register admin user: {register_response.status_code}")
+            return False
+        except Exception as e:
+            print(f"   ❌ Exception creating admin user: {str(e)}")
+            return False
+
     def test_admin_login(self):
         """Test admin account login with admin@habitere.com"""
         try:
+            # First ensure admin user exists
+            self.create_admin_user()
+            
             login_data = {
                 "email": "admin@habitere.com",
                 "password": "admin123"
