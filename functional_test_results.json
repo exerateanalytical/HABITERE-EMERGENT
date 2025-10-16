@@ -1,0 +1,211 @@
+{
+  "summary": {
+    "total_tests": 31,
+    "passed_tests": 31,
+    "failed_tests": 0,
+    "success_rate": 100.0,
+    "timestamp": "2025-10-16T17:08:58.395929",
+    "sample_data": {
+      "property_id": "5f56c995-d5ea-4ab2-83bf-c062c3964975",
+      "service_id": "2a716423-7389-4896-bd21-ba696ccfb37a"
+    }
+  },
+  "results": [
+    {
+      "test_name": "API Health Check",
+      "success": true,
+      "details": "Status: 200",
+      "timestamp": "2025-10-16T17:08:57.773161"
+    },
+    {
+      "test_name": "API Root Endpoint",
+      "success": true,
+      "details": "Status: 200",
+      "timestamp": "2025-10-16T17:08:57.819355"
+    },
+    {
+      "test_name": "Sample Data Initialization",
+      "success": true,
+      "details": "Status: 200",
+      "timestamp": "2025-10-16T17:08:57.829179"
+    },
+    {
+      "test_name": "Properties Listing",
+      "success": true,
+      "details": "Found 4 properties",
+      "timestamp": "2025-10-16T17:08:57.837019"
+    },
+    {
+      "test_name": "Services Listing",
+      "success": true,
+      "details": "Found 6 services",
+      "timestamp": "2025-10-16T17:08:57.844675"
+    },
+    {
+      "test_name": "Property Detail",
+      "success": true,
+      "details": "Status: 200",
+      "timestamp": "2025-10-16T17:08:57.891460"
+    },
+    {
+      "test_name": "Service Detail",
+      "success": true,
+      "details": "Status: 200",
+      "timestamp": "2025-10-16T17:08:57.899442"
+    },
+    {
+      "test_name": "Admin Stats (Auth Required)",
+      "success": true,
+      "details": "Status: 401 (expected 401)",
+      "timestamp": "2025-10-16T17:08:57.906051"
+    },
+    {
+      "test_name": "Admin Users List (Auth Required)",
+      "success": true,
+      "details": "Status: 401 (expected 401)",
+      "timestamp": "2025-10-16T17:08:57.953777"
+    },
+    {
+      "test_name": "Admin Properties (Auth Required)",
+      "success": true,
+      "details": "Status: 401 (expected 401)",
+      "timestamp": "2025-10-16T17:08:57.960388"
+    },
+    {
+      "test_name": "Admin Services (Auth Required)",
+      "success": true,
+      "details": "Status: 401 (expected 401)",
+      "timestamp": "2025-10-16T17:08:57.966839"
+    },
+    {
+      "test_name": "Admin User Analytics (Auth Required)",
+      "success": true,
+      "details": "Status: 401 (expected 401)",
+      "timestamp": "2025-10-16T17:08:58.013598"
+    },
+    {
+      "test_name": "Admin Property Analytics (Auth Required)",
+      "success": true,
+      "details": "Status: 401 (expected 401)",
+      "timestamp": "2025-10-16T17:08:58.019739"
+    },
+    {
+      "test_name": "Reviews Listing",
+      "success": true,
+      "details": "Found 0 reviews",
+      "timestamp": "2025-10-16T17:08:58.026625"
+    },
+    {
+      "test_name": "Property Reviews",
+      "success": true,
+      "details": "Status: 200",
+      "timestamp": "2025-10-16T17:08:58.074223"
+    },
+    {
+      "test_name": "Service Reviews",
+      "success": true,
+      "details": "Status: 200",
+      "timestamp": "2025-10-16T17:08:58.087714"
+    },
+    {
+      "test_name": "User Reviews",
+      "success": true,
+      "details": "Status: 200",
+      "timestamp": "2025-10-16T17:08:58.093692"
+    },
+    {
+      "test_name": "Create Review (Auth Required)",
+      "success": true,
+      "details": "Status: 401 (expected 401)",
+      "timestamp": "2025-10-16T17:08:58.141407"
+    },
+    {
+      "test_name": "Send Message (Auth Required)",
+      "success": true,
+      "details": "Status: 401 (expected 401)",
+      "timestamp": "2025-10-16T17:08:58.147367"
+    },
+    {
+      "test_name": "Get Conversations (Auth Required)",
+      "success": true,
+      "details": "Status: 401 (expected 401)",
+      "timestamp": "2025-10-16T17:08:58.194990"
+    },
+    {
+      "test_name": "Get Message Thread (Auth Required)",
+      "success": true,
+      "details": "Status: 401 (expected 401)",
+      "timestamp": "2025-10-16T17:08:58.200292"
+    },
+    {
+      "test_name": "Get Unread Count (Auth Required)",
+      "success": true,
+      "details": "Status: 401 (expected 401)",
+      "timestamp": "2025-10-16T17:08:58.205600"
+    },
+    {
+      "test_name": "Create Booking (Auth Required)",
+      "success": true,
+      "details": "Status: 401 (expected 401)",
+      "timestamp": "2025-10-16T17:08:58.253581"
+    },
+    {
+      "test_name": "Get User Bookings (Auth Required)",
+      "success": true,
+      "details": "Status: 401 (expected 401)",
+      "timestamp": "2025-10-16T17:08:58.259493"
+    },
+    {
+      "test_name": "Get Received Bookings (Auth Required)",
+      "success": true,
+      "details": "Status: 401 (expected 401)",
+      "timestamp": "2025-10-16T17:08:58.265374"
+    },
+    {
+      "test_name": "Get Available Slots",
+      "success": true,
+      "details": "Status: 200",
+      "timestamp": "2025-10-16T17:08:58.314951"
+    },
+    {
+      "test_name": "Get Current User (Auth Required)",
+      "success": true,
+      "details": "Status: 401 (expected 401)",
+      "timestamp": "2025-10-16T17:08:58.327370"
+    },
+    {
+      "test_name": "Google OAuth URL Generation",
+      "success": true,
+      "details": "Status: 200, Has auth_url: True",
+      "timestamp": "2025-10-16T17:08:58.373406"
+    },
+    {
+      "test_name": "Get Entity Images",
+      "success": true,
+      "details": "Found 0 images",
+      "timestamp": "2025-10-16T17:08:58.382186"
+    },
+    {
+      "test_name": "MTN MoMo Payment (Auth Required)",
+      "success": true,
+      "details": "Status: 401 (expected 401)",
+      "timestamp": "2025-10-16T17:08:58.388986"
+    },
+    {
+      "test_name": "MTN MoMo Callback",
+      "success": true,
+      "details": "Status: 200",
+      "timestamp": "2025-10-16T17:08:58.395643"
+    }
+  ],
+  "categories": {
+    "Core": 3,
+    "Properties/Services": 9,
+    "Admin Security": 6,
+    "Reviews": 5,
+    "Messaging": 2,
+    "Booking": 3,
+    "Authentication": 18,
+    "Images/Payments": 3
+  }
+}
