@@ -144,7 +144,7 @@ const RegisterPage = () => {
       />
 
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 items-start">
           {/* Left Side - Benefits */}
           <div className="hidden lg:block space-y-8">
             {/* Header */}
