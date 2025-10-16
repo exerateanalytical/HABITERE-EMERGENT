@@ -6,8 +6,11 @@ const Terms = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <SEOHead 
-        title="Terms & Conditions | Habitere"
-        description="Read Habitere's terms and conditions. Understand your rights and responsibilities when using our platform."
+        title="Terms & Conditions - Habitere Platform Agreement | Cameroon Real Estate Terms"
+        description="Habitere's terms and conditions for property owners, seekers, and service providers in Cameroon. Understand your rights, responsibilities, and platform usage guidelines."
+        keywords="habitere terms, terms and conditions cameroon, real estate agreement, platform terms cameroon, user agreement habitere"
+        focusKeyword="habitere terms and conditions"
+        canonicalUrl="https://habitere.com/terms"
       />
 
       <div className="bg-gradient-to-br from-blue-600 to-purple-600 text-white">
