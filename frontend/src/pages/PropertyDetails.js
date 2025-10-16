@@ -83,7 +83,9 @@ const PropertyDetails = () => {
   };
 
   const images = property?.images?.length > 0 
-    ? property.images 
+    ? property.images.map(img => 
+        img.startsWith('/uploads/') ? `${BACKEND_URL}${img}` : img
+      )
     : ['https://images.unsplash.com/photo-1560448204-e02f11c3d0e2'];
 
   const nextImage = () => {
