@@ -372,15 +372,24 @@ const PropertyDetails = () => {
 
                 {user ? (
                   <div className="space-y-3">
-                    {/* Show Edit button if user is the owner */}
+                    {/* Show Edit and Delete buttons if user is the owner */}
                     {user.id === property.owner_id ? (
-                      <button
-                        onClick={() => navigate(`/properties/edit/${property.id}`)}
-                        className="btn-primary w-full justify-center bg-green-600 hover:bg-green-700"
-                      >
-                        <Edit className="w-5 h-5 mr-2" />
-                        Edit Property
-                      </button>
+                      <>
+                        <button
+                          onClick={() => navigate(`/properties/edit/${property.id}`)}
+                          className="btn-primary w-full justify-center bg-green-600 hover:bg-green-700"
+                        >
+                          <Edit className="w-5 h-5 mr-2" />
+                          Edit Property
+                        </button>
+                        <button
+                          onClick={handleDelete}
+                          className="btn-secondary w-full justify-center bg-red-600 hover:bg-red-700 text-white border-red-600"
+                        >
+                          <Trash2 className="w-5 h-5 mr-2" />
+                          Delete Property
+                        </button>
+                      </>
                     ) : (
                       <>
                         <button
