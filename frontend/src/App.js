@@ -199,6 +199,15 @@ function AppContent() {
           } 
         />
         
+        <Route 
+          path="/admin/properties" 
+          element={
+            <ProtectedRoute>
+              <AdminProperties />
+            </ProtectedRoute>
+          } 
+        />
+        
         {/* Fallback route */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
