@@ -137,15 +137,7 @@ body {
 
 /* Mobile-first responsive design - Enhanced for 200% native feel */
 /* Base mobile styles (default) */
-.btn-primary, .btn-secondary, .btn-outline {
-  @apply px-5 py-3 text-base min-h-12 touch-manipulation;
-  /* Touch-friendly button sizing */
-  min-height: 44px; /* iOS human interface guidelines minimum touch target */
-}
-
-.card-body {
-  @apply p-4;
-}
+/* Note: Button styles are now handled inline in components for better responsiveness */
 
 .property-image, .service-image {
   @apply h-40;
