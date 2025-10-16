@@ -230,10 +230,17 @@ const FeaturedProperties = ({ title = "Featured Properties", showAll = true, lim
 };
 
 const PropertyCard = ({ property, isFavorite, onToggleFavorite, formatPrice }) => {
+  const getCardWidth = () => {
+    if (typeof window === 'undefined') return '33.333%';
+    if (window.innerWidth < 640) return '50%'; // 2 cards on mobile
+    if (window.innerWidth < 1024) return '50%'; // 2 cards on tablet
+    return '33.333%'; // 3 cards on desktop
+  };
+
   return (
     <div 
-      className="flex-shrink-0 px-3" 
-      style={{ width: `${100 / 3}%` }} // 3 cards visible on desktop
+      className="flex-shrink-0 px-2 sm:px-3" 
+      style={{ width: getCardWidth() }}
       data-testid={`property-card-${property.id}`}
     >
       <Link to={`/properties/${property.id}`}>
