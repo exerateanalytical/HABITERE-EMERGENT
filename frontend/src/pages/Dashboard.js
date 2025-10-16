@@ -284,39 +284,39 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
           {/* Recent Properties */}
           {canListProperties && recentProperties.length > 0 && (
             <div className="card" data-testid="recent-properties">
-              <div className="card-header">
-                <h3 className="text-lg font-semibold text-gray-900">Recent Properties</h3>
-                <Link to="/properties" className="text-blue-600 hover:text-blue-700 text-sm font-medium">
+              <div className="card-header p-4 sm:p-5">
+                <h3 className="text-base sm:text-lg font-semibold text-gray-900">Recent Properties</h3>
+                <Link to="/properties" className="text-blue-600 hover:text-blue-700 text-xs sm:text-sm font-medium">
                   View all
                 </Link>
               </div>
-              <div className="card-body">
-                <div className="space-y-4">
+              <div className="card-body p-3 sm:p-4 md:p-5">
+                <div className="space-y-3 sm:space-y-4">
                   {recentProperties.map((property) => (
-                    <div key={property.id} className="flex items-start space-x-3 p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                    <div key={property.id} className="flex items-start space-x-2 sm:space-x-3 p-2 sm:p-3 hover:bg-gray-50 rounded-lg transition-colors">
                       <img
                         src={getPropertyImageUrl(property.images?.[0])}
                         alt={property.title}
-                        className="w-16 h-16 object-cover rounded-lg"
+                        className="w-14 h-14 sm:w-16 sm:h-16 object-cover rounded-lg flex-shrink-0"
                       />
                       <div className="flex-1 min-w-0">
-                        <h4 className="text-sm font-medium text-gray-900 truncate">
+                        <h4 className="text-xs sm:text-sm font-medium text-gray-900 truncate">
                           {property.title}
                         </h4>
-                        <p className="text-sm text-gray-500 truncate">
+                        <p className="text-xs sm:text-sm text-gray-500 truncate">
                           {property.location}
                         </p>
-                        <p className="text-sm font-semibold text-blue-600">
+                        <p className="text-xs sm:text-sm font-semibold text-blue-600 mt-0.5">
                           {formatPrice(property.price)}
                         </p>
                       </div>
                       <Link
                         to={`/properties/${property.id}`}
-                        className="text-gray-400 hover:text-gray-600"
+                        className="text-gray-400 hover:text-gray-600 flex-shrink-0"
                       >
                         <Eye className="w-4 h-4" />
                       </Link>
@@ -330,35 +330,35 @@ const Dashboard = () => {
           {/* Recent Services */}
           {canProvideServices && recentServices.length > 0 && (
             <div className="card" data-testid="recent-services">
-              <div className="card-header">
-                <h3 className="text-lg font-semibold text-gray-900">Recent Services</h3>
-                <Link to="/services" className="text-blue-600 hover:text-blue-700 text-sm font-medium">
+              <div className="card-header p-4 sm:p-5">
+                <h3 className="text-base sm:text-lg font-semibold text-gray-900">Recent Services</h3>
+                <Link to="/services" className="text-blue-600 hover:text-blue-700 text-xs sm:text-sm font-medium">
                   View all
                 </Link>
               </div>
-              <div className="card-body">
-                <div className="space-y-4">
+              <div className="card-body p-3 sm:p-4 md:p-5">
+                <div className="space-y-3 sm:space-y-4">
                   {recentServices.map((service) => (
-                    <div key={service.id} className="flex items-start space-x-3 p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                    <div key={service.id} className="flex items-start space-x-2 sm:space-x-3 p-2 sm:p-3 hover:bg-gray-50 rounded-lg transition-colors">
                       <img
                         src={getServiceImageUrl(service.images?.[0])}
                         alt={service.title}
-                        className="w-16 h-16 object-cover rounded-lg"
+                        className="w-14 h-14 sm:w-16 sm:h-16 object-cover rounded-lg flex-shrink-0"
                       />
                       <div className="flex-1 min-w-0">
-                        <h4 className="text-sm font-medium text-gray-900 truncate">
+                        <h4 className="text-xs sm:text-sm font-medium text-gray-900 truncate">
                           {service.title}
                         </h4>
-                        <p className="text-sm text-gray-500 truncate">
+                        <p className="text-xs sm:text-sm text-gray-500 truncate">
                           {service.location}
                         </p>
-                        <span className="inline-block px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full capitalize">
+                        <span className="inline-block px-2 py-0.5 sm:py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full capitalize mt-0.5">
                           {service.category}
                         </span>
                       </div>
                       <Link
                         to={`/services/${service.id}`}
-                        className="text-gray-400 hover:text-gray-600"
+                        className="text-gray-400 hover:text-gray-600 flex-shrink-0"
                       >
                         <Eye className="w-4 h-4" />
                       </Link>
@@ -371,21 +371,23 @@ const Dashboard = () => {
 
           {/* Recent Bookings */}
           <div className="card" data-testid="recent-bookings">
-            <div className="card-header">
-              <h3 className="text-lg font-semibold text-gray-900">Recent Bookings</h3>
-              <Link to="/bookings" className="text-blue-600 hover:text-blue-700 text-sm font-medium">
+            <div className="card-header p-4 sm:p-5">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900">Recent Bookings</h3>
+              <Link to="/bookings" className="text-blue-600 hover:text-blue-700 text-xs sm:text-sm font-medium">
                 View all
               </Link>
             </div>
-            <div className="card-body">
+            <div className="card-body p-3 sm:p-4 md:p-5">
               {recentBookings.length > 0 ? (
-                <div className="space-y-4">
+                <div className="space-y-3 sm:space-y-4">
                   {recentBookings.map((booking) => (
-                    <div key={booking.id} className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg transition-colors">
-                      <div className="flex items-center space-x-3">
-                        {getStatusIcon(booking.status)}
-                        <div>
-                          <p className="text-sm font-medium text-gray-900">
+                    <div key={booking.id} className="flex items-center justify-between p-2 sm:p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                      <div className="flex items-center space-x-2 sm:space-x-3 min-w-0 flex-1">
+                        <div className="flex-shrink-0">
+                          {getStatusIcon(booking.status)}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-xs sm:text-sm font-medium text-gray-900 truncate">
                             {booking.property_id ? 'Property Booking' : 'Service Booking'}
                           </p>
                           <p className="text-xs text-gray-500">
@@ -393,17 +395,17 @@ const Dashboard = () => {
                           </p>
                         </div>
                       </div>
-                      <span className={getStatusBadge(booking.status)}>
+                      <span className={`${getStatusBadge(booking.status)} flex-shrink-0 ml-2`}>
                         {booking.status}
                       </span>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-8">
-                  <Calendar className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                  <p className="text-gray-500">No bookings yet</p>
-                  <Link to="/properties" className="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                <div className="text-center py-6 sm:py-8">
+                  <Calendar className="w-10 h-10 sm:w-12 sm:h-12 text-gray-300 mx-auto mb-3 sm:mb-4" />
+                  <p className="text-sm sm:text-base text-gray-500 mb-2">No bookings yet</p>
+                  <Link to="/properties" className="text-blue-600 hover:text-blue-700 text-xs sm:text-sm font-medium">
                     Browse properties to book
                   </Link>
                 </div>
