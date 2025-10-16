@@ -2698,6 +2698,237 @@ async def update_rating_aggregation(property_id: Optional[str], service_id: Opti
     except Exception as e:
         logger.error(f"Error updating rating aggregation: {e}")
 
+# ============================================================================
+# MESSAGING ENDPOINTS
+# ============================================================================
+
+@api_router.post("/messages")
+async def send_message(
+    message_data: dict,
+    current_user: User = Depends(get_current_user)
+):
+    """Send a message to another user"""
+    try:
+        receiver_id = message_data.get('receiver_id')
+        content = message_data.get('content', '').strip()
+        
+        if not receiver_id:
+            raise HTTPException(status_code=400, detail="Receiver ID is required")
+        
+        if not content:
+            raise HTTPException(status_code=400, detail="Message content cannot be empty")
+        
+        # Verify receiver exists
+        receiver = await db.users.find_one({"id": receiver_id})
+        if not receiver:
+            raise HTTPException(status_code=404, detail="Receiver not found")
+        
+        # Cannot message yourself
+        if receiver_id == current_user.id:
+            raise HTTPException(status_code=400, detail="Cannot send message to yourself")
+        
+        # Create message
+        message = {
+            "id": str(uuid.uuid4()),
+            "sender_id": current_user.id,
+            "receiver_id": receiver_id,
+            "content": content,
+            "timestamp": datetime.now(timezone.utc),
+            "is_read": False
+        }
+        
+        await db.messages.insert_one(message)
+        
+        return {"message": "Message sent successfully", "data": Message(**message)}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error sending message: {e}")
+        raise HTTPException(status_code=500, detail="Failed to send message")
+
+@api_router.get("/messages/conversations")
+async def get_conversations(current_user: User = Depends(get_current_user)):
+    """Get all conversations for current user"""
+    try:
+        # Get all unique users the current user has messaged with
+        pipeline = [
+            {
+                "$match": {
+                    "$or": [
+                        {"sender_id": current_user.id},
+                        {"receiver_id": current_user.id}
+                    ]
+                }
+            },
+            {
+                "$sort": {"timestamp": -1}
+            },
+            {
+                "$group": {
+                    "_id": {
+                        "$cond": [
+                            {"$eq": ["$sender_id", current_user.id]},
+                            "$receiver_id",
+                            "$sender_id"
+                        ]
+                    },
+                    "last_message": {"$first": "$$ROOT"}
+                }
+            }
+        ]
+        
+        conversations_data = await db.messages.aggregate(pipeline).to_list(length=None)
+        
+        # Fetch user details and unread count for each conversation
+        conversations = []
+        for conv in conversations_data:
+            other_user_id = conv["_id"]
+            last_message = conv["last_message"]
+            
+            # Get other user details
+            other_user = await db.users.find_one({"id": other_user_id})
+            if not other_user:
+                continue
+            
+            # Count unread messages from this user
+            unread_count = await db.messages.count_documents({
+                "sender_id": other_user_id,
+                "receiver_id": current_user.id,
+                "is_read": False
+            })
+            
+            conversations.append({
+                "user_id": other_user_id,
+                "user_name": other_user["name"],
+                "user_picture": other_user.get("picture"),
+                "last_message": last_message["content"],
+                "last_message_time": last_message["timestamp"],
+                "is_last_sender": last_message["sender_id"] == current_user.id,
+                "unread_count": unread_count
+            })
+        
+        # Sort by last message time
+        conversations.sort(key=lambda x: x["last_message_time"], reverse=True)
+        
+        return {"conversations": conversations}
+    except Exception as e:
+        logger.error(f"Error fetching conversations: {e}")
+        raise HTTPException(status_code=500, detail="Failed to fetch conversations")
+
+@api_router.get("/messages/thread/{other_user_id}")
+async def get_message_thread(
+    other_user_id: str,
+    current_user: User = Depends(get_current_user),
+    limit: int = 50,
+    skip: int = 0
+):
+    """Get message thread between current user and another user"""
+    try:
+        # Verify other user exists
+        other_user = await db.users.find_one({"id": other_user_id})
+        if not other_user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        # Get messages between the two users
+        messages_cursor = db.messages.find({
+            "$or": [
+                {"sender_id": current_user.id, "receiver_id": other_user_id},
+                {"sender_id": other_user_id, "receiver_id": current_user.id}
+            ]
+        }).sort("timestamp", -1).skip(skip).limit(limit)
+        
+        messages = await messages_cursor.to_list(length=limit)
+        messages.reverse()  # Show oldest first
+        
+        # Mark messages from other user as read
+        await db.messages.update_many(
+            {
+                "sender_id": other_user_id,
+                "receiver_id": current_user.id,
+                "is_read": False
+            },
+            {"$set": {"is_read": True}}
+        )
+        
+        return {
+            "messages": [Message(**msg) for msg in messages],
+            "other_user": {
+                "id": other_user["id"],
+                "name": other_user["name"],
+                "picture": other_user.get("picture"),
+                "role": other_user.get("role")
+            }
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error fetching message thread: {e}")
+        raise HTTPException(status_code=500, detail="Failed to fetch messages")
+
+@api_router.get("/messages/unread-count")
+async def get_unread_count(current_user: User = Depends(get_current_user)):
+    """Get total unread message count"""
+    try:
+        count = await db.messages.count_documents({
+            "receiver_id": current_user.id,
+            "is_read": False
+        })
+        return {"unread_count": count}
+    except Exception as e:
+        logger.error(f"Error fetching unread count: {e}")
+        raise HTTPException(status_code=500, detail="Failed to fetch unread count")
+
+@api_router.put("/messages/{message_id}/read")
+async def mark_message_as_read(
+    message_id: str,
+    current_user: User = Depends(get_current_user)
+):
+    """Mark a message as read"""
+    try:
+        message = await db.messages.find_one({"id": message_id})
+        if not message:
+            raise HTTPException(status_code=404, detail="Message not found")
+        
+        # Only receiver can mark as read
+        if message["receiver_id"] != current_user.id:
+            raise HTTPException(status_code=403, detail="Not authorized")
+        
+        await db.messages.update_one(
+            {"id": message_id},
+            {"$set": {"is_read": True}}
+        )
+        
+        return {"message": "Message marked as read"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error marking message as read: {e}")
+        raise HTTPException(status_code=500, detail="Failed to mark message as read")
+
+@api_router.delete("/messages/{message_id}")
+async def delete_message(
+    message_id: str,
+    current_user: User = Depends(get_current_user)
+):
+    """Delete a message (sender only)"""
+    try:
+        message = await db.messages.find_one({"id": message_id})
+        if not message:
+            raise HTTPException(status_code=404, detail="Message not found")
+        
+        # Only sender or admin can delete
+        if message["sender_id"] != current_user.id and current_user.role != "admin":
+            raise HTTPException(status_code=403, detail="Not authorized")
+        
+        await db.messages.delete_one({"id": message_id})
+        
+        return {"message": "Message deleted successfully"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting message: {e}")
+        raise HTTPException(status_code=500, detail="Failed to delete message")
+
 # Include router
 app.include_router(api_router)
 
