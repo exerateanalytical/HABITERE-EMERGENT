@@ -410,8 +410,8 @@ const PropertyCard = ({ property, isFavorite, onToggleFavorite, formatPrice }) =
   const [imageLoaded, setImageLoaded] = React.useState(false);
   
   return (
-    <div className="group bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 hover:border-blue-200 transform hover:-translate-y-2 hover:rotate-1" data-testid={`property-card-${property.id}`}>
-      <div className="relative overflow-hidden h-64">
+    <div className="group bg-white rounded-2xl sm:rounded-3xl shadow-lg sm:shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 hover:border-blue-200 transform hover:-translate-y-1 sm:hover:-translate-y-2" data-testid={`property-card-${property.id}`}>
+      <div className="relative overflow-hidden h-40 sm:h-48 md:h-56 lg:h-64">
         {/* Image with loading state */}
         <div className={`w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 ${!imageLoaded ? 'animate-pulse' : ''}`}>
           <img
@@ -426,26 +426,21 @@ const PropertyCard = ({ property, isFavorite, onToggleFavorite, formatPrice }) =
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
         
         {/* Top badges */}
-        <div className="absolute top-4 left-4 flex flex-wrap gap-2">
-          <span className={`px-3 py-2 rounded-2xl text-xs font-bold shadow-xl backdrop-blur-md border border-white/20 ${
+        <div className="absolute top-2 left-2 sm:top-3 sm:left-3 flex flex-col sm:flex-row flex-wrap gap-1 sm:gap-2">
+          <span className={`px-2 py-1 sm:px-3 sm:py-2 rounded-lg sm:rounded-2xl text-xs font-bold shadow-lg backdrop-blur-md border border-white/20 ${
             property.listing_type === 'rent' 
               ? 'bg-emerald-500/95 text-white' 
               : property.listing_type === 'sale' 
                 ? 'bg-blue-500/95 text-white' 
                 : 'bg-orange-500/95 text-white'
           }`}>
-            {property.listing_type === 'rent' ? '🏠 For Rent' : 
-             property.listing_type === 'sale' ? '🏡 For Sale' : '🏢 For Lease'}
+            {property.listing_type === 'rent' ? 'Rent' : 
+             property.listing_type === 'sale' ? 'Sale' : 'Lease'}
           </span>
           {property.verified && (
-            <span className="px-3 py-2 rounded-2xl text-xs font-bold bg-emerald-600/95 text-white shadow-xl backdrop-blur-md border border-white/20 flex items-center">
-              <Shield className="w-3 h-3 mr-1" />
-              ✓ Verified
-            </span>
-          )}
-          {property.featured && (
-            <span className="px-3 py-2 rounded-2xl text-xs font-bold bg-yellow-500/95 text-white shadow-xl backdrop-blur-md border border-white/20 flex items-center animate-pulse">
-              ⭐ Featured
+            <span className="px-2 py-1 sm:px-3 sm:py-2 rounded-lg sm:rounded-2xl text-xs font-bold bg-emerald-600/95 text-white shadow-lg backdrop-blur-md border border-white/20 flex items-center">
+              <Shield className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-0.5 sm:mr-1" />
+              ✓
             </span>
           )}
         </div>
@@ -453,108 +448,93 @@ const PropertyCard = ({ property, isFavorite, onToggleFavorite, formatPrice }) =
         {/* Heart button */}
         <button
           onClick={() => onToggleFavorite(property.id)}
-          className={`absolute top-4 right-4 p-3 rounded-2xl transition-all duration-300 shadow-xl backdrop-blur-md border border-white/20 ${
+          className={`absolute top-2 right-2 sm:top-3 sm:right-3 p-2 sm:p-3 rounded-xl sm:rounded-2xl transition-all duration-300 shadow-lg backdrop-blur-md border border-white/20 ${
             isFavorite 
-              ? 'bg-red-500 text-white scale-110 animate-bounce' 
-              : 'bg-white/90 text-gray-600 hover:text-red-500 hover:bg-white hover:scale-105'
+              ? 'bg-red-500 text-white' 
+              : 'bg-white/90 text-gray-600 hover:text-red-500 hover:bg-white'
           }`}
           data-testid={`favorite-btn-${property.id}`}
         >
-          <Heart className={`w-5 h-5 ${isFavorite ? 'fill-current' : ''}`} />
+          <Heart className={`w-4 h-4 sm:w-5 sm:h-5 ${isFavorite ? 'fill-current' : ''}`} />
         </button>
 
-        {/* Rating and stats overlay */}
-        <div className="absolute bottom-4 left-4 flex items-center space-x-2">
-          <div className="flex items-center bg-white/95 backdrop-blur-md rounded-xl px-3 py-2 shadow-lg border border-white/20">
-            <Star className="w-4 h-4 text-yellow-400 fill-current mr-1" />
-            <span className="text-sm font-bold text-gray-900">{property.rating || '4.8'}</span>
-          </div>
-          <div className="bg-blue-500/95 backdrop-blur-md rounded-xl px-3 py-2 shadow-lg border border-white/20">
-            <span className="text-xs font-bold text-white">👁️ {property.views || '124'}</span>
-          </div>
-        </div>
-
-        {/* Price overlay */}
-        <div className="absolute bottom-4 right-4 bg-gradient-to-r from-blue-600 to-purple-600 backdrop-blur-md rounded-xl px-4 py-2 shadow-lg border border-white/20">
-          <div className="text-lg font-bold text-white">
+        {/* Price overlay - moved to always visible */}
+        <div className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 bg-gradient-to-r from-blue-600 to-purple-600 backdrop-blur-md rounded-lg sm:rounded-xl px-2 py-1 sm:px-3 sm:py-2 shadow-lg border border-white/20">
+          <div className="text-sm sm:text-base md:text-lg font-bold text-white">
             {formatPrice(property.price)}
             {property.listing_type === 'rent' && <span className="text-xs opacity-80">/mo</span>}
           </div>
         </div>
       </div>
 
-      <div className="p-6 space-y-4">
+      <div className="p-3 sm:p-4 md:p-5 space-y-2 sm:space-y-3">
         {/* Title and location */}
         <div>
-          <h3 className="text-xl font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors duration-300">
+          <h3 className="text-sm sm:text-base md:text-lg font-bold text-gray-900 mb-1 sm:mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors duration-300">
             {property.title}
           </h3>
-          <div className="flex items-center text-gray-500 text-sm">
-            <MapPin className="w-4 h-4 mr-2 text-blue-500" />
-            <span className="font-semibold">{property.location}</span>
-            <span className="ml-auto text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">Available Now</span>
+          <div className="flex items-start sm:items-center text-gray-500 text-xs sm:text-sm">
+            <MapPin className="w-3 h-3 sm:w-4 sm:h-4 mr-1 text-blue-500 flex-shrink-0 mt-0.5 sm:mt-0" />
+            <span className="font-medium truncate">{property.location}</span>
           </div>
         </div>
 
         {/* Property details */}
-        <div className="grid grid-cols-3 gap-4 py-4 bg-gradient-to-br from-gray-50 to-blue-50/30 rounded-2xl">
+        <div className="grid grid-cols-3 gap-2 sm:gap-3 py-2 sm:py-3 bg-gradient-to-br from-gray-50 to-blue-50/30 rounded-xl sm:rounded-2xl">
           {property.bedrooms > 0 && (
             <div className="text-center">
-              <div className="w-8 h-8 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-2">
-                <BedDouble className="w-4 h-4 text-blue-600" />
+              <div className="w-6 h-6 sm:w-8 sm:h-8 bg-blue-100 rounded-lg sm:rounded-xl flex items-center justify-center mx-auto mb-1">
+                <BedDouble className="w-3 h-3 sm:w-4 sm:h-4 text-blue-600" />
               </div>
-              <div className="text-sm font-bold text-gray-900">{property.bedrooms}</div>
-              <div className="text-xs text-gray-500">Bedrooms</div>
+              <div className="text-xs sm:text-sm font-bold text-gray-900">{property.bedrooms}</div>
+              <div className="text-xs text-gray-500 hidden sm:block">Beds</div>
             </div>
           )}
           {property.bathrooms > 0 && (
             <div className="text-center">
-              <div className="w-8 h-8 bg-purple-100 rounded-xl flex items-center justify-center mx-auto mb-2">
-                <Bath className="w-4 h-4 text-purple-600" />
+              <div className="w-6 h-6 sm:w-8 sm:h-8 bg-purple-100 rounded-lg sm:rounded-xl flex items-center justify-center mx-auto mb-1">
+                <Bath className="w-3 h-3 sm:w-4 sm:h-4 text-purple-600" />
               </div>
-              <div className="text-sm font-bold text-gray-900">{property.bathrooms}</div>
-              <div className="text-xs text-gray-500">Bathrooms</div>
+              <div className="text-xs sm:text-sm font-bold text-gray-900">{property.bathrooms}</div>
+              <div className="text-xs text-gray-500 hidden sm:block">Baths</div>
             </div>
           )}
           {property.area_sqm && (
             <div className="text-center">
-              <div className="w-8 h-8 bg-green-100 rounded-xl flex items-center justify-center mx-auto mb-2">
-                <Square className="w-4 h-4 text-green-600" />
+              <div className="w-6 h-6 sm:w-8 sm:h-8 bg-green-100 rounded-lg sm:rounded-xl flex items-center justify-center mx-auto mb-1">
+                <Square className="w-3 h-3 sm:w-4 sm:h-4 text-green-600" />
               </div>
-              <div className="text-sm font-bold text-gray-900">{property.area_sqm}</div>
-              <div className="text-xs text-gray-500">m²</div>
+              <div className="text-xs sm:text-sm font-bold text-gray-900">{property.area_sqm}</div>
+              <div className="text-xs text-gray-500 hidden sm:block">m²</div>
             </div>
           )}
         </div>
 
-        {/* Amenities preview */}
-        <div className="flex flex-wrap gap-2">
-          {(property.amenities || ['WiFi', 'Parking', 'Security']).slice(0, 3).map((amenity, index) => (
-            <span key={index} className="px-3 py-1 bg-gray-100 text-gray-700 text-xs rounded-full font-medium">
+        {/* Amenities preview - hidden on mobile, shown on tablet+ */}
+        <div className="hidden sm:flex flex-wrap gap-1.5 sm:gap-2">
+          {(property.amenities || ['WiFi', 'Parking', 'Security']).slice(0, 2).map((amenity, index) => (
+            <span key={index} className="px-2 py-0.5 sm:px-3 sm:py-1 bg-gray-100 text-gray-700 text-xs rounded-full font-medium">
               {amenity}
             </span>
           ))}
-          {(property.amenities || []).length > 3 && (
-            <span className="px-3 py-1 bg-blue-100 text-blue-700 text-xs rounded-full font-medium">
-              +{(property.amenities || []).length - 3} more
+          {(property.amenities || []).length > 2 && (
+            <span className="px-2 py-0.5 sm:px-3 sm:py-1 bg-blue-100 text-blue-700 text-xs rounded-full font-medium">
+              +{(property.amenities || []).length - 2}
             </span>
           )}
         </div>
 
         {/* Actions */}
-        <div className="flex items-center space-x-3">
-          <Link
-            to={`/properties/${property.id}`}
-            className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold px-6 py-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center group-hover:scale-105"
-            data-testid={`view-property-${property.id}`}
-          >
-            <Eye className="w-5 h-5 mr-2" />
-            View Details
-          </Link>
-          <button className="p-4 bg-gray-100 hover:bg-blue-100 rounded-2xl transition-colors duration-200 group-hover:scale-105">
-            <Phone className="w-5 h-5 text-gray-600 hover:text-blue-600" />
-          </button>
-        </div>
+        <Link
+          to={`/properties/${property.id}`}
+          className="block w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold px-3 py-2.5 sm:px-4 sm:py-3 md:px-6 md:py-4 rounded-xl sm:rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 text-center text-sm sm:text-base"
+          data-testid={`view-property-${property.id}`}
+        >
+          <span className="flex items-center justify-center">
+            <Eye className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" />
+            View
+          </span>
+        </Link>
       </div>
     </div>
   );
