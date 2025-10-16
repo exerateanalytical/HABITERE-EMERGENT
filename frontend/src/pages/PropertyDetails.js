@@ -371,23 +371,36 @@ const PropertyDetails = () => {
 
                 {user ? (
                   <div className="space-y-3">
-                    <button
-                      onClick={handleBooking}
-                      className="btn-primary w-full justify-center"
-                      data-testid="book-viewing-btn"
-                    >
-                      <Calendar className="w-5 h-5 mr-2" />
-                      Book Viewing
-                    </button>
+                    {/* Show Edit button if user is the owner */}
+                    {user.id === property.owner_id ? (
+                      <button
+                        onClick={() => navigate(`/properties/edit/${property.id}`)}
+                        className="btn-primary w-full justify-center bg-green-600 hover:bg-green-700"
+                      >
+                        <Edit className="w-5 h-5 mr-2" />
+                        Edit Property
+                      </button>
+                    ) : (
+                      <>
+                        <button
+                          onClick={handleBooking}
+                          className="btn-primary w-full justify-center"
+                          data-testid="book-viewing-btn"
+                        >
+                          <Calendar className="w-5 h-5 mr-2" />
+                          Book Viewing
+                        </button>
 
-                    <button
-                      onClick={handleMessage}
-                      className="btn-secondary w-full justify-center"
-                      data-testid="message-owner-btn"
-                    >
-                      <MessageSquare className="w-5 h-5 mr-2" />
-                      Message Owner
-                    </button>
+                        <button
+                          onClick={handleMessage}
+                          className="btn-secondary w-full justify-center"
+                          data-testid="message-owner-btn"
+                        >
+                          <MessageSquare className="w-5 h-5 mr-2" />
+                          Message Owner
+                        </button>
+                      </>
+                    )}
 
                     <button className="btn-outline w-full justify-center">
                       <Phone className="w-5 h-5 mr-2" />
