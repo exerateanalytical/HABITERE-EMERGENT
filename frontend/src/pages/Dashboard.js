@@ -316,12 +316,22 @@ const Dashboard = () => {
                           {formatPrice(property.price)}
                         </p>
                       </div>
-                      <Link
-                        to={`/properties/${property.id}`}
-                        className="text-gray-400 hover:text-gray-600 flex-shrink-0"
-                      >
-                        <Eye className="w-4 h-4" />
-                      </Link>
+                      <div className="flex space-x-1 flex-shrink-0">
+                        <Link
+                          to={`/properties/${property.id}`}
+                          className="text-gray-400 hover:text-gray-600"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </Link>
+                        {(property.owner_id === user.id || user.role === "admin") && (
+                          <Link
+                            to={`/properties/${property.id}/edit`}
+                            className="text-blue-400 hover:text-blue-600"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </Link>
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>
