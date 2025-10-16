@@ -138,6 +138,10 @@ class Property(BaseModel):
     amenities: List[str] = []
     available: bool = True
     verified: bool = False
+    verification_status: str = "pending"  # pending, verified, rejected
+    verified_by: Optional[str] = None  # Admin user ID who verified
+    verified_at: Optional[datetime] = None
+    rejection_reason: Optional[str] = None
     views: int = 0
     favorites: int = 0
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
