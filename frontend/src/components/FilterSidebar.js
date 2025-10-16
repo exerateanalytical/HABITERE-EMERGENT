@@ -146,6 +146,8 @@ const FilterSidebar = ({
       search: '',
       location: '',
       priceRange: { min: '', max: '' },
+      property_sector: '',
+      property_category: '',
       propertyType: '',
       serviceCategory: '',
       bedrooms: '',
