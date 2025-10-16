@@ -96,7 +96,7 @@ const LoginPage = () => {
       <div className="max-w-6xl w-full space-y-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
           {/* Left Side - Login Form */}
-          <div className="bg-white rounded-3xl shadow-2xl border border-gray-100 p-8 lg:p-12">
+          <div className="bg-white rounded-3xl shadow-2xl border border-gray-100 p-6 lg:p-12">
             {/* Back to home link */}
             <div className="mb-6">
               <Link 
