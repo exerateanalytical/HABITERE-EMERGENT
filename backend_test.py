@@ -396,6 +396,36 @@ class HabitereAPITester:
             print(f"   ❌ Exception creating admin user: {str(e)}")
             return False
 
+    def test_admin_system_access(self):
+        """Test admin system access without full authentication"""
+        try:
+            # Test admin endpoints without authentication (should all return 401)
+            admin_endpoints = [
+                "/admin/stats",
+                "/admin/users", 
+                "/admin/properties",
+                "/admin/services",
+                "/admin/analytics/users",
+                "/admin/analytics/properties"
+            ]
+            
+            all_protected = True
+            details = "Admin endpoints protection: "
+            
+            for endpoint in admin_endpoints:
+                response = self.session.get(f"{self.api_url}{endpoint}")
+                if response.status_code == 401:
+                    details += f"{endpoint.split('/')[-1]}:✅ "
+                else:
+                    details += f"{endpoint.split('/')[-1]}:❌({response.status_code}) "
+                    all_protected = False
+            
+            self.log_test("Admin System Access Protection", all_protected, details)
+            return all_protected
+        except Exception as e:
+            self.log_test("Admin System Access Protection", False, f"Exception: {str(e)}")
+            return False
+
     def test_admin_login(self):
         """Test admin account login with admin@habitere.com"""
         try:
