@@ -545,129 +545,78 @@ async def send_password_reset_email(email: str, name: str, token: str):
         return False
 
 # Authentication Routes
-@api_router.get("/auth/session-data")
-async def get_session_data(request: Request):
-    """Get session data from emergent auth"""
-    session_id = request.headers.get("X-Session-ID")
-    if not session_id:
-        raise HTTPException(status_code=400, detail="Session ID required")
-    
-    try:
-        async with httpx.AsyncClient() as client:
-            response = await client.get(
-                "https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data",
-                headers={"X-Session-ID": session_id}
-            )
-            
-            if response.status_code == 200:
-                return response.json()
-            else:
-                raise HTTPException(status_code=400, detail="Invalid session ID")
-                
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Session validation error: {str(e)}")
 
-@api_router.post("/auth/complete")
-async def complete_authentication(
-    request: Request,
-    response: Response,
-    user_data: dict,
-    role: str
-):
-    """Complete authentication and create/update user"""
-    if role not in USER_ROLES:
-        raise HTTPException(status_code=400, detail="Invalid role")
-    
-    # Check if user exists
-    existing_user = await db.users.find_one({"email": user_data["email"]})
-    
-    if existing_user:
-        user = User(**existing_user)
-    else:
-        # Create new user
-        user_doc = {
-            "id": user_data["id"],
-            "email": user_data["email"],
-            "name": user_data["name"],
-            "picture": user_data.get("picture"),
-            "role": role,
-            "created_at": datetime.now(timezone.utc)
-        }
-        await db.users.insert_one(user_doc)
-        user = User(**user_doc)
-    
-    # Create session
-    session_token = user_data["session_token"]
-    expires_at = datetime.now(timezone.utc) + timedelta(days=7)
-    
-    session_doc = {
-        "user_id": user.id,
-        "session_token": session_token,
-        "expires_at": expires_at,
-        "created_at": datetime.now(timezone.utc)
-    }
-    await db.user_sessions.insert_one(session_doc)
-    
-    # Set cookie
-    response.set_cookie(
-        key="session_token",
-        value=session_token,
-        max_age=7 * 24 * 60 * 60,  # 7 days
-        httponly=True,
-        secure=True,
-        samesite="none",
-        path="/"
-    )
-    
-    return {"user": serialize_doc(user.model_dump()), "message": "Authentication complete"}
-
+# ==================== EMAIL/PASSWORD AUTHENTICATION ====================
 
 @api_router.post("/auth/register")
-async def register_user(
-    response: Response,
-    email: str = Form(...),
-    password: str = Form(...),
-    name: str = Form(...),
-    role: str = Form(...),
-    phone: Optional[str] = Form(None),
-    company_name: Optional[str] = Form(None)
-):
+async def register_user(user_register: UserRegister):
     """Register a new user with email and password"""
-    import bcrypt
-    
-    if role not in USER_ROLES:
-        raise HTTPException(status_code=400, detail="Invalid role")
-    
     # Check if user already exists
-    existing_user = await db.users.find_one({"email": email})
+    existing_user = await db.users.find_one({"email": user_register.email})
     if existing_user:
         raise HTTPException(status_code=400, detail="Email already registered")
     
     # Hash password
-    hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+    password_hash = hash_password(user_register.password)
+    
+    # Generate verification token
+    verification_token = str(uuid.uuid4())
+    verification_expires = datetime.now(timezone.utc) + timedelta(hours=24)
     
     # Create new user
-    user_id = str(uuid.uuid4())
     user_doc = {
-        "id": user_id,
-        "email": email,
-        "password": hashed_password.decode('utf-8'),
-        "name": name,
-        "role": role,
-        "phone": phone,
-        "company_name": company_name,
-        "is_verified": False,
+        "id": str(uuid.uuid4()),
+        "email": user_register.email,
+        "name": user_register.name,
+        "password_hash": password_hash,
+        "auth_provider": "email",
+        "role": None,  # Will be set after role selection
+        "role_verified": False,
+        "email_verified": False,
+        "email_verification_token": verification_token,
+        "email_verification_expires": verification_expires,
         "created_at": datetime.now(timezone.utc)
     }
     
     await db.users.insert_one(user_doc)
+    
+    # Send verification email
+    await send_verification_email(user_register.email, user_register.name, verification_token)
+    
+    return {
+        "message": "Registration successful. Please check your email to verify your account.",
+        "email": user_register.email
+    }
+
+@api_router.post("/auth/verify-email")
+async def verify_email(response: Response, verification: EmailVerification):
+    """Verify email address"""
+    user_doc = await db.users.find_one({
+        "email_verification_token": verification.token,
+        "email_verification_expires": {"$gt": datetime.now(timezone.utc)}
+    })
+    
+    if not user_doc:
+        raise HTTPException(status_code=400, detail="Invalid or expired verification token")
+    
+    # Update user as verified
+    await db.users.update_one(
+        {"id": user_doc["id"]},
+        {
+            "$set": {
+                "email_verified": True,
+                "email_verification_token": None,
+                "email_verification_expires": None
+            }
+        }
+    )
     
     # Create session
     session_token = str(uuid.uuid4())
     expires_at = datetime.now(timezone.utc) + timedelta(days=7)
     
     session_doc = {
-        "user_id": user_id,
+        "user_id": user_doc["id"],
         "session_token": session_token,
         "expires_at": expires_at,
         "created_at": datetime.now(timezone.utc)
@@ -678,20 +627,197 @@ async def register_user(
     response.set_cookie(
         key="session_token",
         value=session_token,
-        max_age=7 * 24 * 60 * 60,  # 7 days
+        max_age=7 * 24 * 60 * 60,
         httponly=True,
         secure=True,
         samesite="none",
         path="/"
     )
     
-    # Remove password from response
-    user_doc.pop('password')
-    user = User(**user_doc)
+    # Get updated user
+    updated_user = await db.users.find_one({"id": user_doc["id"]})
+    user = User(**updated_user)
     
+    return {
+        "message": "Email verified successfully",
+        "user": serialize_doc(user.model_dump()),
+        "needs_role_selection": user.role is None
+    }
+
+@api_router.post("/auth/resend-verification")
+async def resend_verification(email_request: dict):
+    """Resend verification email"""
+    email = email_request.get("email")
+    if not email:
+        raise HTTPException(status_code=400, detail="Email required")
+    
+    user_doc = await db.users.find_one({"email": email, "email_verified": False})
+    if not user_doc:
+        raise HTTPException(status_code=404, detail="User not found or already verified")
+    
+    # Generate new token
+    verification_token = str(uuid.uuid4())
+    verification_expires = datetime.now(timezone.utc) + timedelta(hours=24)
+    
+    await db.users.update_one(
+        {"email": email},
+        {
+            "$set": {
+                "email_verification_token": verification_token,
+                "email_verification_expires": verification_expires
+            }
+        }
+    )
+    
+    # Send verification email
+    await send_verification_email(email, user_doc["name"], verification_token)
+    
+    return {"message": "Verification email resent"}
+
+@api_router.post("/auth/login")
+async def login_user(response: Response, user_login: UserLogin):
+    """Login with email and password"""
+    # Find user
+    user_doc = await db.users.find_one({"email": user_login.email})
+    if not user_doc:
+        raise HTTPException(status_code=401, detail="Invalid email or password")
+    
+    # Check if user used Google OAuth
+    if user_doc.get("auth_provider") == "google":
+        raise HTTPException(status_code=400, detail="Please login with Google")
+    
+    # Verify password
+    if not user_doc.get("password_hash") or not verify_password(user_login.password, user_doc["password_hash"]):
+        raise HTTPException(status_code=401, detail="Invalid email or password")
+    
+    # Check if email is verified
+    if not user_doc.get("email_verified"):
+        raise HTTPException(status_code=403, detail="Please verify your email first")
+    
+    # Create session
+    session_token = str(uuid.uuid4())
+    expires_at = datetime.now(timezone.utc) + timedelta(days=7)
+    
+    session_doc = {
+        "user_id": user_doc["id"],
+        "session_token": session_token,
+        "expires_at": expires_at,
+        "created_at": datetime.now(timezone.utc)
+    }
+    await db.user_sessions.insert_one(session_doc)
+    
+    # Set cookie
+    response.set_cookie(
+        key="session_token",
+        value=session_token,
+        max_age=7 * 24 * 60 * 60,
+        httponly=True,
+        secure=True,
+        samesite="none",
+        path="/"
+    )
+    
+    user = User(**user_doc)
+    return {
+        "message": "Login successful",
+        "user": serialize_doc(user.model_dump()),
+        "needs_role_selection": user.role is None
+    }
+
+@api_router.post("/auth/forgot-password")
+async def forgot_password(password_request: PasswordResetRequest):
+    """Request password reset"""
+    user_doc = await db.users.find_one({"email": password_request.email})
+    if not user_doc:
+        # Don't reveal if email exists or not
+        return {"message": "If the email exists, a password reset link has been sent"}
+    
+    # Check if user used Google OAuth
+    if user_doc.get("auth_provider") == "google":
+        raise HTTPException(status_code=400, detail="Google accounts cannot reset password. Please login with Google.")
+    
+    # Generate reset token
+    reset_token = str(uuid.uuid4())
+    reset_expires = datetime.now(timezone.utc) + timedelta(hours=1)
+    
+    await db.users.update_one(
+        {"email": password_request.email},
+        {
+            "$set": {
+                "password_reset_token": reset_token,
+                "password_reset_expires": reset_expires
+            }
+        }
+    )
+    
+    # Send reset email
+    await send_password_reset_email(password_request.email, user_doc["name"], reset_token)
+    
+    return {"message": "If the email exists, a password reset link has been sent"}
+
+@api_router.post("/auth/reset-password")
+async def reset_password(password_reset: PasswordReset):
+    """Reset password with token"""
+    user_doc = await db.users.find_one({
+        "password_reset_token": password_reset.token,
+        "password_reset_expires": {"$gt": datetime.now(timezone.utc)}
+    })
+    
+    if not user_doc:
+        raise HTTPException(status_code=400, detail="Invalid or expired reset token")
+    
+    # Hash new password
+    password_hash = hash_password(password_reset.new_password)
+    
+    # Update password and clear reset token
+    await db.users.update_one(
+        {"id": user_doc["id"]},
+        {
+            "$set": {
+                "password_hash": password_hash,
+                "password_reset_token": None,
+                "password_reset_expires": None
+            }
+        }
+    )
+    
+    return {"message": "Password reset successful. Please login with your new password."}
+
+# ==================== ROLE SELECTION ====================
+
+@api_router.post("/auth/select-role")
+async def select_role(
+    role_selection: RoleSelection,
+    current_user: User = Depends(get_current_user)
+):
+    """Select user role (first-time or role change)"""
+    if role_selection.role not in USER_ROLES:
+        raise HTTPException(status_code=400, detail="Invalid role")
+    
+    # Update user role
+    await db.users.update_one(
+        {"id": current_user.id},
+        {
+            "$set": {
+                "role": role_selection.role,
+                "role_verified": True
+            }
+        }
+    )
+    
+    # Get updated user
+    updated_user = await db.users.find_one({"id": current_user.id})
+    user = User(**updated_user)
+    
+    return {
+        "message": "Role selected successfully",
+        "user": serialize_doc(user.model_dump())
+    }
+
+# ==================== GOOGLE OAUTH ====================
 
 @api_router.get("/auth/google/login")
-async def google_login(role: Optional[str] = None):
+async def google_login():
     """Initiate Google OAuth flow"""
     params = {
         "client_id": GOOGLE_CLIENT_ID,
@@ -702,19 +828,11 @@ async def google_login(role: Optional[str] = None):
         "prompt": "select_account"
     }
     
-    # Store role in state parameter to retrieve after callback
-    if role:
-        params["state"] = role
-    
     auth_url = f"{GOOGLE_AUTH_URL}?{urlencode(params)}"
     return {"auth_url": auth_url}
 
 @api_router.get("/auth/google/callback")
-async def google_callback(
-    response: Response,
-    code: str,
-    state: Optional[str] = None
-):
+async def google_callback(response: Response, code: str):
     """Handle Google OAuth callback"""
     try:
         # Exchange authorization code for tokens
@@ -732,7 +850,6 @@ async def google_callback(
             tokens = token_response.json()
         
         # Get user info
-        id_token_jwt = tokens.get("id_token")
         access_token = tokens.get("access_token")
         
         async with httpx.AsyncClient() as client:
@@ -756,18 +873,16 @@ async def google_callback(
         else:
             # Create new user
             user_id = str(uuid.uuid4())
-            # Use state parameter for role or default to property_seeker
-            role = state if state and state in USER_ROLES else "property_seeker"
-            
             user_doc = {
                 "id": user_id,
                 "email": email,
                 "name": google_user.get("name", ""),
                 "picture": google_user.get("picture", ""),
-                "role": role,
-                "is_verified": google_user.get("verified_email", False),
-                "created_at": datetime.now(timezone.utc),
-                "auth_provider": "google"
+                "role": None,  # Will be set in role selection
+                "role_verified": False,
+                "email_verified": True,  # Google already verified
+                "auth_provider": "google",
+                "created_at": datetime.now(timezone.utc)
             }
             await db.users.insert_one(user_doc)
         
@@ -794,16 +909,20 @@ async def google_callback(
             path="/"
         )
         
-        # Redirect to frontend dashboard
-        from fastapi.responses import RedirectResponse
-        return RedirectResponse(url=f"https://habitere-realestate.preview.emergentagent.com/dashboard")
+        # Get user to check if they need role selection
+        user_doc = await db.users.find_one({"id": user_id})
+        needs_role = user_doc.get("role") is None
+        
+        # Redirect based on role status
+        redirect_url = f"{FRONTEND_URL}/choose-role" if needs_role else f"{FRONTEND_URL}/dashboard"
+        return RedirectResponse(url=redirect_url)
         
     except Exception as e:
         logging.error(f"Google OAuth error: {str(e)}")
-        raise HTTPException(status_code=400, detail=f"Authentication failed: {str(e)}")
+        # Redirect to login with error
+        return RedirectResponse(url=f"{FRONTEND_URL}/auth/login?error=auth_failed")
 
-
-    return {"user": serialize_doc(user.model_dump()), "message": "Registration successful"}
+# ==================== USER INFO & LOGOUT ====================
 
 
 @api_router.get("/auth/me", response_model=Dict[str, Any])
