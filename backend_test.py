@@ -1743,7 +1743,14 @@ class HabitereAPITester:
 
 def main():
     tester = HabitereAPITester()
-    success = tester.run_comprehensive_tests()
+    
+    # Check if we should run authentication tests specifically
+    import sys
+    if len(sys.argv) > 1 and sys.argv[1] == "auth":
+        success = tester.run_authentication_tests()
+    else:
+        success = tester.run_comprehensive_tests()
+    
     return 0 if success else 1
 
 if __name__ == "__main__":
