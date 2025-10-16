@@ -336,13 +336,13 @@ const Properties = () => {
             </div>
 
             {/* Results Header */}
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-between mb-4 sm:mb-6">
               <div>
-                <h2 className="text-xl font-semibold text-gray-900">
-                  {filteredProperties.length} Properties Found
+                <h2 className="text-base sm:text-lg md:text-xl font-semibold text-gray-900">
+                  {filteredProperties.length} Properties
                 </h2>
-                <p className="text-sm text-gray-600 mt-1">
-                  Showing the best matches for your criteria
+                <p className="text-xs sm:text-sm text-gray-600 mt-0.5 sm:mt-1">
+                  Best matches for you
                 </p>
               </div>
             </div>
