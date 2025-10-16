@@ -90,8 +90,16 @@ class User(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     email: str
     name: str
+    password_hash: Optional[str] = None  # For email/password auth
+    auth_provider: str = "email"  # email, google
     picture: Optional[str] = None
-    role: str
+    role: Optional[str] = None  # Made optional, set after role selection
+    role_verified: bool = False
+    email_verified: bool = False
+    email_verification_token: Optional[str] = None
+    email_verification_expires: Optional[datetime] = None
+    password_reset_token: Optional[str] = None
+    password_reset_expires: Optional[datetime] = None
     phone: Optional[str] = None
     location: Optional[str] = None
     company_name: Optional[str] = None
