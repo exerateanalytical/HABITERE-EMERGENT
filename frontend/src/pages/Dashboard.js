@@ -288,13 +288,13 @@ const Dashboard = () => {
           {/* Recent Properties */}
           {canListProperties && recentProperties.length > 0 && (
             <div className="card" data-testid="recent-properties">
-              <div className="card-header p-4 sm:p-5">
+              <div className="card-header">
                 <h3 className="text-base sm:text-lg font-semibold text-gray-900">Recent Properties</h3>
                 <Link to="/properties" className="text-blue-600 hover:text-blue-700 text-xs sm:text-sm font-medium">
                   View all
                 </Link>
               </div>
-              <div className="card-body p-3 sm:p-4 md:p-5">
+              <div className="card-body">
                 <div className="space-y-3 sm:space-y-4">
                   {recentProperties.map((property) => (
                     <div key={property.id} className="flex items-start space-x-2 sm:space-x-3 p-2 sm:p-3 hover:bg-gray-50 rounded-lg transition-colors">
@@ -330,13 +330,13 @@ const Dashboard = () => {
           {/* Recent Services */}
           {canProvideServices && recentServices.length > 0 && (
             <div className="card" data-testid="recent-services">
-              <div className="card-header p-4 sm:p-5">
+              <div className="card-header">
                 <h3 className="text-base sm:text-lg font-semibold text-gray-900">Recent Services</h3>
                 <Link to="/services" className="text-blue-600 hover:text-blue-700 text-xs sm:text-sm font-medium">
                   View all
                 </Link>
               </div>
-              <div className="card-body p-3 sm:p-4 md:p-5">
+              <div className="card-body">
                 <div className="space-y-3 sm:space-y-4">
                   {recentServices.map((service) => (
                     <div key={service.id} className="flex items-start space-x-2 sm:space-x-3 p-2 sm:p-3 hover:bg-gray-50 rounded-lg transition-colors">
@@ -371,13 +371,13 @@ const Dashboard = () => {
 
           {/* Recent Bookings */}
           <div className="card" data-testid="recent-bookings">
-            <div className="card-header p-4 sm:p-5">
+            <div className="card-header">
               <h3 className="text-base sm:text-lg font-semibold text-gray-900">Recent Bookings</h3>
               <Link to="/bookings" className="text-blue-600 hover:text-blue-700 text-xs sm:text-sm font-medium">
                 View all
               </Link>
             </div>
-            <div className="card-body p-3 sm:p-4 md:p-5">
+            <div className="card-body">
               {recentBookings.length > 0 ? (
                 <div className="space-y-3 sm:space-y-4">
                   {recentBookings.map((booking) => (
