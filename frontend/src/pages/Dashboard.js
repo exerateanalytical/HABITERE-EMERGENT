@@ -179,7 +179,7 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 mb-6 sm:mb-8">
           {canListProperties && (
             <div className="card hover-lift" data-testid="properties-stat">
-              <div className="card-body p-4 sm:p-5">
+              <div className="card-body">
                 <div className="flex items-center">
                   <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
                     <Building className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
@@ -195,7 +195,7 @@ const Dashboard = () => {
 
           {canProvideServices && (
             <div className="card hover-lift" data-testid="services-stat">
-              <div className="card-body p-4 sm:p-5">
+              <div className="card-body">
                 <div className="flex items-center">
                   <div className="w-10 h-10 sm:w-12 sm:h-12 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
                     <Wrench className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
@@ -210,7 +210,7 @@ const Dashboard = () => {
           )}
 
           <div className="card hover-lift" data-testid="bookings-stat">
-            <div className="card-body p-4 sm:p-5">
+            <div className="card-body">
               <div className="flex items-center">
                 <div className="w-10 h-10 sm:w-12 sm:h-12 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
                   <Calendar className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600" />
@@ -224,7 +224,7 @@ const Dashboard = () => {
           </div>
 
           <div className="card hover-lift" data-testid="messages-stat">
-            <div className="card-body p-4 sm:p-5">
+            <div className="card-body">
               <div className="flex items-center">
                 <div className="w-10 h-10 sm:w-12 sm:h-12 bg-yellow-100 rounded-lg flex items-center justify-center flex-shrink-0">
                   <MessageSquare className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-600" />
