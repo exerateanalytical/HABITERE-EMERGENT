@@ -1,20 +1,24 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
-import { Home, MapPin, DollarSign, BedDouble, Bath, Square, Upload, X, Image as ImageIcon, ChevronDown } from 'lucide-react';
+import { Home, MapPin, DollarSign, BedDouble, Bath, Square, Upload, X, Image as ImageIcon, ChevronDown, Loader } from 'lucide-react';
 import { PROPERTY_CATEGORIES } from '../utils/propertyCategories';
+import { getPropertyImageUrl } from '../utils/imageUtils';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
-const PropertyForm = () => {
+const PropertyEditForm = () => {
+  const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [loadingProperty, setLoadingProperty] = useState(true);
   const [uploadingImages, setUploadingImages] = useState(false);
   const [error, setError] = useState('');
   const [selectedFiles, setSelectedFiles] = useState([]);
+  const [existingImages, setExistingImages] = useState([]);
   const [uploadedImages, setUploadedImages] = useState([]);
   const [formData, setFormData] = useState({
     title: '',
