@@ -55,19 +55,11 @@ const Profile = () => {
   const fetchMyProperties = async () => {
     try {
       setLoadingProperties(true);
-      const response = await axios.get(`${API}/properties`);
-      console.log('All properties:', response.data);
-      console.log('Current user ID:', user?.id);
-      console.log('Current user email:', user?.email);
-      
-      // Filter properties owned by current user
-      const userProperties = response.data.filter(prop => {
-        console.log(`Checking property: ${prop.title}, owner_id: ${prop.owner_id}`);
-        return prop.owner_id === user?.id;
+      const response = await axios.get(`${API}/users/me/properties`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
       });
-      
-      console.log('User properties found:', userProperties.length);
-      setMyProperties(userProperties);
+      console.log("User properties found:", response.data.length);
+      setMyProperties(response.data);
     } catch (error) {
       console.error('Error fetching properties:', error);
     } finally {
