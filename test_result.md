@@ -368,11 +368,12 @@
 
 ## test_plan:
   current_focus:
-    - "Phase 1: Authentication System Validation - COMPLETED"
-    - "Google OAuth Login Testing - COMPLETED"
-    - "Admin Login Testing - COMPLETED"
-    - "SendGrid Email Verification - WORKING"
-    - "Password Reset Flow Testing - COMPLETED"
+    - "Phase 2: Core Features Frontend Testing"
+    - "Reviews & Ratings System Integration"
+    - "Messaging System Between Users"
+    - "Booking Flow End-to-End"
+    - "Property Management UI"
+    - "Admin Dashboard (Local Environment)"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
