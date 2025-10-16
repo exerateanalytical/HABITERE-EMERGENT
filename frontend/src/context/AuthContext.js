@@ -58,6 +58,28 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const register = async (formData) => {
+    try {
+      const response = await axios.post(`${API}/auth/register`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      
+      if (response.data.user) {
+        setUser(response.data.user);
+        return { success: true, user: response.data.user };
+      }
+      return { success: false, error: 'Registration failed' };
+    } catch (error) {
+      console.error('Registration error:', error);
+      return { 
+        success: false, 
+        error: error.response?.data?.detail || 'Registration failed. Please try again.' 
+      };
+    }
+  };
+
   const logout = async () => {
     try {
       await axios.post(`${API}/auth/logout`);
@@ -73,6 +95,7 @@ export const AuthProvider = ({ children }) => {
     user,
     loading,
     login,
+    register,
     completeAuth,
     logout,
     checkExistingSession
