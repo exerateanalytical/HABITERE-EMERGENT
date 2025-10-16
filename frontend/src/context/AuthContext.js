@@ -28,9 +28,12 @@ export const AuthProvider = ({ children }) => {
       const response = await axios.get(`${API}/auth/me`);
       if (response.data) {
         setUser(response.data);
+      } else {
+        setUser(null);
       }
     } catch (error) {
       console.log('No existing session found');
+      setUser(null); // Clear user state if session is invalid
     } finally {
       setLoading(false);
     }
