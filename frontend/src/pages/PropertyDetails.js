@@ -449,9 +449,20 @@ const PropertyDetails = () => {
                       </>
                     )}
 
-                    <button className="btn-outline w-full justify-center text-sm sm:text-base">
+                    <button 
+                      onClick={handleCall}
+                      className="btn-outline w-full justify-center text-sm sm:text-base"
+                    >
                       <Phone className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" />
                       Call Owner
+                    </button>
+
+                    <button 
+                      onClick={handleWhatsApp}
+                      className="btn-outline w-full justify-center text-sm sm:text-base bg-green-50 hover:bg-green-100 text-green-700 border-green-200"
+                    >
+                      <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" />
+                      WhatsApp
                     </button>
                   </div>
                 ) : (
