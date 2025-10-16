@@ -832,6 +832,29 @@ async def delete_property(
     await db.properties.delete_one({"id": property_id})
     return {"message": "Property deleted"}
 
+
+# User Properties Routes
+@api_router.get("/users/me/properties", response_model=List[Dict[str, Any]])
+async def get_current_user_properties(
+    current_user: User = Depends(get_current_user)
+):
+    """Get current user's properties"""
+    properties = await db.properties.find({"owner_id": current_user.id}).to_list(1000)
+    return [serialize_doc(prop) for prop in properties]
+
+@api_router.get("/users/{user_id}/properties", response_model=List[Dict[str, Any]])
+async def get_user_properties(
+    user_id: str,
+    current_user: User = Depends(get_current_user)
+):
+    """Get specific user's properties (admin or public view)"""
+    # Allow admins to view any user's properties, others can only view their own
+    if user_id != current_user.id and current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Not authorized")
+    
+    properties = await db.properties.find({"owner_id": user_id}).to_list(1000)
+    return [serialize_doc(prop) for prop in properties]
+
 # Service Routes
 @api_router.get("/services", response_model=List[Dict[str, Any]])
 async def get_services(
