@@ -12,6 +12,7 @@ import Services from './pages/Services';
 import Dashboard from './pages/Dashboard';
 import PropertyDetails from './pages/PropertyDetails';
 import PropertyForm from './pages/PropertyForm';
+import PropertyEditForm from './pages/PropertyEditForm';
 import ServiceDetails from './pages/ServiceDetails';
 import BookingPage from './pages/BookingPage';
 import Messages from './pages/Messages';
