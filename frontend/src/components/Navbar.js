@@ -112,13 +112,13 @@ const Navbar = () => {
             ) : (
               <div className="flex items-center space-x-3">
                 <Link
-                  to="/login"
+                  to="/auth/login"
                   className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200"
                 >
                   Sign In
                 </Link>
                 <Link
-                  to="/register"
+                  to="/auth/register"
                   className="btn-primary"
                   data-testid="register-btn"
                 >
