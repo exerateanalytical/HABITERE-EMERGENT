@@ -1,11 +1,11 @@
 {
   "summary": {
     "total_tests": 22,
-    "passed_tests": 20,
-    "failed_tests": 2,
-    "success_rate": 90.9090909090909,
+    "passed_tests": 21,
+    "failed_tests": 1,
+    "success_rate": 95.45454545454545,
     "critical_failures": [],
-    "timestamp": "2025-10-16T14:05:54.908486"
+    "timestamp": "2025-10-16T14:08:25.795816"
   },
   "test_results": [
     {
@@ -15,17 +15,17 @@
       "response_data": {
         "message": "Sample data initialized"
       },
-      "timestamp": "2025-10-16T14:05:54.248827"
+      "timestamp": "2025-10-16T14:08:25.173457"
     },
     {
       "test_name": "API Health Check",
       "success": true,
-      "details": "Status: 200, Response: {'status': 'healthy', 'timestamp': '2025-10-16T14:05:54.254667+00:00'}",
+      "details": "Status: 200, Response: {'status': 'healthy', 'timestamp': '2025-10-16T14:08:25.179590+00:00'}",
       "response_data": {
         "status": "healthy",
-        "timestamp": "2025-10-16T14:05:54.254667+00:00"
+        "timestamp": "2025-10-16T14:08:25.179590+00:00"
       },
-      "timestamp": "2025-10-16T14:05:54.298349"
+      "timestamp": "2025-10-16T14:08:25.182049"
     },
     {
       "test_name": "API Root Endpoint",
@@ -34,14 +34,126 @@
       "response_data": {
         "message": "Habitere API - Real Estate and Home Services Platform"
       },
-      "timestamp": "2025-10-16T14:05:54.310721"
+      "timestamp": "2025-10-16T14:08:25.191210"
     },
     {
       "test_name": "Properties Listing",
       "success": true,
-      "details": "Status: 200, Properties found: 0, Filtered request: OK",
-      "response_data": [],
-      "timestamp": "2025-10-16T14:05:54.375938"
+      "details": "Status: 200, Properties found: 4, Filtered request: OK",
+      "response_data": [
+        {
+          "id": "5f56c995-d5ea-4ab2-83bf-c062c3964975",
+          "owner_id": "sample-owner-1",
+          "title": "Modern 3-Bedroom Apartment in Douala",
+          "description": "Beautiful modern apartment with city views, fully furnished, close to shopping centers and business district. Features include air conditioning, modern kitchen, and secure parking.",
+          "price": 180000,
+          "currency": "XAF",
+          "location": "Akwa, Douala, Littoral",
+          "property_type": "apartment",
+          "listing_type": "rent",
+          "bedrooms": 3,
+          "bathrooms": 2,
+          "area_sqm": 120,
+          "images": [
+            "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2",
+            "https://images.unsplash.com/photo-1571055107559-3e67626fa8be"
+          ],
+          "amenities": [
+            "Air Conditioning",
+            "Furnished",
+            "Parking",
+            "Security",
+            "Internet"
+          ],
+          "available": true,
+          "verified": true,
+          "created_at": "2025-10-16T14:08:13.200000"
+        },
+        {
+          "id": "d5b50106-53ce-4b3b-916e-243a8f238fc2",
+          "owner_id": "sample-owner-2",
+          "title": "Spacious Family House for Sale",
+          "description": "Large family house with garden, perfect for growing families. Located in quiet residential area with good access to schools and healthcare facilities.",
+          "price": 45000000,
+          "currency": "XAF",
+          "location": "Bastos, Yaound\u00e9, Centre",
+          "property_type": "house",
+          "listing_type": "sale",
+          "bedrooms": 4,
+          "bathrooms": 3,
+          "area_sqm": 250,
+          "images": [
+            "https://images.unsplash.com/photo-1580587771525-78b9dba3b914",
+            "https://images.unsplash.com/photo-1605146769289-440113cc3d00"
+          ],
+          "amenities": [
+            "Garden",
+            "Garage",
+            "Modern Kitchen",
+            "Study Room",
+            "Guest Room"
+          ],
+          "available": true,
+          "verified": true,
+          "created_at": "2025-10-16T14:08:13.200000"
+        },
+        {
+          "id": "d321448a-dda9-4a29-8f9b-0911262ea45c",
+          "owner_id": "sample-owner-3",
+          "title": "Commercial Office Space",
+          "description": "Prime commercial office space in business district, suitable for companies and startups. Modern facilities with meeting rooms and parking.",
+          "price": 350000,
+          "currency": "XAF",
+          "location": "Bonanjo, Douala, Littoral",
+          "property_type": "commercial",
+          "listing_type": "rent",
+          "bedrooms": 0,
+          "bathrooms": 2,
+          "area_sqm": 180,
+          "images": [
+            "https://images.unsplash.com/photo-1497366216548-37526070297c",
+            "https://images.unsplash.com/photo-1497366811353-6870744d04b2"
+          ],
+          "amenities": [
+            "Meeting Rooms",
+            "Parking",
+            "Internet",
+            "Reception Area",
+            "Security"
+          ],
+          "available": true,
+          "verified": true,
+          "created_at": "2025-10-16T14:08:13.200000"
+        },
+        {
+          "id": "f4d098e9-0e58-4a81-bead-647181338f11",
+          "owner_id": "sample-owner-4",
+          "title": "Cozy Studio Apartment",
+          "description": "Perfect studio for students or young professionals. Located near university campus with easy access to public transportation.",
+          "price": 85000,
+          "currency": "XAF",
+          "location": "Ngoa-Ekelle, Yaound\u00e9, Centre",
+          "property_type": "apartment",
+          "listing_type": "rent",
+          "bedrooms": 1,
+          "bathrooms": 1,
+          "area_sqm": 45,
+          "images": [
+            "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267",
+            "https://images.unsplash.com/photo-1560448075-bb485b067938"
+          ],
+          "amenities": [
+            "Furnished",
+            "Internet",
+            "Near Campus",
+            "Public Transport"
+          ],
+          "available": true,
+          "verified": true,
+          "created_at": "2025-10-16T14:08:13.200000"
+        }
+      ],
+      "timestamp": "2025-10-16T14:08:25.249036"
     },
     {
       "test_name": "Services Listing",
@@ -49,7 +161,7 @@
       "details": "Status: 200, Services found: 6, Category filter: OK",
       "response_data": [
         {
-          "id": "d08e7999-a734-44a2-b9e4-573b45e373a0",
+          "id": "2a716423-7389-4896-bd21-ba696ccfb37a",
           "provider_id": "sample-provider-1",
           "category": "plumbing",
           "title": "Expert Plumbing Services",
@@ -61,10 +173,10 @@
           ],
           "available": true,
           "verified": true,
-          "created_at": "2025-10-10T03:26:34.431000"
+          "created_at": "2025-10-16T14:08:13.200000"
         },
         {
-          "id": "affcb0c6-9ac4-45f7-9514-60b691db1fbc",
+          "id": "504a4634-e2eb-4431-a4ae-a18e8efb5867",
           "provider_id": "sample-provider-2",
           "category": "electrical",
           "title": "Licensed Electrician Services",
@@ -76,10 +188,10 @@
           ],
           "available": true,
           "verified": true,
-          "created_at": "2025-10-10T03:26:34.431000"
+          "created_at": "2025-10-16T14:08:13.200000"
         },
         {
-          "id": "92db5637-3184-4364-bb58-91dbc06209f4",
+          "id": "9e226200-ebeb-44e0-bcd5-b6e1ede9ea33",
           "provider_id": "sample-provider-3",
           "category": "construction",
           "title": "Premium Construction Company",
@@ -91,10 +203,10 @@
           ],
           "available": true,
           "verified": true,
-          "created_at": "2025-10-10T03:26:34.431000"
+          "created_at": "2025-10-16T14:08:13.200000"
         },
         {
-          "id": "02c29f90-4e87-49d0-8fa0-5b50e84e7e2a",
+          "id": "049765e5-8b63-4b20-93c1-cf46d94929f3",
           "provider_id": "sample-provider-4",
           "category": "interior_design",
           "title": "Modern Interior Design Studio",
@@ -106,10 +218,10 @@
           ],
           "available": true,
           "verified": true,
-          "created_at": "2025-10-10T03:26:34.431000"
+          "created_at": "2025-10-16T14:08:13.200000"
         },
         {
-          "id": "4d6caabc-66f4-45fe-b03d-11878837127b",
+          "id": "923533c5-2e05-4048-a2a6-0a5fa16b6285",
           "provider_id": "sample-provider-5",
           "category": "painting",
           "title": "Professional Painting Services",
@@ -121,10 +233,10 @@
           ],
           "available": true,
           "verified": true,
-          "created_at": "2025-10-10T03:26:34.431000"
+          "created_at": "2025-10-16T14:08:13.200000"
         },
         {
-          "id": "972584fd-db47-49f4-ba0d-deed44847c8c",
+          "id": "7e1392ed-70cf-468a-b008-d317f464d3f3",
           "provider_id": "sample-provider-6",
           "category": "carpentry",
           "title": "Custom Carpentry & Woodwork",
@@ -136,24 +248,51 @@
           ],
           "available": true,
           "verified": true,
-          "created_at": "2025-10-10T03:26:34.431000"
+          "created_at": "2025-10-16T14:08:13.200000"
         }
       ],
-      "timestamp": "2025-10-16T14:05:54.405868"
+      "timestamp": "2025-10-16T14:08:25.307077"
     },
     {
       "test_name": "Property Detail",
-      "success": false,
-      "details": "No properties available for testing",
-      "response_data": null,
-      "timestamp": "2025-10-16T14:05:54.415966"
+      "success": true,
+      "details": "Status: 200, Property ID: 5f56c995-d5ea-4ab2-83bf-c062c3964975, Title: Modern 3-Bedroom Apartment in Douala",
+      "response_data": {
+        "id": "5f56c995-d5ea-4ab2-83bf-c062c3964975",
+        "owner_id": "sample-owner-1",
+        "title": "Modern 3-Bedroom Apartment in Douala",
+        "description": "Beautiful modern apartment with city views, fully furnished, close to shopping centers and business district. Features include air conditioning, modern kitchen, and secure parking.",
+        "price": 180000,
+        "currency": "XAF",
+        "location": "Akwa, Douala, Littoral",
+        "property_type": "apartment",
+        "listing_type": "rent",
+        "bedrooms": 3,
+        "bathrooms": 2,
+        "area_sqm": 120,
+        "images": [
+          "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2",
+          "https://images.unsplash.com/photo-1571055107559-3e67626fa8be"
+        ],
+        "amenities": [
+          "Air Conditioning",
+          "Furnished",
+          "Parking",
+          "Security",
+          "Internet"
+        ],
+        "available": true,
+        "verified": true,
+        "created_at": "2025-10-16T14:08:13.200000"
+      },
+      "timestamp": "2025-10-16T14:08:25.325552"
     },
     {
       "test_name": "Service Detail",
       "success": true,
-      "details": "Status: 200, Service ID: d08e7999-a734-44a2-b9e4-573b45e373a0, Title: Expert Plumbing Services",
+      "details": "Status: 200, Service ID: 2a716423-7389-4896-bd21-ba696ccfb37a, Title: Expert Plumbing Services",
       "response_data": {
-        "id": "d08e7999-a734-44a2-b9e4-573b45e373a0",
+        "id": "2a716423-7389-4896-bd21-ba696ccfb37a",
         "provider_id": "sample-provider-1",
         "category": "plumbing",
         "title": "Expert Plumbing Services",
@@ -165,114 +304,114 @@
         ],
         "available": true,
         "verified": true,
-        "created_at": "2025-10-10T03:26:34.431000"
+        "created_at": "2025-10-16T14:08:13.200000"
       },
-      "timestamp": "2025-10-16T14:05:54.475988"
+      "timestamp": "2025-10-16T14:08:25.382964"
     },
     {
       "test_name": "Reviews Listing",
       "success": true,
       "details": "Status: 200, Reviews found: 0",
       "response_data": [],
-      "timestamp": "2025-10-16T14:05:54.524946"
+      "timestamp": "2025-10-16T14:08:25.430823"
     },
     {
       "test_name": "Auth Session Data (No Session)",
       "success": false,
       "details": "Session data endpoint status: 404 (expected 400)",
       "response_data": null,
-      "timestamp": "2025-10-16T14:05:54.531394"
+      "timestamp": "2025-10-16T14:08:25.439205"
     },
     {
       "test_name": "Auth Me (No Auth)",
       "success": true,
       "details": "Auth me endpoint status: 401 (expected 401)",
       "response_data": null,
-      "timestamp": "2025-10-16T14:05:54.537771"
+      "timestamp": "2025-10-16T14:08:25.446679"
     },
     {
       "test_name": "Messages Endpoint (No Auth)",
       "success": true,
       "details": "Status: 401 (expected 401 without auth)",
       "response_data": null,
-      "timestamp": "2025-10-16T14:05:54.585685"
+      "timestamp": "2025-10-16T14:08:25.495896"
     },
     {
       "test_name": "Bookings Endpoint (No Auth)",
       "success": true,
       "details": "Status: 401 (expected 401 without auth)",
       "response_data": null,
-      "timestamp": "2025-10-16T14:05:54.591701"
+      "timestamp": "2025-10-16T14:08:25.502858"
     },
     {
       "test_name": "Image Upload (No Auth)",
       "success": true,
       "details": "Status: 401 (expected 401 without auth)",
       "response_data": null,
-      "timestamp": "2025-10-16T14:05:54.661236"
+      "timestamp": "2025-10-16T14:08:25.550367"
     },
     {
       "test_name": "Image Upload (Invalid File)",
       "success": true,
       "details": "Status: 401 (expected 400/401 for invalid file)",
       "response_data": null,
-      "timestamp": "2025-10-16T14:05:54.698883"
+      "timestamp": "2025-10-16T14:08:25.587710"
     },
     {
       "test_name": "Image Upload (Large File)",
       "success": true,
       "details": "Status: 401 (expected 400/401 for large file)",
       "response_data": null,
-      "timestamp": "2025-10-16T14:05:54.771973"
+      "timestamp": "2025-10-16T14:08:25.658055"
     },
     {
       "test_name": "Get Entity Images",
       "success": true,
       "details": "Status: 200, Images found: 0",
       "response_data": [],
-      "timestamp": "2025-10-16T14:05:54.783885"
+      "timestamp": "2025-10-16T14:08:25.667845"
     },
     {
       "test_name": "MTN MoMo Configuration Check",
       "success": true,
       "details": "Status: 401 - Auth required (config appears OK)",
       "response_data": null,
-      "timestamp": "2025-10-16T14:05:54.831006"
+      "timestamp": "2025-10-16T14:08:25.677010"
     },
     {
       "test_name": "MTN MoMo Payment (No Auth)",
       "success": true,
       "details": "Status: 401 (expected 401 without auth)",
       "response_data": null,
-      "timestamp": "2025-10-16T14:05:54.838103"
+      "timestamp": "2025-10-16T14:08:25.723761"
     },
     {
       "test_name": "MTN MoMo Payment (Invalid Data)",
       "success": true,
       "details": "Status: 401 (expected 400/401/422 for invalid data)",
       "response_data": null,
-      "timestamp": "2025-10-16T14:05:54.844159"
+      "timestamp": "2025-10-16T14:08:25.730024"
     },
     {
       "test_name": "MTN MoMo Status Check (No Auth)",
       "success": true,
       "details": "Status: 401 (expected 401 without auth)",
       "response_data": null,
-      "timestamp": "2025-10-16T14:05:54.850109"
+      "timestamp": "2025-10-16T14:08:25.778368"
     },
     {
       "test_name": "MTN MoMo Callback",
       "success": true,
       "details": "Status: 200, Response: {'success': False, 'message': 'Payment not found'}",
       "response_data": null,
-      "timestamp": "2025-10-16T14:05:54.900834"
+      "timestamp": "2025-10-16T14:08:25.787520"
     },
     {
       "test_name": "Payment Status (No Auth)",
       "success": true,
       "details": "Status: 401 (expected 401 without auth)",
       "response_data": null,
-      "timestamp": "2025-10-16T14:05:54.908443"
+      "timestamp": "2025-10-16T14:08:25.795775"
     }
   ]
 }
