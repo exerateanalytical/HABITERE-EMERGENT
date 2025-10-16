@@ -94,8 +94,10 @@ class Property(BaseModel):
     price: float
     currency: str = "XAF"
     location: str
-    property_type: str  # house, apartment, land, commercial
-    listing_type: str  # rent, sale, lease
+    property_type: Optional[str] = None  # Keeping for backward compatibility
+    property_sector: Optional[str] = None  # Residential Properties, Commercial Properties, etc.
+    property_category: Optional[str] = None  # Houses for Sale, Apartments for Rent, etc.
+    listing_type: str  # sale, rent, lease, short_let, auction
     bedrooms: Optional[int] = 0
     bathrooms: Optional[int] = 0
     area_sqm: Optional[float] = None
@@ -103,6 +105,8 @@ class Property(BaseModel):
     amenities: List[str] = []
     available: bool = True
     verified: bool = False
+    views: int = 0
+    favorites: int = 0
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class ProfessionalService(BaseModel):
