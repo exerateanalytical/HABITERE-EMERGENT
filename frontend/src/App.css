@@ -19,18 +19,18 @@ body {
 
 /* Global styles for buttons and form elements */
 .btn-primary {
-  @apply inline-flex items-center px-4 py-2.5 sm:px-5 sm:py-3 md:px-6 border border-transparent text-sm sm:text-base font-medium rounded-full text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 touch-manipulation;
-  min-height: 44px;
+  @apply inline-flex items-center justify-center px-4 py-2.5 sm:px-6 sm:py-3 md:px-7 border border-transparent text-base sm:text-lg font-bold rounded-xl text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 active:from-blue-800 active:to-purple-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 shadow-lg hover:shadow-xl active:shadow-md transform hover:-translate-y-0.5 active:translate-y-0 touch-manipulation;
+  min-height: 56px;
 }
 
 .btn-secondary {
-  @apply inline-flex items-center px-4 py-2.5 sm:px-5 sm:py-3 md:px-6 border border-gray-300 text-sm sm:text-base font-medium rounded-full text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 shadow-md hover:shadow-lg touch-manipulation;
-  min-height: 44px;
+  @apply inline-flex items-center justify-center px-4 py-2.5 sm:px-6 sm:py-3 md:px-7 border-2 border-gray-300 text-base sm:text-lg font-bold rounded-xl text-gray-700 bg-white hover:bg-gray-50 active:bg-gray-100 hover:border-blue-300 active:border-blue-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 shadow-md hover:shadow-lg active:shadow-sm touch-manipulation;
+  min-height: 56px;
 }
 
 .btn-outline {
-  @apply inline-flex items-center px-4 py-2.5 sm:px-5 sm:py-3 md:px-6 border-2 border-blue-600 text-sm sm:text-base font-medium rounded-full text-blue-600 bg-transparent hover:bg-blue-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 touch-manipulation;
-  min-height: 44px;
+  @apply inline-flex items-center justify-center px-4 py-2.5 sm:px-6 sm:py-3 md:px-7 border-2 border-blue-600 text-base sm:text-lg font-bold rounded-xl text-blue-600 bg-transparent hover:bg-blue-50 active:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 touch-manipulation;
+  min-height: 56px;
 }
 
 .form-input {
