@@ -248,10 +248,18 @@ const ServicesCarousel = ({ title = "Professional Services", showAll = true, lim
 const ServiceCard = ({ service }) => {
   const IconComponent = serviceIcons[service.category] || serviceIcons.default;
 
+  const getCardWidth = () => {
+    if (typeof window === 'undefined') return '25%';
+    if (window.innerWidth < 640) return '50%'; // 2 cards on mobile
+    if (window.innerWidth < 768) return '50%'; // 2 cards on small tablets
+    if (window.innerWidth < 1024) return '33.333%'; // 3 cards on tablets
+    return '25%'; // 4 cards on desktop
+  };
+
   return (
     <div 
       className="flex-shrink-0 px-2" 
-      style={{ width: `${100 / 4}%` }} // 4 cards visible on desktop
+      style={{ width: getCardWidth() }}
       data-testid={`service-card-${service.id}`}
     >
       <Link to={`/services/${service.id}`}>
