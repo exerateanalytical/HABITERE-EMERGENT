@@ -341,7 +341,7 @@ const Dashboard = () => {
                   {recentServices.map((service) => (
                     <div key={service.id} className="flex items-start space-x-3 p-3 hover:bg-gray-50 rounded-lg transition-colors">
                       <img
-                        src={service.images?.[0] || 'https://images.unsplash.com/photo-1505798577917-a65157d3320a'}
+                        src={getServiceImageUrl(service.images?.[0])}
                         alt={service.title}
                         className="w-16 h-16 object-cover rounded-lg"
                       />
