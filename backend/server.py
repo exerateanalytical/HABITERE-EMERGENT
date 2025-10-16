@@ -174,9 +174,15 @@ class Booking(BaseModel):
     client_id: str
     property_id: Optional[str] = None
     service_id: Optional[str] = None
+    booking_type: str  # property_viewing, service_booking
     scheduled_date: datetime
+    scheduled_time: Optional[str] = None  # e.g., "10:00", "14:30"
+    duration_hours: Optional[int] = 1
     status: str = "pending"  # pending, confirmed, completed, cancelled
     notes: Optional[str] = None
+    cancellation_reason: Optional[str] = None
+    confirmed_by: Optional[str] = None
+    confirmed_at: Optional[datetime] = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class Payment(BaseModel):
