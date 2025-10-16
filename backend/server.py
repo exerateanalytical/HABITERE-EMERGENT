@@ -3295,16 +3295,17 @@ async def get_available_slots(property_id: str, date: str):
 # Include router
 app.include_router(api_router)
 
-# CORS middleware - Production Configuration  
-# Proper CORS configuration to avoid duplicate headers
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins
-    allow_credentials=False,  # Must be False when using wildcard
-    allow_methods=["*"],
-    allow_headers=["*"],
-    expose_headers=["*"]
-)
+# CORS middleware - DISABLED
+# Kubernetes ingress handles CORS headers to prevent duplication
+# Previously caused: "The 'Access-Control-Allow-Origin' header contains multiple values" error
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=["*"],
+#     allow_credentials=False,
+#     allow_methods=["*"],
+#     allow_headers=["*"],
+#     expose_headers=["*"]
+# )
 
 # Logging configuration
 logging.basicConfig(
