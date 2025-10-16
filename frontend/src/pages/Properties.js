@@ -415,7 +415,7 @@ const PropertyCard = ({ property, isFavorite, onToggleFavorite, formatPrice }) =
         {/* Image with loading state */}
         <div className={`w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 ${!imageLoaded ? 'animate-pulse' : ''}`}>
           <img
-            src={property.images?.[0] || 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80'}
+            src={getImageUrl(property.images?.[0])}
             alt={property.title}
             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
             onLoad={() => setImageLoaded(true)}
