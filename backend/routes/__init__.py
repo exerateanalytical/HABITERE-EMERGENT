@@ -44,6 +44,6 @@ __all__ = [
     "messages",
     "reviews",
     "core",
-    "images"
-    # "payments"  # TODO: Fix syntax errors and re-enable
+    "images",
+    "payments"
 ]
