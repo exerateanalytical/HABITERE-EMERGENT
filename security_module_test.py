@@ -39,6 +39,7 @@ TEST_USERS = {
     "admin": {
         "email": "admin@habitere.com",
         "password": "admin123",
+        "name": "Admin User",
         "expected_role": "admin"
     },
     "security_provider": {
