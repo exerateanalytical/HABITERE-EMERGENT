@@ -270,14 +270,15 @@ const LandingPage = () => {
               </div>
               
               {/* Search Button */}
-              <button 
-                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 active:from-blue-700 active:to-purple-700 text-white font-bold px-8 py-5 rounded-2xl shadow-lg active:shadow-md transform active:scale-95 transition-all duration-100 text-lg touch-manipulation flex items-center justify-center gap-2" 
+              <RippleButton
+                variant="primary"
+                className="w-full text-lg flex items-center justify-center gap-2"
+                ariaLabel="Search properties"
                 data-testid="search-btn"
-                aria-label="Search properties"
               >
                 <Search className="w-6 h-6" />
                 <span>Search Properties</span>
-              </button>
+              </RippleButton>
             </div>
             
             {/* Quick Filters - Native Mobile Pills */}
