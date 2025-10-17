@@ -101,7 +101,8 @@ async def get_current_user(
         )
     
     # Check if session expired
-    if session["expires_at"] < datetime.now(timezone.utc):
+    expires_at = datetime.fromisoformat(session["expires_at"].replace('Z', '+00:00'))
+    if expires_at < datetime.now(timezone.utc):
         logger.warning(f"Expired session for user: {session.get('user_id')}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
