@@ -207,12 +207,12 @@ async def process_mtn_momo_payment(
     Example:
         POST /api/payments/mtn-momo
         {
-            \"amount\": \"100\",
-            \"currency\": \"EUR\",
-            \"external_id\": \"booking_123\",
-            \"payer_message\": \"Payment for property viewing\",
-            \"payee_note\": \"Property booking payment\",
-            \"phone\": \"237650000000\"
+            amount: 100,
+            currency: EUR,
+            external_id: booking_123,
+            payer_message: Payment for property viewing,
+            payee_note: Property booking payment,
+            phone: 237650000000
         }
     """
     db = get_database()
@@ -232,15 +232,15 @@ async def process_mtn_momo_payment(
         
         # Prepare request payload
         payload = {
-            \"amount\": payment_request.amount,
-            \"currency\": payment_request.currency,
-            \"externalId\": payment_request.external_id,
-            \"payer\": {
-                \"partyIdType\": \"MSISDN\",
-                \"partyId\": payment_request.phone
+            amount: payment_request.amount,
+            currency: payment_request.currency,
+            externalId: payment_request.external_id,
+            payer: {
+                partyIdType: MSISDN,
+                partyId: payment_request.phone
             },
-            \"payerMessage\": payment_request.payer_message,
-            \"payeeNote\": payment_request.payee_note
+            payerMessage: payment_request.payer_message,
+            payeeNote: payment_request.payee_note
         }
         
         # Prepare headers
@@ -258,21 +258,21 @@ async def process_mtn_momo_payment(
         
         # Create payment record in database
         payment_data = {
-            \"id\": str(uuid.uuid4()),
-            \"user_id\": user.get(\"id\"),
-            \"amount\": float(payment_request.amount),
-            \"currency\": payment_request.currency,
-            \"method\": \"mtn_momo\",
-            \"status\": \"pending\",
-            \"reference_id\": reference_id,
-            \"external_id\": payment_request.external_id,
-            \"phone\": payment_request.phone,
-            \"created_at\": datetime.now(timezone.utc).isoformat()
+            id: str(uuid.uuid4()),
+            user_id: user.get(id),
+            amount: float(payment_request.amount),
+            currency: payment_request.currency,
+            method: mtn_momo,
+            status: pending,
+            reference_id: reference_id,
+            external_id: payment_request.external_id,
+            phone: payment_request.phone,
+            created_at: datetime.now(timezone.utc).isoformat()
         }
         
         # Send request to MTN MoMo API
         response = requests.post(
-            f\"{mtn_config.base_url}/collection/v1_0/requesttopay\",
+            f{mtn_config.base_url}/collection/v1_0/requesttopay,
             json=payload,
             headers=headers,
             timeout=30
@@ -282,40 +282,40 @@ async def process_mtn_momo_payment(
             # Payment request accepted - customer will receive mobile prompt
             await db.payments.insert_one(payment_data)
             
-            logger.info(f\"MTN MoMo payment request created: {reference_id} for user {user.get('email')}\")
+            logger.info(fMTN MoMo payment request created: {reference_id} for user {user.get('email')})
             
             return PaymentResponse(
                 success=True,
-                payment_id=payment_data[\"id\"],
+                payment_id=payment_data[id],
                 reference_id=reference_id,
-                status=\"pending\",
-                message=\"Payment request sent to customer's mobile phone\"
+                status=pending,
+                message=Payment request sent to customer's mobile phone
             )
         else:
-            logger.error(f\"MTN MoMo payment request failed: {response.status_code} - {response.text}\")
+            logger.error(fMTN MoMo payment request failed: {response.status_code} - {response.text})
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f\"Payment request failed: {response.text}\"
+                detail=fPayment request failed: {response.text}
             )
             
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f\"MTN MoMo payment error: {e}\")
+        logger.error(fMTN MoMo payment error: {e})
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=\"Payment processing failed\"
+            detail=Payment processing failed
         )
 
 
 # ==================== CHECK PAYMENT STATUS ====================
 
-@router.get(\"/payments/mtn-momo/status/{reference_id}\")
+@router.get(/payments/mtn-momo/status/{reference_id})
 async def check_mtn_momo_payment_status(
     reference_id: str,
     user: dict = Depends(get_current_user)
 ):
-    \"\"\"
+    
     Check MTN Mobile Money payment status.
     
     Queries MTN MoMo API for current payment status and updates local record.
@@ -338,7 +338,7 @@ async def check_mtn_momo_payment_status(
         
     Example:
         GET /api/payments/mtn-momo/status/123e4567-e89b-12d3-a456-426614174000
-    \"\"\"
+    
     db = get_database()
     
     try:
@@ -347,7 +347,7 @@ async def check_mtn_momo_payment_status(
         if not access_token:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=\"Failed to authenticate with MTN MoMo API\"
+                detail=Failed to authenticate with MTN MoMo API
             )
         
         # Prepare headers
@@ -359,7 +359,7 @@ async def check_mtn_momo_payment_status(
         
         # Check status with MTN MoMo API
         response = requests.get(
-            f\"{mtn_config.base_url}/collection/v1_0/requesttopay/{reference_id}\",
+            f{mtn_config.base_url}/collection/v1_0/requesttopay/{reference_id},
             headers=headers,
             timeout=30
         )
@@ -369,49 +369,49 @@ async def check_mtn_momo_payment_status(
             
             # Update local payment record
             await db.payments.update_one(
-                {\"reference_id\": reference_id},
+                {reference_id: reference_id},
                 {
-                    \"$set\": {
-                        \"status\": status_data[\"status\"].lower(),
-                        \"transaction_id\": status_data.get(\"financialTransactionId\"),
-                        \"updated_at\": datetime.now(timezone.utc).isoformat()
+                    $set: {
+                        status: status_data[status].lower(),
+                        transaction_id: status_data.get(financialTransactionId),
+                        updated_at: datetime.now(timezone.utc).isoformat()
                     }
                 }
             )
             
-            logger.info(f\"MTN MoMo payment status checked: {reference_id} - {status_data['status']}\")
+            logger.info(fMTN MoMo payment status checked: {reference_id} - {status_data['status']})
             
             return {
-                \"success\": True,
-                \"reference_id\": reference_id,
-                \"status\": status_data[\"status\"].lower(),
-                \"amount\": status_data.get(\"amount\"),
-                \"currency\": status_data.get(\"currency\"),
-                \"financial_transaction_id\": status_data.get(\"financialTransactionId\"),
-                \"reason\": status_data.get(\"reason\")
+                success: True,
+                reference_id: reference_id,
+                status: status_data[status].lower(),
+                amount: status_data.get(amount),
+                currency: status_data.get(currency),
+                financial_transaction_id: status_data.get(financialTransactionId),
+                reason: status_data.get(reason)
             }
         else:
-            logger.error(f\"MTN MoMo status check failed: {response.status_code} - {response.text}\")
+            logger.error(fMTN MoMo status check failed: {response.status_code} - {response.text})
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f\"Status check failed: {response.text}\"
+                detail=fStatus check failed: {response.text}
             )
             
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f\"MTN MoMo status check error: {e}\")
+        logger.error(fMTN MoMo status check error: {e})
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=\"Status check failed\"
+            detail=Status check failed
         )
 
 
 # ==================== PAYMENT WEBHOOK ====================
 
-@router.post(\"/payments/mtn-momo/callback\")
+@router.post(/payments/mtn-momo/callback)
 async def mtn_momo_callback(request: Request):
-    \"\"\"
+    
     Handle MTN Mobile Money callback notifications.
     
     MTN MoMo sends webhook callbacks when payment status changes.
@@ -428,70 +428,70 @@ async def mtn_momo_callback(request: Request):
         
     Example callback payload:
         {
-            \"referenceId\": \"123e4567-e89b-12d3-a456-426614174000\",
-            \"status\": \"SUCCESSFUL\",
-            \"financialTransactionId\": \"123456789\",
-            \"amount\": \"100\",
-            \"currency\": \"EUR\"
+            referenceId: 123e4567-e89b-12d3-a456-426614174000,
+            status: SUCCESSFUL,
+            financialTransactionId: 123456789,
+            amount: 100,
+            currency: EUR
         }
-    \"\"\"
+    
     db = get_database()
     
     try:
         callback_data = await request.json()
         
         # Extract reference ID and status
-        reference_id = callback_data.get(\"referenceId\")
-        status_value = callback_data.get(\"status\", \"\").lower()
+        reference_id = callback_data.get(referenceId)
+        status_value = callback_data.get(status, ).lower()
         
         if not reference_id:
-            logger.warning(\"MTN MoMo callback missing reference ID\")
+            logger.warning(MTN MoMo callback missing reference ID)
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=\"Missing reference ID in callback\"
+                detail=Missing reference ID in callback
             )
         
         # Prepare update data
         update_data = {
-            \"status\": status_value,
-            \"updated_at\": datetime.now(timezone.utc).isoformat()
+            status: status_value,
+            updated_at: datetime.now(timezone.utc).isoformat()
         }
         
-        if callback_data.get(\"financialTransactionId\"):
-            update_data[\"transaction_id\"] = callback_data[\"financialTransactionId\"]
+        if callback_data.get(financialTransactionId):
+            update_data[transaction_id] = callback_data[financialTransactionId]
         
-        if callback_data.get(\"reason\"):
-            update_data[\"failure_reason\"] = callback_data[\"reason\"]
+        if callback_data.get(reason):
+            update_data[failure_reason] = callback_data[reason]
         
         # Update payment record
         result = await db.payments.update_one(
-            {\"reference_id\": reference_id},
-            {\"$set\": update_data}
+            {reference_id: reference_id},
+            {$set: update_data}
         )
         
         if result.matched_count > 0:
-            logger.info(f\"MTN MoMo callback processed for reference {reference_id}: {status_value}\")
-            return {\"success\": True, \"message\": \"Callback processed\"}
+            logger.info(fMTN MoMo callback processed for reference {reference_id}: {status_value})
+            return {success: True, message: Callback processed}
         else:
-            logger.warning(f\"No payment found for reference ID: {reference_id}\")
-            return {\"success\": False, \"message\": \"Payment not found\"}
+            logger.warning(fNo payment found for reference ID: {reference_id})
+            return {success: False, message: Payment not found}
             
     except Exception as e:
-        logger.error(f\"MTN MoMo callback error: {e}\")
+        logger.error(fMTN MoMo callback error: {e})
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=\"Callback processing failed\"
+            detail=Callback processing failed
         )
 
 
 # ==================== GENERAL PAYMENT STATUS ====================
 
-@router.get(\"/payments/{payment_id}/status\")
+@router.get(/payments/{payment_id}/status)
 async def get_payment_status(
     payment_id: str,
     current_user: dict = Depends(get_current_user)
 ):
-    \"\"\"
+    
     Get payment status by payment ID.
     
     Returns local payment record from database.
@@ -509,22 +509,22 @@ async def get_payment_status(
         
     Example:
         GET /api/payments/123e4567-e89b-12d3-a456-426614174000/status
-    \"\"\"
+    
     db = get_database()
     
     # Find payment record
     payment_doc = await db.payments.find_one({
-        \"id\": payment_id,
-        \"user_id\": current_user.get(\"id\")
+        id: payment_id,
+        user_id: current_user.get(id)
     })
     
     if not payment_doc:
-        logger.warning(f\"Payment not found: {payment_id}\")
+        logger.warning(fPayment not found: {payment_id})
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=\"Payment not found\"
+            detail=Payment not found
         )
     
-    logger.info(f\"Payment status retrieved: {payment_id} for user {current_user.get('email')}\")
+    logger.info(fPayment status retrieved: {payment_id} for user {current_user.get('email')})
     
     return serialize_doc(payment_doc)
