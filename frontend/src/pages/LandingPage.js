@@ -210,8 +210,8 @@ const LandingPage = () => {
                 ariaLabel="Get started for free"
                 data-testid="get-started-btn"
               >
-                <span className="font-bold text-lg">Get Started Free</span>
-                <ArrowRight className="w-5 h-5 ml-2" />
+                Get Started Free
+                <ArrowRight className="w-5 h-5" />
               </RippleButton>
               
               <RippleButton
@@ -221,8 +221,8 @@ const LandingPage = () => {
                 ariaLabel="Browse available properties"
                 data-testid="browse-properties-btn"
               >
-                <span className="font-bold text-lg">Browse Properties</span>
-                <Home className="w-5 h-5 ml-2" />
+                Browse Properties
+                <Home className="w-5 h-5" />
               </RippleButton>
             </div>
 
