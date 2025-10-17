@@ -206,23 +206,23 @@ const LandingPage = () => {
               <RippleButton
                 onClick={handleGetStarted}
                 variant="primary"
-                className="w-full sm:flex-1 flex items-center justify-center gap-2 text-lg"
+                className="w-full sm:flex-1"
                 ariaLabel="Get started for free"
                 data-testid="get-started-btn"
               >
-                <span>Get Started Free</span>
-                <ArrowRight className="w-5 h-5" />
+                <span className="font-bold text-lg">Get Started Free</span>
+                <ArrowRight className="w-5 h-5 ml-2" />
               </RippleButton>
               
               <RippleButton
-                onClick={() => window.location.href = '/properties'}
+                onClick={handleBrowseProperties}
                 variant="secondary"
-                className="w-full sm:flex-1 flex items-center justify-center gap-2 text-lg"
+                className="w-full sm:flex-1"
                 ariaLabel="Browse available properties"
                 data-testid="browse-properties-btn"
               >
-                <span>Browse Properties</span>
-                <Home className="w-5 h-5" />
+                <span className="font-bold text-lg">Browse Properties</span>
+                <Home className="w-5 h-5 ml-2" />
               </RippleButton>
             </div>
 
