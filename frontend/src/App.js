@@ -34,6 +34,11 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminProperties from './pages/admin/AdminProperties';
 
+// Homeland Security Pages
+import HomelandSecurity from './pages/HomelandSecurity';
+import SecurityServices from './pages/SecurityServices';
+import GuardApplication from './pages/GuardApplication';
+
 // New Auth Pages
 import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
