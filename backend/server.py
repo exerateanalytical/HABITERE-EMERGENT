@@ -74,6 +74,9 @@ MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB
 ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/jpg", "image/png", "image/webp"}
 THUMBNAIL_SIZE = (300, 300)
 
+# Import route modules
+from routes import auth, properties, services, users, bookings, messages, reviews, core, images, payments
+
 # Create the main app
 app = FastAPI(title="Habitere API", description="Real Estate and Home Services Platform for Cameroon")
 api_router = APIRouter(prefix="/api")
