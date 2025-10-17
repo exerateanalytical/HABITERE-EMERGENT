@@ -87,13 +87,17 @@ export const AuthProvider = ({ children }) => {
   // Email/Password Login
   const login = async (email, password) => {
     try {
+      console.log('[AuthContext] Attempting login for:', email);
       const response = await axios.post(`${API}/auth/login`, {
         email,
         password
       }, { withCredentials: true });
       
+      console.log('[AuthContext] Login response:', response.data);
+      
       if (response.data.user) {
         setUser(response.data.user);
+        console.log('[AuthContext] User set after login:', response.data.user.email, 'Role:', response.data.user.role);
         return { 
           success: true, 
           user: response.data.user,
@@ -102,7 +106,7 @@ export const AuthProvider = ({ children }) => {
       }
       return { success: false, error: 'Login failed' };
     } catch (error) {
-      console.error('Login error:', error);
+      console.error('[AuthContext] Login error:', error.response?.data);
       return { 
         success: false, 
         error: error.response?.data?.detail || 'Login failed. Please try again.' 
