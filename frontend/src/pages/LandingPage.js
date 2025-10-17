@@ -495,11 +495,11 @@ const LandingPage = () => {
               
               <RippleButton
                 variant="primary"
-                onClick={() => window.location.href = '/services'}
-                className="inline-flex items-center justify-center"
+                onClick={handleExploreServices}
+                className="mt-4"
                 ariaLabel="Explore services"
               >
-                <span>Explore Services</span>
+                <span className="font-bold">Explore Services</span>
                 <ArrowRight className="ml-2 w-5 h-5" />
               </RippleButton>
             </div>
