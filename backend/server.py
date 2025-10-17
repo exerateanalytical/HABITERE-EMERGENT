@@ -75,8 +75,7 @@ ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/jpg", "image/png", "image/webp"}
 THUMBNAIL_SIZE = (300, 300)
 
 # Import route modules
-from routes import auth, properties, services, users, bookings, messages, reviews, core, images
-# from routes import payments  # TODO: Fix syntax errors and re-enable
+from routes import auth, properties, services, users, bookings, messages, reviews, core, images, payments
 
 # Create the main app
 app = FastAPI(title="Habitere API", description="Real Estate and Home Services Platform for Cameroon")
