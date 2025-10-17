@@ -416,15 +416,3 @@ async def login(request: LoginRequest, response: Response):
     }
 
 
-# ==================== MORE ENDPOINTS TO BE CONTINUED ====================
-# NOTE: Due to file size, remaining endpoints will be added in next iteration:
-# - POST /auth/verify-email
-# - POST /auth/forgot-password
-# - POST /auth/reset-password
-# - POST /auth/select-role
-# - GET /auth/google/login
-# - GET /auth/google/callback
-# - GET /auth/me
-# - POST /auth/logout
-
-# These will be extracted and added with full documentation in the next phase
