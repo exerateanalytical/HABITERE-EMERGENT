@@ -338,6 +338,9 @@ app.include_router(payments.router, prefix="/api", tags=["Payments"])
 # Admin dashboard and moderation
 app.include_router(admin.router, prefix="/api", tags=["Admin"])
 
+# Homeland Security services
+app.include_router(security.router, prefix="/api", tags=["Homeland Security"])
+
 # Legacy api_router (for any remaining routes not yet extracted)
 app.include_router(api_router)
 
