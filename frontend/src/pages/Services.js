@@ -6,6 +6,7 @@ import SEOHead from '../components/SEOHead';
 import { generateSEOData, generateStructuredData } from '../utils/seoData';
 import ServiceCard from '../components/ServiceCard';
 import FilterSidebar from '../components/FilterSidebar';
+import { ServiceCardSkeleton } from '../components/SkeletonLoader';
 import { 
   Search, 
   Filter, 
