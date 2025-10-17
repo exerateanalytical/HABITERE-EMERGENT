@@ -34,7 +34,8 @@ from . import (
     core,
     images,
     payments,
-    admin
+    admin,
+    security
 )
 
 __all__ = [
@@ -48,5 +49,6 @@ __all__ = [
     "core",
     "images",
     "payments",
-    "admin"
+    "admin",
+    "security"
 ]
