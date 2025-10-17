@@ -46,5 +46,6 @@ __all__ = [
     "reviews",
     "core",
     "images",
-    "payments"
+    "payments",
+    "admin"
 ]
