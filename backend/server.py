@@ -3427,8 +3427,8 @@ app.include_router(reviews.router, prefix="/api", tags=["Reviews"])
 # Image upload & management
 app.include_router(images.router, prefix="/api", tags=["Images"])
 
-# Payment processing - TODO: Fix syntax errors and re-enable
-# app.include_router(payments.router, prefix="/api", tags=["Payments"])
+# Payment processing
+app.include_router(payments.router, prefix="/api", tags=["Payments"])
 
 # Legacy api_router (contains admin routes and other endpoints not yet extracted)
 # TODO: Extract remaining admin routes to routes/admin.py
