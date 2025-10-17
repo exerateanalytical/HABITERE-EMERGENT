@@ -71,7 +71,7 @@ api_router = APIRouter(prefix="/api")
 app.mount("/uploads", StaticFiles(directory=str(UPLOAD_DIR)), name="uploads")
 
 # Security scheme
-security = HTTPBearer(auto_error=False)
+http_bearer_security = HTTPBearer(auto_error=False)
 
 # User roles
 USER_ROLES = [
