@@ -40,18 +40,23 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const checkExistingSession = async () => {
+    console.log('[AuthContext] Checking existing session...');
     try {
       const response = await axios.get(`${API}/auth/me`, { withCredentials: true });
+      console.log('[AuthContext] Session check response:', response.data);
       if (response.data) {
         setUser(response.data);
+        console.log('[AuthContext] User loaded:', response.data.email, 'Role:', response.data.role);
       } else {
         setUser(null);
+        console.log('[AuthContext] No user data in response');
       }
     } catch (error) {
-      console.log('No existing session found');
+      console.log('[AuthContext] No existing session:', error.response?.status);
       setUser(null);
     } finally {
       setLoading(false);
+      console.log('[AuthContext] Session check complete');
     }
   };
 
