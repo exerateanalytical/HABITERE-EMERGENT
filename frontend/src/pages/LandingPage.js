@@ -401,10 +401,15 @@ const LandingPage = () => {
                 ))}
               </div>
               
-              <a href="/services" className="btn-primary">
-                Explore Services
+              <RippleButton
+                variant="primary"
+                onClick={() => window.location.href = '/services'}
+                className="inline-flex items-center justify-center"
+                ariaLabel="Explore services"
+              >
+                <span>Explore Services</span>
                 <ArrowRight className="ml-2 w-5 h-5" />
-              </a>
+              </RippleButton>
             </div>
 
             <div className="relative">
