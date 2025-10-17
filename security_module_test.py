@@ -120,7 +120,9 @@ class SecurityModuleTestSuite:
     async def setup_session(self):
         """Initialize HTTP session"""
         connector = aiohttp.TCPConnector(ssl=False)
-        self.session = aiohttp.ClientSession(connector=connector)
+        # Create session with cookie jar to persist cookies
+        jar = aiohttp.CookieJar(unsafe=True)
+        self.session = aiohttp.ClientSession(connector=connector, cookie_jar=jar)
         
     async def cleanup_session(self):
         """Close HTTP session"""
