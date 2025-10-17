@@ -3404,6 +3404,50 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+
+
+# Auto-cleanup function for old properties
+async def cleanup_old_properties():
+    """Delete properties older than 1 hour"""
+    try:
+        one_hour_ago = datetime.now(timezone.utc) - timedelta(hours=1)
+        result = await db.properties.delete_many({
+            "created_at": {"$lt": one_hour_ago}
+        })
+        if result.deleted_count > 0:
+            logger.info(f"Deleted {result.deleted_count} properties older than 1 hour")
+    except Exception as e:
+        logger.error(f"Error during property cleanup: {e}")
+
+# Background task runner
+import asyncio
+import threading
+
+def run_cleanup_loop():
+    """Run cleanup every hour in background"""
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    
+    async def cleanup_task():
+        while True:
+            await cleanup_old_properties()
+            await asyncio.sleep(3600)  # Run every 1 hour
+    
+    loop.run_until_complete(cleanup_task())
+
+@app.on_event("startup")
+async def startup_event():
+    """Run on application startup"""
+    logger.info("Application starting up...")
+    
+    # Run initial cleanup
+    await cleanup_old_properties()
+    
+    # Start background cleanup thread
+    cleanup_thread = threading.Thread(target=run_cleanup_loop, daemon=True)
+    cleanup_thread.start()
+    logger.info("Background property cleanup scheduled (runs every 1 hour)")
+
 @app.on_event("shutdown")
 async def shutdown_db_client():
     client.close()
