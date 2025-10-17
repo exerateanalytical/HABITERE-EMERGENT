@@ -126,6 +126,9 @@ const LandingPage = () => {
         structuredData={structuredData} 
       />
       
+      {/* Sticky Search Bar */}
+      <StickySearchBar />
+      
       {/* Hero Section - Native Mobile-First Design */}
       <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-purple-50 pt-20 pb-12 sm:pt-24 sm:pb-16 md:pt-28 md:pb-20 safe-area-top">
         {/* Optimized background - Single subtle gradient */}
