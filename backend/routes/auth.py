@@ -831,15 +831,7 @@ async def google_callback(code: str, response: Response):
     await db.user_sessions.insert_one(session_doc)
     
     # Set cookie
-    response.set_cookie(
-        key="session_token",
-        value=session_token,
-        max_age=7 * 24 * 60 * 60,
-        httponly=True,
-        secure=True,
-        samesite="none",
-        path="/"
-    )
+    set_auth_cookie(response, session_token)
     
     logger.info(f"Google OAuth login for: {userinfo['email']}")
     
