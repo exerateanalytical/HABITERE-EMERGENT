@@ -201,9 +201,12 @@ class CriticalAuthTester:
                 auth_url = oauth_data.get('auth_url', '')
                 
                 if auth_url:
-                    # Step 2: Verify redirect URI matches expected
+                    # Step 2: Verify redirect URI matches expected (URL decode for proper comparison)
+                    import urllib.parse
                     expected_redirect = "https://habitere.com/api/auth/google/callback"
-                    if expected_redirect in auth_url:
+                    decoded_url = urllib.parse.unquote(auth_url)
+                    
+                    if expected_redirect in decoded_url:
                         self.log_test("3.1 OAuth URL Generation", True,
                                     f"Valid OAuth URL with correct redirect URI: {expected_redirect}")
                         
@@ -232,7 +235,7 @@ class CriticalAuthTester:
                                         f"Missing OAuth parameters: {missing_params}")
                     else:
                         self.log_test("3.1 OAuth URL Generation", False,
-                                    f"Incorrect redirect URI in OAuth URL. Expected: {expected_redirect}")
+                                    f"Incorrect redirect URI in OAuth URL. Expected: {expected_redirect}, Got: {decoded_url[:200]}")
                 else:
                     self.log_test("3.1 OAuth URL Generation", False,
                                 "No auth_url in OAuth response")
