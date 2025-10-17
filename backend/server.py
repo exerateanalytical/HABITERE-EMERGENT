@@ -3402,7 +3402,36 @@ async def get_available_slots(property_id: str, date: str):
         logger.error(f"Error fetching available slots: {e}")
         raise HTTPException(status_code=500, detail="Failed to fetch available slots")
 
-# Include router
+# ==================== REGISTER ROUTE MODULES ====================
+# Register all modular route handlers
+# Each module is a separate file in /routes with focused functionality
+
+# Core utilities (health checks, root endpoint)
+app.include_router(core.router, prefix="/api", tags=["Core"])
+
+# Authentication & user management
+app.include_router(auth.router, prefix="/api", tags=["Authentication"])
+app.include_router(users.router, prefix="/api", tags=["Users"])
+
+# Properties & services
+app.include_router(properties.router, prefix="/api", tags=["Properties"])
+app.include_router(services.router, prefix="/api", tags=["Services"])
+
+# Bookings & messaging
+app.include_router(bookings.router, prefix="/api", tags=["Bookings"])
+app.include_router(messages.router, prefix="/api", tags=["Messages"])
+
+# Reviews & ratings
+app.include_router(reviews.router, prefix="/api", tags=["Reviews"])
+
+# Image upload & management
+app.include_router(images.router, prefix="/api", tags=["Images"])
+
+# Payment processing
+app.include_router(payments.router, prefix="/api", tags=["Payments"])
+
+# Legacy api_router (contains admin routes and other endpoints not yet extracted)
+# TODO: Extract remaining admin routes to routes/admin.py
 app.include_router(api_router)
 
 # CORS middleware - DISABLED
