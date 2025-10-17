@@ -13,6 +13,7 @@ const Navbar = () => {
     { name: 'Home', path: '/', icon: Home, public: true },
     { name: 'Properties', path: '/properties', icon: Building, public: true },
     { name: 'Services', path: '/services', icon: Wrench, public: true },
+    { name: 'Security', path: '/security', icon: Shield, public: true },
   ];
 
   const userNavItems = [
