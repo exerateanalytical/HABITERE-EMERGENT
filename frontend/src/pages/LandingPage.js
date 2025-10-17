@@ -262,45 +262,95 @@ const LandingPage = () => {
             </div>
             
             {/* Search Form - Mobile Optimized Stack */}
-            <div className="space-y-4">
+            <form onSubmit={handleSearchSubmit} className="space-y-4" role="search" aria-label="Property search form">
               {/* Property Type */}
               <div className="space-y-2">
-                <label className="block text-sm font-semibold text-gray-700">Property Type</label>
-                <select className="w-full px-4 py-4 bg-white border-2 border-gray-200 rounded-2xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 active:border-blue-400 transition-all duration-100 text-base appearance-none cursor-pointer touch-manipulation min-h-[56px] h-14" data-testid="search-type">
-                  <option>All Types</option>
-                  <option>🏠 House</option>
-                  <option>🏢 Apartment</option>
-                  <option>🏞️ Land</option>
-                  <option>🏪 Commercial</option>
+                <label htmlFor="property-type" className="block text-sm font-semibold text-gray-700">
+                  Property Type
+                  <span className="text-gray-400 text-xs ml-1">(Optional)</span>
+                </label>
+                <select 
+                  id="property-type"
+                  name="propertyType"
+                  value={searchForm.propertyType}
+                  onChange={(e) => handleInputChange('propertyType', e.target.value)}
+                  className="w-full px-4 py-4 bg-white border-2 border-gray-200 rounded-2xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 active:border-blue-400 transition-all duration-100 text-base appearance-none cursor-pointer touch-manipulation min-h-[56px] h-14" 
+                  data-testid="search-type"
+                  aria-describedby="property-type-hint"
+                >
+                  <option value="">All Types</option>
+                  <option value="house">🏠 House</option>
+                  <option value="apartment">🏢 Apartment</option>
+                  <option value="land">🏞️ Land</option>
+                  <option value="commercial">🏪 Commercial</option>
                 </select>
+                <span id="property-type-hint" className="sr-only">Select the type of property you're looking for</span>
               </div>
               
               {/* Location */}
               <div className="space-y-2">
-                <label className="block text-sm font-semibold text-gray-700">Location</label>
-                <select className="w-full px-4 py-4 bg-white border-2 border-gray-200 rounded-2xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 active:border-blue-400 transition-all duration-100 text-base appearance-none cursor-pointer touch-manipulation min-h-[56px] h-14" data-testid="search-location">
-                  <option>All Locations</option>
-                  <option>📍 Douala</option>
-                  <option>📍 Yaoundé</option>
-                  <option>📍 Bafoussam</option>
-                  <option>📍 Bamenda</option>
+                <label htmlFor="location" className="block text-sm font-semibold text-gray-700">
+                  Location
+                  <span className="text-gray-400 text-xs ml-1">(Optional)</span>
+                </label>
+                <select 
+                  id="location"
+                  name="location"
+                  value={searchForm.location}
+                  onChange={(e) => handleInputChange('location', e.target.value)}
+                  autoComplete="address-level2"
+                  className="w-full px-4 py-4 bg-white border-2 border-gray-200 rounded-2xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 active:border-blue-400 transition-all duration-100 text-base appearance-none cursor-pointer touch-manipulation min-h-[56px] h-14" 
+                  data-testid="search-location"
+                  aria-describedby="location-hint"
+                >
+                  <option value="">All Locations</option>
+                  <option value="douala">📍 Douala</option>
+                  <option value="yaounde">📍 Yaoundé</option>
+                  <option value="bafoussam">📍 Bafoussam</option>
+                  <option value="bamenda">📍 Bamenda</option>
+                  <option value="garoua">📍 Garoua</option>
+                  <option value="maroua">📍 Maroua</option>
                 </select>
+                <span id="location-hint" className="sr-only">Choose your preferred location</span>
               </div>
               
               {/* Price Range */}
               <div className="space-y-2">
-                <label className="block text-sm font-semibold text-gray-700">Price Range</label>
-                <select className="w-full px-4 py-4 bg-white border-2 border-gray-200 rounded-2xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 active:border-blue-400 transition-all duration-100 text-base appearance-none cursor-pointer touch-manipulation min-h-[56px] h-14" data-testid="search-price">
-                  <option>Any Price</option>
-                  <option>💰 Under 100K XAF</option>
-                  <option>💰 100K - 500K XAF</option>
-                  <option>💰 500K - 1M XAF</option>
-                  <option>💰 Over 1M XAF</option>
+                <label htmlFor="price-range" className="block text-sm font-semibold text-gray-700">
+                  Price Range
+                  <span className="text-gray-400 text-xs ml-1">(Optional)</span>
+                </label>
+                <select 
+                  id="price-range"
+                  name="priceRange"
+                  value={searchForm.priceRange}
+                  onChange={(e) => handleInputChange('priceRange', e.target.value)}
+                  className="w-full px-4 py-4 bg-white border-2 border-gray-200 rounded-2xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 active:border-blue-400 transition-all duration-100 text-base appearance-none cursor-pointer touch-manipulation min-h-[56px] h-14" 
+                  data-testid="search-price"
+                  aria-describedby="price-hint"
+                >
+                  <option value="">Any Price</option>
+                  <option value="0-100000">💰 Under 100K XAF</option>
+                  <option value="100000-500000">💰 100K - 500K XAF</option>
+                  <option value="500000-1000000">💰 500K - 1M XAF</option>
+                  <option value="1000000+">💰 Over 1M XAF</option>
                 </select>
+                <span id="price-hint" className="sr-only">Select your budget range</span>
               </div>
+              
+              {/* Error Message */}
+              {searchError && (
+                <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-xl" role="alert">
+                  <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span className="text-sm text-red-700">{searchError}</span>
+                </div>
+              )}
               
               {/* Search Button */}
               <RippleButton
+                type="submit"
                 variant="primary"
                 className="w-full text-lg flex items-center justify-center gap-2"
                 ariaLabel="Search properties"
@@ -309,7 +359,7 @@ const LandingPage = () => {
                 <Search className="w-6 h-6" />
                 <span>Search Properties</span>
               </RippleButton>
-            </div>
+            </form>
             
             {/* Quick Filters - Native Mobile Pills */}
             <div className="mt-6 flex flex-wrap gap-2 justify-center">
