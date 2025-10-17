@@ -288,7 +288,11 @@ class HabitereProductionTester:
     def test_auth_me(self):
         """Test GET /api/auth/me"""
         try:
-            response = self.session.get(f"{self.api_url}/auth/me")
+            # Use a fresh session to ensure no authentication
+            fresh_session = requests.Session()
+            fresh_session.headers.update({'Content-Type': 'application/json'})
+            
+            response = fresh_session.get(f"{self.api_url}/auth/me")
             success = response.status_code == 401  # Should fail without auth
             details = f"Status: {response.status_code} (expected 401 without auth)"
             
@@ -301,7 +305,11 @@ class HabitereProductionTester:
     def test_auth_logout(self):
         """Test POST /api/auth/logout"""
         try:
-            response = self.session.post(f"{self.api_url}/auth/logout")
+            # Use a fresh session to ensure no authentication
+            fresh_session = requests.Session()
+            fresh_session.headers.update({'Content-Type': 'application/json'})
+            
+            response = fresh_session.post(f"{self.api_url}/auth/logout")
             success = response.status_code == 401  # Should fail without auth
             details = f"Status: {response.status_code} (expected 401 without auth)"
             
