@@ -889,7 +889,8 @@ body {
 }
 
 .animate-ripple {
-
+  animation: ripple 600ms ease-out;
+}
 
 /* Bottom Sheet Slide Up Animation */
 @keyframes slideUp {
@@ -905,7 +906,16 @@ body {
   animation: slideUp 300ms ease-out;
 }
 
-  animation: ripple 600ms ease-out;
+/* Shimmer Animation for Skeletons */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }
 
+.animate-shimmer {
+  animation: shimmer 2s infinite linear;
 }
