@@ -62,8 +62,8 @@ const RippleButton = ({
       aria-label={ariaLabel}
       {...props}
     >
-      {/* Content */}
-      <span className="relative z-10">{children}</span>
+      {/* Content - removed wrapper to allow proper flex alignment */}
+      {children}
 
       {/* Ripple Effects */}
       {ripples.map((ripple) => (
