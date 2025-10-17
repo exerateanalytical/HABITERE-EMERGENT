@@ -289,11 +289,11 @@ class HabitereProductionTester:
         """Test GET /api/auth/me"""
         try:
             response = self.session.get(f"{self.api_url}/auth/me")
-            expected_failure = response.status_code == 401  # Should fail without auth
+            success = response.status_code == 401  # Should fail without auth
             details = f"Status: {response.status_code} (expected 401 without auth)"
             
-            self.log_test("Auth Me (No Auth)", expected_failure, details)
-            return expected_failure
+            self.log_test("Auth Me (No Auth)", success, details)
+            return success
         except Exception as e:
             self.log_test("Auth Me", False, f"Exception: {str(e)}")
             return False
@@ -302,11 +302,11 @@ class HabitereProductionTester:
         """Test POST /api/auth/logout"""
         try:
             response = self.session.post(f"{self.api_url}/auth/logout")
-            expected_failure = response.status_code == 401  # Should fail without auth
+            success = response.status_code == 401  # Should fail without auth
             details = f"Status: {response.status_code} (expected 401 without auth)"
             
-            self.log_test("Auth Logout (No Auth)", expected_failure, details)
-            return expected_failure
+            self.log_test("Auth Logout (No Auth)", success, details)
+            return success
         except Exception as e:
             self.log_test("Auth Logout", False, f"Exception: {str(e)}")
             return False
