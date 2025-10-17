@@ -159,29 +159,29 @@ const LandingPage = () => {
               </p>
             </div>
             
-            {/* CTA Buttons - Native mobile feel */}
+            {/* CTA Buttons - Native mobile feel with ripple effects */}
             <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto px-4">
-              <button
+              <RippleButton
                 onClick={handleGetStarted}
-                className="group relative bg-gradient-to-r from-blue-600 to-purple-600 active:from-blue-700 active:to-purple-700 text-white font-bold px-8 py-5 rounded-2xl shadow-lg active:shadow-md transform active:scale-95 transition-all duration-100 text-lg touch-manipulation w-full sm:flex-1"
+                variant="primary"
+                className="w-full sm:flex-1 flex items-center justify-center gap-2 text-lg"
+                ariaLabel="Get started for free"
                 data-testid="get-started-btn"
-                aria-label="Get started for free"
               >
-                <span className="flex items-center justify-center gap-2">
-                  Get Started Free
-                  <ArrowRight className="w-5 h-5" />
-                </span>
-              </button>
+                <span>Get Started Free</span>
+                <ArrowRight className="w-5 h-5" />
+              </RippleButton>
               
-              <a 
-                href="/properties" 
-                className="group bg-white active:bg-gray-100 border-2 border-gray-300 text-gray-800 font-bold px-8 py-5 rounded-2xl shadow-md active:shadow-sm transform active:scale-95 transition-all duration-100 text-lg touch-manipulation flex items-center justify-center gap-2 w-full sm:flex-1"
+              <RippleButton
+                onClick={() => window.location.href = '/properties'}
+                variant="secondary"
+                className="w-full sm:flex-1 flex items-center justify-center gap-2 text-lg"
+                ariaLabel="Browse available properties"
                 data-testid="browse-properties-btn"
-                aria-label="Browse available properties"
               >
                 <span>Browse Properties</span>
                 <Home className="w-5 h-5" />
-              </a>
+              </RippleButton>
             </div>
 
             {/* Stats - Optimized for mobile screens */}
