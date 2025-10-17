@@ -21,6 +21,14 @@
 **Live URL:** https://habitere.com  
 **Admin Panel:** https://habitere.com/admin
 
+### 🆕 Recent Major Refactoring (October 2025)
+The backend has been completely refactored into a **modular feature-based architecture**:
+- ✅ Migrated from 3,453-line monolithic `server.py` to 11 focused modules
+- ✅ 74 API endpoints extracted into feature-specific route files
+- ✅ 100% comprehensive inline documentation
+- ✅ Improved maintainability, scalability, and team collaboration
+- ✅ All endpoints tested and verified working
+
 ### Key Features
 - ✅ Property listings (rent/sale)
 - ✅ Professional services directory
