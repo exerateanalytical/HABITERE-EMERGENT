@@ -1197,6 +1197,21 @@ async def delete_property(
     return {"message": "Property deleted"}
 
 
+@api_router.delete("/properties/cleanup/old")
+async def cleanup_old_properties_endpoint(current_user: User = Depends(get_current_user)):
+    """Manually trigger cleanup of properties older than 1 hour (Admin only)"""
+    if current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    deleted_count = await cleanup_old_properties()
+    return {
+        "success": True,
+        "message": f"Cleanup completed",
+        "deleted_count": deleted_count
+    }
+
+
+
 # User Properties Routes
 @api_router.get("/users/me/properties", response_model=List[Dict[str, Any]])
 async def get_current_user_properties(
