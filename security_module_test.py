@@ -215,9 +215,8 @@ class SecurityModuleTestSuite:
         
     def get_auth_headers(self, user_key: str) -> Dict[str, str]:
         """Get authentication headers for user"""
-        token = self.auth_tokens.get(user_key)
-        if token:
-            return {"Cookie": f"session_token={token}"}
+        # Since we're using cookie jar, we don't need to manually set cookies
+        # The session will automatically include cookies from login
         return {}
         
     # ==================== STATISTICS TESTS ====================
