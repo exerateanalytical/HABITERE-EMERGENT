@@ -349,7 +349,11 @@ class HabitereFinalTester:
     def test_admin_stats_unauthorized(self):
         """Test GET /admin/stats without authentication"""
         try:
-            response = self.unauthenticated_session.get(f"{self.api_url}/admin/stats")
+            # Create a completely fresh session to ensure no authentication
+            fresh_session = requests.Session()
+            fresh_session.headers.update({'Content-Type': 'application/json'})
+            
+            response = fresh_session.get(f"{self.api_url}/admin/stats")
             success = response.status_code == 401
             details = f"Status: {response.status_code} (expected 401 without auth)"
             
