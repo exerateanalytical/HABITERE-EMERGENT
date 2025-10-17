@@ -368,8 +368,8 @@ const LandingPage = () => {
                 ariaLabel="Search properties"
                 data-testid="search-btn"
               >
+                <span className="font-bold">Search Properties</span>
                 <Search className="w-5 h-5" />
-                Search Properties
               </RippleButton>
             </form>
             
