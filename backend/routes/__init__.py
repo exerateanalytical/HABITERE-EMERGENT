@@ -32,7 +32,8 @@ from . import (
     reviews,
     core,
     images,
-    payments
+    payments,
+    admin
 )
 
 __all__ = [
