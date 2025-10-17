@@ -92,7 +92,7 @@ async def get_current_user(
         )
     
     # Validate session token
-    session = await db.sessions.find_one({"session_token": token})
+    session = await db.user_sessions.find_one({"session_token": token})
     if not session:
         logger.warning(f"Invalid session token: {token[:10]}...")
         raise HTTPException(
