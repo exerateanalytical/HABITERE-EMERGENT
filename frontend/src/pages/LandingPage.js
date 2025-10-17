@@ -50,13 +50,24 @@ const LandingPage = () => {
 
   // Duplicate declarations removed - using the first ones above
 
+  const navigate = (path) => {
+    window.location.href = path;
+  };
+
   const handleGetStarted = () => {
-    const redirectUrl = `${window.location.origin}/auth/callback`;
-    login(redirectUrl);
+    navigate('/auth/register');
+  };
+
+  const handleBrowseProperties = () => {
+    navigate('/properties');
+  };
+
+  const handleExploreServices = () => {
+    navigate('/services');
   };
 
   const handleSearchSubmit = (e) => {
-    e?.preventDefault();
+    e.preventDefault();
     
     // Clear any previous errors
     setSearchError('');
@@ -68,7 +79,8 @@ const LandingPage = () => {
     if (searchForm.priceRange) params.append('price', searchForm.priceRange);
     
     // Navigate to properties page with filters
-    window.location.href = `/properties?${params.toString()}`;
+    const queryString = params.toString();
+    navigate(`/properties${queryString ? '?' + queryString : ''}`);
   };
 
   const handleInputChange = (field, value) => {
