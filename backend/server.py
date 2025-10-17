@@ -995,6 +995,96 @@ async def get_user_by_id(user_id: str):
         raise HTTPException(status_code=500, detail="Failed to fetch user")
 
 
+
+@api_router.put("/users/profile", response_model=Dict[str, Any])
+async def update_user_profile(
+    name: Optional[str] = Form(None),
+    phone: Optional[str] = Form(None),
+    company_name: Optional[str] = Form(None),
+    bio: Optional[str] = Form(None),
+    location: Optional[str] = Form(None),
+    profile_image: Optional[UploadFile] = File(None),
+    current_user: User = Depends(get_current_user)
+):
+    """Update user profile information and/or profile image"""
+    try:
+        update_data = {}
+        
+        # Update text fields
+        if name is not None:
+            update_data["name"] = name
+        if phone is not None:
+            update_data["phone"] = phone
+        if company_name is not None:
+            update_data["company_name"] = company_name
+        if bio is not None:
+            update_data["bio"] = bio
+        if location is not None:
+            update_data["location"] = location
+        
+        # Handle profile image upload
+        if profile_image:
+            # Validate image
+            is_valid, error_message = validate_image_file(profile_image)
+            if not is_valid:
+                raise HTTPException(status_code=400, detail=error_message)
+            
+            # Generate unique filename
+            file_ext = Path(profile_image.filename).suffix.lower()
+            if not file_ext:
+                file_ext = mimetypes.guess_extension(profile_image.content_type) or '.jpg'
+            
+            unique_filename = f"{uuid.uuid4()}{file_ext}"
+            
+            # Create profile directory
+            profile_dir = UPLOAD_DIR / "profile"
+            profile_dir.mkdir(parents=True, exist_ok=True)
+            
+            file_path = profile_dir / unique_filename
+            thumbnail_path = UPLOAD_DIR / "thumbnails" / f"thumb_{unique_filename}"
+            
+            # Save file
+            content = await profile_image.read()
+            async with aiofiles.open(file_path, 'wb') as f:
+                await f.write(content)
+            
+            # Create thumbnail
+            await create_thumbnail(file_path, thumbnail_path)
+            
+            # Update profile picture URL
+            update_data["picture"] = f"/uploads/profile/{unique_filename}"
+        
+        if not update_data:
+            raise HTTPException(status_code=400, detail="No data provided for update")
+        
+        # Add updated_at timestamp
+        update_data["updated_at"] = datetime.now(timezone.utc)
+        
+        # Update user in database
+        result = await db.users.update_one(
+            {"id": current_user.id},
+            {"$set": update_data}
+        )
+        
+        if result.modified_count == 0 and result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        # Get updated user
+        updated_user = await db.users.find_one({"id": current_user.id})
+        
+        return {
+            "success": True,
+            "message": "Profile updated successfully",
+            "user": serialize_doc(updated_user)
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Profile update error: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to update profile: {str(e)}")
+
+
 @api_router.post("/auth/logout")
 async def logout(
     response: Response,
