@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import SEOHead from '../components/SEOHead';
 import { generateSEOData, generateStructuredData } from '../utils/seoData';
 import { useAuth } from '../context/AuthContext';
