@@ -8,24 +8,25 @@ import time
 from datetime import datetime
 from typing import Dict, Any, Optional
 
-class HabitereAuthTester:
-    def __init__(self, base_url="https://mobile-ux-boost-1.preview.emergentagent.com"):
+class CriticalAuthTester:
+    def __init__(self, base_url="https://habitere.com"):
         self.base_url = base_url
         self.api_url = f"{base_url}/api"
         self.session = requests.Session()
         self.session.headers.update({
             'Content-Type': 'application/json',
-            'User-Agent': 'Habitere-Auth-Test-Client/1.0'
+            'User-Agent': 'Habitere-Critical-Auth-Test/1.0'
         })
         self.tests_run = 0
         self.tests_passed = 0
         self.test_results = []
-        self.test_user_email = f"test.user.{uuid.uuid4().hex[:8]}@habitere-test.com"
-        self.test_user_password = "SecureTestPass123!"
-        self.test_user_name = "Test User Authentication"
-        self.session_token = None
+        
+        # Test data for critical authentication testing
+        self.test_email = f"auth_test_{uuid.uuid4().hex[:8]}@habitere.com"
+        self.test_password = "SecurePass123!"
+        self.test_name = "Critical Auth Test User"
         self.verification_token = None
-        self.reset_token = None
+        self.session_token = None
 
     def log_test(self, test_name: str, success: bool, details: str = "", response_data: Any = None):
         """Log test result"""
