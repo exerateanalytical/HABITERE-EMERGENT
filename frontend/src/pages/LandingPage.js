@@ -527,7 +527,7 @@ const LandingPage = () => {
             {testimonials.map((testimonial, index) => (
               <div 
                 key={index} 
-                className="bg-white rounded-3xl p-8 shadow-md border border-gray-100"
+                className="bg-white rounded-3xl p-8 shadow-md border border-gray-100 hover:shadow-xl hover:border-blue-200 transition-all duration-300 transform hover:scale-105"
                 data-testid={`testimonial-${index}`}
               >
                 {/* Rating */}
@@ -538,7 +538,7 @@ const LandingPage = () => {
                 </div>
                 
                 {/* Content */}
-                <p className="text-gray-700 mb-6 leading-relaxed">
+                <p className="text-gray-700 mb-6 leading-relaxed line-clamp-4">
                   "{testimonial.content}"
                 </p>
                 
