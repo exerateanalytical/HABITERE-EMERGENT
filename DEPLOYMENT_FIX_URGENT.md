@@ -8,7 +8,7 @@
    - NEW: `https://habitere.com/api/auth/google/callback`
 
 2. ✅ Updated `REACT_APP_BACKEND_URL` in `/app/frontend/.env`:
-   - OLD: `https://habitere-upgrade.preview.emergentagent.com`
+   - OLD: `https://fastapi-modules-1.preview.emergentagent.com`
    - NEW: `https://habitere.com`
 
 3. ✅ Services restarted - All running successfully

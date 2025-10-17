@@ -6,7 +6,7 @@ import io
 from PIL import Image
 
 class ErrorScenarioTester:
-    def __init__(self, base_url="https://habitere-upgrade.preview.emergentagent.com"):
+    def __init__(self, base_url="https://fastapi-modules-1.preview.emergentagent.com"):
         self.base_url = base_url
         self.api_url = f"{base_url}/api"
         self.session = requests.Session()
