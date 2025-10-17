@@ -320,8 +320,6 @@ class MessageCreate(BaseModel):
     receiver_id: str
     content: str
 
-# MTN MoMo Client Class
-
 # Authentication functions
 async def get_current_user(
     request: Request,
