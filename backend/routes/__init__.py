@@ -14,6 +14,7 @@ This package contains all API route modules organized by feature:
 - core.py: Core utilities (health checks, root endpoint)
 - images.py: Image upload and management
 - payments.py: Payment processing (MTN MoMo)
+- admin.py: Admin dashboard and moderation
 
 Each module exports a FastAPI APIRouter that can be included in the main app.
 
