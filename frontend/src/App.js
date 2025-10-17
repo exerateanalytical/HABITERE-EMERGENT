@@ -228,27 +228,27 @@ function AppContent() {
         <Route 
           path="/admin" 
           element={
-            <ProtectedRoute>
+            <AdminRoute>
               <AdminDashboard />
-            </ProtectedRoute>
+            </AdminRoute>
           } 
         />
         
         <Route 
           path="/admin/users" 
           element={
-            <ProtectedRoute>
+            <AdminRoute>
               <AdminUsers />
-            </ProtectedRoute>
+            </AdminRoute>
           } 
         />
         
         <Route 
           path="/admin/properties" 
           element={
-            <ProtectedRoute>
+            <AdminRoute>
               <AdminProperties />
-            </ProtectedRoute>
+            </AdminRoute>
           } 
         />
         
