@@ -230,7 +230,7 @@ const LandingPage = () => {
               {/* Property Type */}
               <div className="space-y-2">
                 <label className="block text-sm font-semibold text-gray-700">Property Type</label>
-                <select className="w-full px-4 py-4 bg-white border-2 border-gray-200 rounded-2xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 active:border-blue-400 transition-all duration-100 text-base appearance-none cursor-pointer touch-manipulation min-h-[56px]" data-testid="search-type">
+                <select className="w-full px-4 py-4 bg-white border-2 border-gray-200 rounded-2xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 active:border-blue-400 transition-all duration-100 text-base appearance-none cursor-pointer touch-manipulation min-h-[56px] h-14" data-testid="search-type">
                   <option>All Types</option>
                   <option>🏠 House</option>
                   <option>🏢 Apartment</option>
@@ -242,7 +242,7 @@ const LandingPage = () => {
               {/* Location */}
               <div className="space-y-2">
                 <label className="block text-sm font-semibold text-gray-700">Location</label>
-                <select className="w-full px-4 py-4 bg-white border-2 border-gray-200 rounded-2xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 active:border-blue-400 transition-all duration-100 text-base appearance-none cursor-pointer touch-manipulation min-h-[56px]" data-testid="search-location">
+                <select className="w-full px-4 py-4 bg-white border-2 border-gray-200 rounded-2xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 active:border-blue-400 transition-all duration-100 text-base appearance-none cursor-pointer touch-manipulation min-h-[56px] h-14" data-testid="search-location">
                   <option>All Locations</option>
                   <option>📍 Douala</option>
                   <option>📍 Yaoundé</option>
@@ -254,7 +254,7 @@ const LandingPage = () => {
               {/* Price Range */}
               <div className="space-y-2">
                 <label className="block text-sm font-semibold text-gray-700">Price Range</label>
-                <select className="w-full px-4 py-4 bg-white border-2 border-gray-200 rounded-2xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 active:border-blue-400 transition-all duration-100 text-base appearance-none cursor-pointer touch-manipulation min-h-[56px]" data-testid="search-price">
+                <select className="w-full px-4 py-4 bg-white border-2 border-gray-200 rounded-2xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 active:border-blue-400 transition-all duration-100 text-base appearance-none cursor-pointer touch-manipulation min-h-[56px] h-14" data-testid="search-price">
                   <option>Any Price</option>
                   <option>💰 Under 100K XAF</option>
                   <option>💰 100K - 500K XAF</option>
