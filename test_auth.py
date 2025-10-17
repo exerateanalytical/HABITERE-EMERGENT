@@ -29,6 +29,8 @@ async def test_auth():
                 
                 # Check cookies
                 print(f"Cookies after login: {session.cookie_jar}")
+                for cookie in session.cookie_jar:
+                    print(f"Cookie: {cookie.key}={cookie.value}, domain={cookie['domain']}, path={cookie['path']}")
                 
                 # Test authenticated endpoint
                 print("\n🔒 Testing authenticated endpoint...")
