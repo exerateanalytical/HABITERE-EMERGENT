@@ -475,7 +475,7 @@ const LandingPage = () => {
               {testimonials.map((testimonial, index) => (
                 <div 
                   key={index} 
-                  className="flex-none w-[85%] sm:w-80 bg-white rounded-3xl p-6 shadow-lg snap-center touch-manipulation"
+                  className="flex-none w-[85%] sm:w-80 bg-white rounded-3xl p-6 shadow-lg snap-center touch-manipulation transform hover:scale-105 transition-transform duration-200"
                   data-testid={`testimonial-${index}`}
                 >
                   {/* Rating */}
@@ -486,7 +486,7 @@ const LandingPage = () => {
                   </div>
                   
                   {/* Content */}
-                  <p className="text-base text-gray-700 mb-6 leading-relaxed">
+                  <p className="text-base text-gray-700 mb-6 leading-relaxed line-clamp-4">
                     "{testimonial.content}"
                   </p>
                   
@@ -504,11 +504,21 @@ const LandingPage = () => {
               ))}
             </div>
             
-            {/* Swipe Indicator */}
+            {/* Swipe Indicator - Enhanced with active state */}
             <div className="flex justify-center gap-2 mt-4">
               {testimonials.map((_, index) => (
-                <div key={index} className="w-2 h-2 rounded-full bg-gray-300"></div>
+                <div 
+                  key={index} 
+                  className={`h-2 rounded-full transition-all duration-300 ${
+                    index === 0 ? 'w-6 bg-blue-600' : 'w-2 bg-gray-300'
+                  }`}
+                ></div>
               ))}
+            </div>
+            
+            {/* Swipe hint */}
+            <div className="text-center mt-3 text-sm text-gray-500 animate-pulse">
+              Swipe to see more →
             </div>
           </div>
 
