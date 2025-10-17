@@ -165,7 +165,7 @@ async def get_service(service_id: str):
 
 # ==================== SERVICE CREATION ====================
 
-@router.post("/services", response_model=Dict[str, Any]])
+@router.post("/services", response_model=Dict[str, Any])
 async def create_service(
     service_data: ServiceCreate,
     current_user: dict = Depends(get_current_user)
