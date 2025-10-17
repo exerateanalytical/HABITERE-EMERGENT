@@ -25,7 +25,7 @@ Total Properties: 4
 
 **Issue:** Cross-Origin Cookie Blocking
 - **Frontend:** `http://localhost:3000`
-- **Backend:** `https://property-platform-12.preview.emergentagent.com/api`
+- **Backend:** `https://mobile-ux-boost-1.preview.emergentagent.com/api`
 - **Problem:** Browsers block cross-origin cookies even with proper CORS configuration
 
 **This is NOT a bug** - it's expected browser security behavior for cross-origin requests in development.

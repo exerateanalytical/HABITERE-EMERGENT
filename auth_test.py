@@ -9,7 +9,7 @@ from datetime import datetime
 from typing import Dict, Any, Optional
 
 class HabitereAuthTester:
-    def __init__(self, base_url="https://property-platform-12.preview.emergentagent.com"):
+    def __init__(self, base_url="https://mobile-ux-boost-1.preview.emergentagent.com"):
         self.base_url = base_url
         self.api_url = f"{base_url}/api"
         self.session = requests.Session()
@@ -467,7 +467,7 @@ class HabitereAuthTester:
         try:
             # Test preflight request
             headers = {
-                'Origin': 'https://property-platform-12.preview.emergentagent.com',
+                'Origin': 'https://mobile-ux-boost-1.preview.emergentagent.com',
                 'Access-Control-Request-Method': 'POST',
                 'Access-Control-Request-Headers': 'Content-Type'
             }
