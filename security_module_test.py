@@ -279,15 +279,17 @@ class SecurityModuleTestSuite:
             
     async def test_create_security_service(self):
         """Test POST /api/security/services (Auth required)"""
-        # Test without authentication
+        # Test without authentication using a separate session
         try:
-            async with self.session.post(f"{BASE_URL}/security/services", json=TEST_SERVICE_DATA) as response:
-                if response.status == 401:
-                    self.log_test("/security/services", "POST", "PASS", 
-                                "Correctly rejected unauthenticated request")
-                else:
-                    self.log_test("/security/services", "POST", "FAIL", 
-                                f"Should reject unauthenticated request, got {response.status}")
+            connector = aiohttp.TCPConnector(ssl=False)
+            async with aiohttp.ClientSession(connector=connector) as unauth_session:
+                async with unauth_session.post(f"{BASE_URL}/security/services", json=TEST_SERVICE_DATA) as response:
+                    if response.status == 401:
+                        self.log_test("/security/services", "POST", "PASS", 
+                                    "Correctly rejected unauthenticated request")
+                    else:
+                        self.log_test("/security/services", "POST", "FAIL", 
+                                    f"Should reject unauthenticated request, got {response.status}")
         except Exception as e:
             self.log_test("/security/services", "POST", "FAIL", f"Auth test failed: {str(e)}")
             
