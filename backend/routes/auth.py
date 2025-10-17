@@ -395,11 +395,21 @@ async def login(request: LoginRequest, response: Response):
     
     # Create session token
     session_token = str(uuid.uuid4())
+    expires_at = datetime.now(timezone.utc) + timedelta(days=7)
     
-    # Update user's session in database
+    # Create session document
+    session_doc = {
+        "user_id": user["id"],
+        "session_token": session_token,
+        "expires_at": expires_at.isoformat(),
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.user_sessions.insert_one(session_doc)
+    
+    # Update user's last login
     await db.users.update_one(
         {"id": user['id']},
-        {"$set": {"session_token": session_token, "last_login": datetime.now(timezone.utc)}}
+        {"$set": {"last_login": datetime.now(timezone.utc)}}
     )
     
     # Set auth cookie
