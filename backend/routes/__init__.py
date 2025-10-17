@@ -31,8 +31,8 @@ from . import (
     messages,
     reviews,
     core,
-    images,
-    payments
+    images
+    # payments  # TODO: Fix syntax errors and re-enable
 )
 
 __all__ = [
