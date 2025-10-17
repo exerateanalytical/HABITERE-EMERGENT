@@ -6,7 +6,8 @@ import './App.css';
 
 // Components
 import Navbar from './components/Navbar';
-import Footer from './components/Footer';
+import Footer from './components/FooterMobile';
+import BackToTop from './components/BackToTop';
 import ScrollToTop from './components/ScrollToTop';
 import LandingPage from './pages/LandingPage';
 import Properties from './pages/Properties';
