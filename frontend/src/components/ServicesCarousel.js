@@ -15,6 +15,7 @@ import {
   ArrowRight,
   Heart
 } from 'lucide-react';
+import { ServiceCardSkeleton } from './SkeletonLoader';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
