@@ -32,6 +32,8 @@ from pydantic import BaseModel
 import uuid
 import bcrypt
 import logging
+import os
+import httpx
 from urllib.parse import urlencode
 
 # Import from parent modules
@@ -39,8 +41,8 @@ import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent))
 
-from config import settings
-from database import get_database, serialize_doc
+from database import get_database
+from utils import get_current_user, serialize_doc
 
 # Setup logging
 logger = logging.getLogger(__name__)
