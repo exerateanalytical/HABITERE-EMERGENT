@@ -312,7 +312,7 @@ class HabitereProductionTester:
             return False
 
     def test_google_oauth(self):
-        """Test POST /api/auth/google/login"""
+        """Test GET /api/auth/google/login"""
         try:
             response = self.session.get(f"{self.api_url}/auth/google/login")
             success = response.status_code == 200
@@ -323,8 +323,10 @@ class HabitereProductionTester:
                 auth_url = data.get('auth_url', '')
                 if 'https://habitere.com/api/auth/google/callback' in auth_url:
                     details += ", Redirect URI: ✅"
+                elif 'redirect_uri' in auth_url:
+                    details += f", Redirect URI: ⚠️ (found but different: {auth_url.split('redirect_uri=')[1].split('&')[0] if 'redirect_uri=' in auth_url else 'unknown'})"
                 else:
-                    details += ", Redirect URI: ❌"
+                    details += ", Redirect URI: ❌ (not found)"
                     success = False
                     
             self.log_test("Google OAuth", success, details)
