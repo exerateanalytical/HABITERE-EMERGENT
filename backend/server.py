@@ -78,7 +78,8 @@ USER_ROLES = [
     "property_seeker", "property_owner", "real_estate_agent", "real_estate_company",
     "construction_company", "bricklayer", "plumber", "electrician", "interior_designer",
     "borehole_driller", "cleaning_company", "painter", "architect", "carpenter",
-    "evaluator", "building_material_supplier", "furnishing_shop", "admin"
+    "evaluator", "building_material_supplier", "furnishing_shop", "admin",
+    "security_provider", "security_guard", "security_admin"
 ]
 
 # Pydantic Models
