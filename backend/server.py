@@ -1,7 +1,6 @@
-from fastapi import FastAPI, APIRouter, Depends, HTTPException, status, Request, Response, Cookie, UploadFile, File, Form
-from fastapi.responses import RedirectResponse
+from fastapi import FastAPI, APIRouter, status, Request, File
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from fastapi.security import HTTPBearer
 from fastapi.staticfiles import StaticFiles
 from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel, Field, ConfigDict
@@ -9,23 +8,10 @@ from typing import List, Optional, Dict, Any
 from datetime import datetime, timezone, timedelta
 from dotenv import load_dotenv
 from pathlib import Path
+from PIL import Image
 import os
 import uuid
 import logging
-import httpx
-import json
-import base64
-import shutil
-import aiofiles
-from PIL import Image
-import mimetypes
-import requests
-from google.oauth2 import id_token
-from google.auth.transport import requests as google_requests
-from urllib.parse import urlencode
-import bcrypt
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail
 
 # Load environment variables
 ROOT_DIR = Path(__file__).parent
