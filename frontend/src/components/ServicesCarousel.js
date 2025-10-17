@@ -152,17 +152,12 @@ const ServicesCarousel = ({ title = "Professional Services", showAll = true, lim
     return (
       <div className="py-8" data-testid="services-carousel-loading">
         <div className="flex items-center justify-between mb-6">
-          <div className="h-6 bg-gray-300 rounded w-48 animate-pulse"></div>
-          <div className="h-4 bg-gray-300 rounded w-20 animate-pulse"></div>
+          <div className="h-7 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-48 animate-shimmer bg-[length:200%_100%]"></div>
+          <div className="h-5 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-20 animate-shimmer bg-[length:200%_100%]"></div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {[...Array(4)].map((_, index) => (
-            <div key={index} className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 animate-pulse">
-              <div className="w-full h-40 bg-gray-300 rounded-lg mb-4"></div>
-              <div className="h-4 bg-gray-300 rounded mb-2"></div>
-              <div className="h-3 bg-gray-300 rounded w-2/3 mb-2"></div>
-              <div className="h-3 bg-gray-300 rounded w-1/2"></div>
-            </div>
+            <ServiceCardSkeleton key={index} />
           ))}
         </div>
       </div>
