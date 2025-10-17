@@ -481,15 +481,7 @@ async def verify_email(response: Response, verification_data: dict):
     await db.user_sessions.insert_one(session_doc)
     
     # Set session cookie
-    response.set_cookie(
-        key="session_token",
-        value=session_token,
-        max_age=7 * 24 * 60 * 60,
-        httponly=True,
-        secure=True,
-        samesite="none",
-        path="/"
-    )
+    set_auth_cookie(response, session_token)
     
     logger.info(f"Email verified for user: {user_doc.get('email')}")
     
