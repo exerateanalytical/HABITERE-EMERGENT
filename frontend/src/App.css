@@ -889,6 +889,22 @@ body {
 }
 
 .animate-ripple {
+
+
+/* Bottom Sheet Slide Up Animation */
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slideUp 300ms ease-out;
+}
+
   animation: ripple 600ms ease-out;
 }
 
