@@ -515,26 +515,30 @@ const LandingPage = () => {
       </section>
 
       {/* Featured Properties Carousel */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <FeaturedProperties 
-            title="Featured Properties" 
-            limit={8}
-            showAll={true}
-          />
-        </div>
-      </section>
+      <LazySection threshold={0.1}>
+        <section className="py-20 bg-gray-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <FeaturedProperties 
+              title="Featured Properties" 
+              limit={8}
+              showAll={true}
+            />
+          </div>
+        </section>
+      </LazySection>
 
       {/* Professional Services Carousel */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <ServicesCarousel 
-            title="Connect with Trusted Professionals" 
-            limit={12}
-            showAll={true}
-          />
-        </div>
-      </section>
+      <LazySection threshold={0.1}>
+        <section className="py-20 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <ServicesCarousel 
+              title="Connect with Trusted Professionals" 
+              limit={12}
+              showAll={true}
+            />
+          </div>
+        </section>
+      </LazySection>
 
       {/* Testimonials Section - Mobile Optimized */}
       <section className="py-12 md:py-20 bg-blue-50">
