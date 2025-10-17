@@ -499,7 +499,7 @@ const LandingPage = () => {
                 className="mt-4"
                 ariaLabel="Explore services"
               >
-                <span className="font-bold">Explore Services</span>
+                Explore Services
                 <ArrowRight className="w-5 h-5" />
               </RippleButton>
             </div>
