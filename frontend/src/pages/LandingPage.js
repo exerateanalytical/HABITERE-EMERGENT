@@ -25,6 +25,14 @@ import { LazyImage, LazySection } from '../components/LazyComponents';
 const LandingPage = () => {
   const { login } = useAuth();
   
+  // Search form state
+  const [searchForm, setSearchForm] = useState({
+    propertyType: '',
+    location: '',
+    priceRange: ''
+  });
+  const [searchError, setSearchError] = useState('');
+  
   // Generate comprehensive SEO data for homepage
   const seoData = generateSEOData('homepage', {
     location: 'Cameroon',
@@ -45,6 +53,28 @@ const LandingPage = () => {
   const handleGetStarted = () => {
     const redirectUrl = `${window.location.origin}/auth/callback`;
     login(redirectUrl);
+  };
+
+  const handleSearchSubmit = (e) => {
+    e?.preventDefault();
+    
+    // Clear any previous errors
+    setSearchError('');
+    
+    // Build query params
+    const params = new URLSearchParams();
+    if (searchForm.propertyType) params.append('type', searchForm.propertyType);
+    if (searchForm.location) params.append('location', searchForm.location);
+    if (searchForm.priceRange) params.append('price', searchForm.priceRange);
+    
+    // Navigate to properties page with filters
+    window.location.href = `/properties?${params.toString()}`;
+  };
+
+  const handleInputChange = (field, value) => {
+    setSearchForm(prev => ({ ...prev, [field]: value }));
+    // Clear error when user starts typing
+    if (searchError) setSearchError('');
   };
 
   const features = [
