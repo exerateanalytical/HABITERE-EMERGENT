@@ -122,19 +122,12 @@ const FeaturedProperties = ({ title = "Featured Properties", showAll = true, lim
     return (
       <div className="py-8" data-testid="properties-carousel-loading">
         <div className="flex items-center justify-between mb-6">
-          <div className="h-6 bg-gray-300 rounded w-48 animate-pulse"></div>
-          <div className="h-4 bg-gray-300 rounded w-20 animate-pulse"></div>
+          <div className="h-7 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-48 animate-shimmer bg-[length:200%_100%]"></div>
+          <div className="h-5 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded w-20 animate-shimmer bg-[length:200%_100%]"></div>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {[...Array(3)].map((_, index) => (
-            <div key={index} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden animate-pulse">
-              <div className="h-48 bg-gray-300"></div>
-              <div className="p-4 space-y-3">
-                <div className="h-4 bg-gray-300 rounded w-3/4"></div>
-                <div className="h-3 bg-gray-300 rounded w-1/2"></div>
-                <div className="h-6 bg-gray-300 rounded w-2/3"></div>
-              </div>
-            </div>
+            <PropertyCardSkeleton key={index} />
           ))}
         </div>
       </div>
