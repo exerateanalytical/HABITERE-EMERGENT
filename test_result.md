@@ -398,15 +398,14 @@
 
 ## test_plan:
   current_focus:
-    - "Authentication System Issues Resolution"
-    - "Reviews & Ratings System Integration"
-    - "Messaging System Between Users"
-    - "Booking Flow End-to-End"
-    - "Property Management UI"
-    - "Admin Dashboard (Local Environment)"
-  stuck_tasks:
-    - "Authentication System Issues"
-  test_all: false
+    - "PWA Implementation (Manifest, Service Worker)"
+    - "Performance Optimizations (Skeleton Loaders, Lazy Loading)"
+    - "Landing Page Complete Polish"
+    - "Properties Page Optimizations"
+    - "Services Page Optimizations"
+    - "Final Production Testing"
+  stuck_tasks: []
+  test_all: true
   test_priority: "high_first"
 
 ## agent_communication:
