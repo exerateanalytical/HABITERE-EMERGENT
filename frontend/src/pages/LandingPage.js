@@ -413,10 +413,12 @@ const LandingPage = () => {
             </div>
 
             <div className="relative">
-              <img 
+              <LazyImage
                 src="https://images.unsplash.com/photo-1505798577917-a65157d3320a"
                 alt="Professional contractor"
-                className="rounded-2xl shadow-lg object-cover w-full h-96"
+                width={600}
+                height={384}
+                className="rounded-2xl shadow-lg"
               />
               <div className="absolute top-4 right-4 bg-white rounded-lg shadow-lg p-3">
                 <div className="flex items-center space-x-2">
