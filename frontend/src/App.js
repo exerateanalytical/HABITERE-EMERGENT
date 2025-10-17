@@ -203,6 +203,11 @@ function AppContent() {
         <Route path="/terms" element={<Terms />} />
         <Route path="/help-center" element={<HelpCenter />} />
         
+        {/* Homeland Security Routes */}
+        <Route path="/security" element={<HomelandSecurity />} />
+        <Route path="/security/services" element={<SecurityServices />} />
+        <Route path="/security/apply" element={<GuardApplication />} />
+        
         {/* Protected Routes */}
         <Route 
           path="/dashboard" 
