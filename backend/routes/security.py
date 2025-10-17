@@ -1,0 +1,780 @@
+"""
+Homeland Security Routes Module
+=================================
+Handles all security services API endpoints for Habitere platform.
+
+This module provides:
+- Security service marketplace (Guards, CCTV, Remote Monitoring, Patrol, K9, Emergency)
+- Security guard profiles and applications
+- Security service bookings
+- Provider management
+- Guard recruitment system
+
+Features:
+- Service listings with photos, certifications, ratings
+- Instant booking and custom requests
+- Emergency dispatch capability
+- Guard application and verification process
+- Provider and guard dashboards
+
+Authorization:
+- Service creation: security_provider, security_admin
+- Guard applications: any authenticated user
+- Bookings: any authenticated user
+- Service management: security_provider, security_admin
+- Application approval: security_admin
+
+Dependencies:
+- FastAPI for routing
+- MongoDB for data storage
+- Authentication middleware for protected endpoints
+
+Author: Habitere Development Team
+Last Modified: 2025-10-17
+"""
+
+from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
+from typing import List, Dict, Any, Optional
+from datetime import datetime, timezone
+from pydantic import BaseModel, Field
+import uuid
+import logging
+
+# Import from parent modules
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).parent.parent))
+
+from database import get_database
+from utils import get_current_user, serialize_doc
+
+# Setup logging
+logger = logging.getLogger(__name__)
+
+# Create router for security endpoints
+router = APIRouter(prefix="/security", tags=["Homeland Security"])
+
+
+# ==================== PYDANTIC MODELS ====================
+
+class SecurityServiceCreate(BaseModel):
+    """
+    Security service creation model.
+    
+    Used for creating new security service listings.
+    """
+    title: str
+    description: str
+    service_type: str  # Security Guards, CCTV Installation, Remote Monitoring, Patrol Units, K9 Units, Emergency Response
+    price_range: str  # e.g., "50,000 - 200,000 XAF/month"
+    location: str
+    images: List[str] = []
+    certifications: List[str] = []
+    availability: str = "Available"  # Available, Unavailable, Limited
+    features: List[str] = []  # e.g., ["24/7 Service", "Armed Guards", "Trained K9s"]
+    response_time: Optional[str] = None  # e.g., "15 minutes"
+
+
+class GuardApplicationCreate(BaseModel):
+    """
+    Guard application model.
+    
+    Used when individuals apply to become security guards.
+    """
+    full_name: str
+    phone: str
+    email: str
+    date_of_birth: str
+    national_id: str
+    address: str
+    city: str
+    experience_years: int
+    previous_employers: List[str] = []
+    certifications: List[str] = []
+    training: List[str] = []
+    availability: str  # Full-time, Part-time, On-demand
+    preferred_locations: List[str] = []
+    id_document_url: Optional[str] = None
+    photo_url: Optional[str] = None
+
+
+class SecurityBookingCreate(BaseModel):
+    """
+    Security service booking model.
+    
+    Used for booking security services.
+    """
+    service_id: str
+    booking_type: str  # instant, scheduled, emergency
+    start_date: str
+    end_date: Optional[str] = None
+    duration: Optional[str] = None  # e.g., "1 month", "24 hours"
+    location: str
+    property_id: Optional[str] = None
+    num_guards: int = 1
+    special_requirements: Optional[str] = None
+    emergency_contact: Optional[str] = None
+
+
+class GuardProfileUpdate(BaseModel):
+    """
+    Guard profile update model.
+    """
+    availability: Optional[str] = None
+    certifications: Optional[List[str]] = None
+    training: Optional[List[str]] = None
+    photo_url: Optional[str] = None
+    bio: Optional[str] = None
+
+
+# ==================== SECURITY SERVICE MARKETPLACE ====================
+
+@router.get("/services")
+async def get_security_services(
+    service_type: Optional[str] = None,
+    location: Optional[str] = None,
+    min_price: Optional[float] = None,
+    max_price: Optional[float] = None,
+    skip: int = 0,
+    limit: int = 20
+):
+    """
+    Get all security services with optional filtering.
+    
+    Provides marketplace listing of all available security services including
+    guards, CCTV, remote monitoring, patrol units, K9 units, and emergency response.
+    
+    Args:
+        service_type: Filter by service type (Security Guards, CCTV Installation, etc.)
+        location: Filter by location (case-insensitive)
+        min_price: Minimum price filter
+        max_price: Maximum price filter
+        skip: Number of items to skip (pagination)
+        limit: Maximum number of items to return
+        
+    Returns:
+        List of security service listings
+        
+    Example:
+        GET /api/security/services?service_type=Security Guards&location=Douala
+    """
+    db = get_database()
+    
+    # Build filters
+    filters = {"availability": {"$ne": "Unavailable"}}
+    
+    if service_type:
+        filters["service_type"] = service_type
+    
+    if location:
+        filters["location"] = {"$regex": location, "$options": "i"}
+    
+    logger.info(f"Fetching security services with filters: {filters}")
+    
+    services = await db.security_services.find(filters).skip(skip).limit(limit).to_list(1000)
+    
+    logger.info(f"Found {len(services)} security services")
+    
+    return [serialize_doc(service) for service in services]
+
+
+@router.get("/services/{service_id}")
+async def get_security_service(service_id: str):
+    """
+    Get detailed information about a specific security service.
+    
+    Args:
+        service_id: UUID of the security service
+        
+    Returns:
+        Complete service details including provider info, ratings, and reviews
+        
+    Raises:
+        HTTPException: 404 if service not found
+    """
+    db = get_database()
+    
+    service = await db.security_services.find_one({"id": service_id})
+    
+    if not service:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Security service not found"
+        )
+    
+    # Get provider info
+    provider = await db.users.find_one({"id": service["provider_id"]})
+    
+    return {
+        "service": serialize_doc(service),
+        "provider": serialize_doc(provider) if provider else None
+    }
+
+
+@router.post("/services", response_model=Dict[str, Any])
+async def create_security_service(
+    service_data: SecurityServiceCreate,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Create a new security service listing.
+    
+    Only security providers and admins can create service listings.
+    
+    Args:
+        service_data: Security service details
+        current_user: Authenticated user (must be security_provider or security_admin)
+        
+    Returns:
+        Created service with ID
+        
+    Raises:
+        HTTPException: 403 if user is not authorized
+        
+    Example:
+        POST /api/security/services
+        {
+            "title": "24/7 Armed Guards",
+            "service_type": "Security Guards",
+            "price_range": "100,000 - 300,000 XAF/month",
+            "location": "Douala"
+        }
+    """
+    db = get_database()
+    
+    # Check authorization
+    if current_user["role"] not in ["security_provider", "security_admin", "admin"]:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only security providers can create services"
+        )
+    
+    # Create service document
+    service = {
+        "id": str(uuid.uuid4()),
+        "provider_id": current_user["id"],
+        "provider_name": current_user["name"],
+        **service_data.dict(),
+        "verified": False,
+        "average_rating": 0.0,
+        "review_count": 0,
+        "booking_count": 0,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.security_services.insert_one(service)
+    
+    logger.info(f"Security service created: {service['id']} by {current_user['email']}")
+    
+    return serialize_doc(service)
+
+
+@router.put("/services/{service_id}")
+async def update_security_service(
+    service_id: str,
+    service_data: SecurityServiceCreate,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Update an existing security service.
+    
+    Only the provider who created the service or admins can update it.
+    
+    Args:
+        service_id: UUID of the service
+        service_data: Updated service details
+        current_user: Authenticated user
+        
+    Returns:
+        Success message
+        
+    Raises:
+        HTTPException: 404 if service not found
+        HTTPException: 403 if not authorized
+    """
+    db = get_database()
+    
+    service = await db.security_services.find_one({"id": service_id})
+    
+    if not service:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Security service not found"
+        )
+    
+    # Check authorization
+    if service["provider_id"] != current_user["id"] and current_user["role"] not in ["security_admin", "admin"]:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to update this service"
+        )
+    
+    # Update service
+    await db.security_services.update_one(
+        {"id": service_id},
+        {"$set": service_data.dict()}
+    )
+    
+    logger.info(f"Security service updated: {service_id}")
+    
+    return {"message": "Security service updated successfully"}
+
+
+@router.delete("/services/{service_id}")
+async def delete_security_service(
+    service_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Delete a security service listing.
+    
+    Args:
+        service_id: UUID of the service
+        current_user: Authenticated user
+        
+    Returns:
+        Success message
+        
+    Raises:
+        HTTPException: 404 if service not found
+        HTTPException: 403 if not authorized
+    """
+    db = get_database()
+    
+    service = await db.security_services.find_one({"id": service_id})
+    
+    if not service:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Security service not found"
+        )
+    
+    # Check authorization
+    if service["provider_id"] != current_user["id"] and current_user["role"] not in ["security_admin", "admin"]:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to delete this service"
+        )
+    
+    await db.security_services.delete_one({"id": service_id})
+    
+    logger.info(f"Security service deleted: {service_id}")
+    
+    return {"message": "Security service deleted successfully"}
+
+
+# ==================== GUARD APPLICATIONS ====================
+
+@router.post("/guards/apply")
+async def apply_as_guard(
+    application_data: GuardApplicationCreate,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Submit an application to become a security guard.
+    
+    Any authenticated user can apply. Applications go through verification
+    by security admins before approval.
+    
+    Args:
+        application_data: Guard application details
+        current_user: Authenticated user
+        
+    Returns:
+        Application confirmation with ID
+        
+    Example:
+        POST /api/security/guards/apply
+        {
+            "full_name": "John Doe",
+            "experience_years": 5,
+            "certifications": ["First Aid", "Firearms Training"]
+        }
+    """
+    db = get_database()
+    
+    # Check if user already has a pending or approved application
+    existing = await db.guard_applications.find_one({
+        "user_id": current_user["id"],
+        "status": {"$in": ["pending", "approved"]}
+    })
+    
+    if existing:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="You already have a pending or approved application"
+        )
+    
+    # Create application
+    application = {
+        "id": str(uuid.uuid4()),
+        "user_id": current_user["id"],
+        "user_email": current_user["email"],
+        **application_data.dict(),
+        "status": "pending",  # pending, approved, rejected
+        "verified": False,
+        "background_check": "pending",
+        "applied_at": datetime.now(timezone.utc).isoformat(),
+        "reviewed_at": None,
+        "reviewed_by": None
+    }
+    
+    await db.guard_applications.insert_one(application)
+    
+    logger.info(f"Guard application submitted: {application['id']} by {current_user['email']}")
+    
+    return {
+        "message": "Application submitted successfully. You will be notified once reviewed.",
+        "application_id": application["id"],
+        "status": "pending"
+    }
+
+
+@router.get("/guards/applications")
+async def get_guard_applications(
+    status: Optional[str] = None,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Get guard applications.
+    
+    Regular users see their own applications. Admins see all applications.
+    
+    Args:
+        status: Filter by status (pending, approved, rejected)
+        current_user: Authenticated user
+        
+    Returns:
+        List of applications
+    """
+    db = get_database()
+    
+    filters = {}
+    
+    # Regular users only see their own applications
+    if current_user["role"] not in ["security_admin", "admin"]:
+        filters["user_id"] = current_user["id"]
+    
+    if status:
+        filters["status"] = status
+    
+    applications = await db.guard_applications.find(filters).to_list(1000)
+    
+    return [serialize_doc(app) for app in applications]
+
+
+@router.get("/guards/profiles")
+async def get_guard_profiles(
+    location: Optional[str] = None,
+    availability: Optional[str] = None,
+    skip: int = 0,
+    limit: int = 20
+):
+    """
+    Get approved guard profiles.
+    
+    Shows publicly available guards who have been verified and approved.
+    
+    Args:
+        location: Filter by location
+        availability: Filter by availability (Full-time, Part-time, On-demand)
+        skip: Pagination skip
+        limit: Pagination limit
+        
+    Returns:
+        List of approved guard profiles
+    """
+    db = get_database()
+    
+    filters = {"status": "approved", "verified": True}
+    
+    if location:
+        filters["preferred_locations"] = {"$regex": location, "$options": "i"}
+    
+    if availability:
+        filters["availability"] = availability
+    
+    guards = await db.guard_applications.find(filters).skip(skip).limit(limit).to_list(1000)
+    
+    return [serialize_doc(guard) for guard in guards]
+
+
+@router.put("/guards/applications/{application_id}/approve")
+async def approve_guard_application(
+    application_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Approve a guard application.
+    
+    Only security admins can approve applications.
+    
+    Args:
+        application_id: UUID of the application
+        current_user: Authenticated admin
+        
+    Returns:
+        Success message
+        
+    Raises:
+        HTTPException: 403 if not admin
+        HTTPException: 404 if application not found
+    """
+    db = get_database()
+    
+    # Check authorization
+    if current_user["role"] not in ["security_admin", "admin"]:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only security admins can approve applications"
+        )
+    
+    application = await db.guard_applications.find_one({"id": application_id})
+    
+    if not application:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Application not found"
+        )
+    
+    # Update application status
+    await db.guard_applications.update_one(
+        {"id": application_id},
+        {"$set": {
+            "status": "approved",
+            "verified": True,
+            "reviewed_at": datetime.now(timezone.utc).isoformat(),
+            "reviewed_by": current_user["id"]
+        }}
+    )
+    
+    # Update user role
+    await db.users.update_one(
+        {"id": application["user_id"]},
+        {"$set": {"role": "security_guard"}}
+    )
+    
+    logger.info(f"Guard application approved: {application_id} by {current_user['email']}")
+    
+    return {"message": "Application approved successfully"}
+
+
+# ==================== SECURITY BOOKINGS ====================
+
+@router.post("/bookings")
+async def create_security_booking(
+    booking_data: SecurityBookingCreate,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Create a new security service booking.
+    
+    Users can book security services with instant or scheduled options.
+    
+    Args:
+        booking_data: Booking details
+        current_user: Authenticated user
+        
+    Returns:
+        Booking confirmation with ID
+        
+    Example:
+        POST /api/security/bookings
+        {
+            "service_id": "123",
+            "booking_type": "scheduled",
+            "start_date": "2025-11-01",
+            "duration": "1 month",
+            "num_guards": 2
+        }
+    """
+    db = get_database()
+    
+    # Verify service exists
+    service = await db.security_services.find_one({"id": booking_data.service_id})
+    
+    if not service:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Security service not found"
+        )
+    
+    # Create booking
+    booking = {
+        "id": str(uuid.uuid4()),
+        "user_id": current_user["id"],
+        "user_name": current_user["name"],
+        "user_email": current_user["email"],
+        "provider_id": service["provider_id"],
+        "service_title": service["title"],
+        **booking_data.dict(),
+        "status": "pending",  # pending, confirmed, active, completed, cancelled
+        "payment_status": "pending",
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.security_bookings.insert_one(booking)
+    
+    # Update service booking count
+    await db.security_services.update_one(
+        {"id": booking_data.service_id},
+        {"$inc": {"booking_count": 1}}
+    )
+    
+    logger.info(f"Security booking created: {booking['id']} by {current_user['email']}")
+    
+    return {
+        "message": "Booking request submitted successfully",
+        "booking_id": booking["id"],
+        "status": "pending"
+    }
+
+
+@router.get("/bookings")
+async def get_security_bookings(
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Get user's security bookings.
+    
+    Returns bookings created by the current user or for their services
+    if they're a provider.
+    
+    Args:
+        current_user: Authenticated user
+        
+    Returns:
+        List of bookings
+    """
+    db = get_database()
+    
+    # Users see their own bookings, providers see bookings for their services
+    if current_user["role"] in ["security_provider", "security_admin", "admin"]:
+        filters = {"$or": [
+            {"user_id": current_user["id"]},
+            {"provider_id": current_user["id"]}
+        ]}
+    else:
+        filters = {"user_id": current_user["id"]}
+    
+    bookings = await db.security_bookings.find(filters).to_list(1000)
+    
+    return [serialize_doc(booking) for booking in bookings]
+
+
+@router.get("/bookings/{booking_id}")
+async def get_security_booking(
+    booking_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Get details of a specific security booking.
+    
+    Args:
+        booking_id: UUID of the booking
+        current_user: Authenticated user
+        
+    Returns:
+        Booking details
+        
+    Raises:
+        HTTPException: 404 if booking not found
+        HTTPException: 403 if not authorized
+    """
+    db = get_database()
+    
+    booking = await db.security_bookings.find_one({"id": booking_id})
+    
+    if not booking:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Booking not found"
+        )
+    
+    # Check authorization
+    if booking["user_id"] != current_user["id"] and booking["provider_id"] != current_user["id"] and current_user["role"] not in ["security_admin", "admin"]:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to view this booking"
+        )
+    
+    return serialize_doc(booking)
+
+
+@router.put("/bookings/{booking_id}/confirm")
+async def confirm_security_booking(
+    booking_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Confirm a security booking.
+    
+    Providers can confirm bookings for their services.
+    
+    Args:
+        booking_id: UUID of the booking
+        current_user: Authenticated provider
+        
+    Returns:
+        Success message
+        
+    Raises:
+        HTTPException: 404 if booking not found
+        HTTPException: 403 if not the provider
+    """
+    db = get_database()
+    
+    booking = await db.security_bookings.find_one({"id": booking_id})
+    
+    if not booking:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Booking not found"
+        )
+    
+    # Check authorization
+    if booking["provider_id"] != current_user["id"] and current_user["role"] not in ["security_admin", "admin"]:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only the provider can confirm this booking"
+        )
+    
+    await db.security_bookings.update_one(
+        {"id": booking_id},
+        {"$set": {
+            "status": "confirmed",
+            "confirmed_at": datetime.now(timezone.utc).isoformat(),
+            "confirmed_by": current_user["id"]
+        }}
+    )
+    
+    logger.info(f"Security booking confirmed: {booking_id}")
+    
+    return {"message": "Booking confirmed successfully"}
+
+
+# ==================== STATISTICS ====================
+
+@router.get("/stats")
+async def get_security_stats():
+    """
+    Get homeland security statistics.
+    
+    Public endpoint showing platform stats.
+    
+    Returns:
+        Dictionary with security service statistics
+    """
+    db = get_database()
+    
+    total_services = await db.security_services.count_documents({})
+    total_guards = await db.guard_applications.count_documents({"status": "approved"})
+    total_bookings = await db.security_bookings.count_documents({})
+    pending_applications = await db.guard_applications.count_documents({"status": "pending"})
+    
+    return {
+        "total_services": total_services,
+        "available_guards": total_guards,
+        "total_bookings": total_bookings,
+        "pending_applications": pending_applications
+    }
