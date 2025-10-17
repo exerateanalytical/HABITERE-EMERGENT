@@ -43,6 +43,7 @@ sys.path.append(str(Path(__file__).parent.parent))
 
 from database import get_database
 from utils import get_current_user, serialize_doc
+from config import settings
 
 # Setup logging
 logger = logging.getLogger(__name__)
