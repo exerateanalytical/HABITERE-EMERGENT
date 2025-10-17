@@ -1132,7 +1132,9 @@ async def get_properties(
         else:
             filters["price"] = {"$lte": max_price}
     
+    logger.info(f"Fetching properties with filters: {filters}")
     properties = await db.properties.find(filters).skip(skip).limit(limit).to_list(1000)
+    logger.info(f"Found {len(properties)} properties in database")
     return [serialize_doc(prop) for prop in properties]
 
 @api_router.get("/properties/{property_id}", response_model=Dict[str, Any])
