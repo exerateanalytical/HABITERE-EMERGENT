@@ -56,7 +56,7 @@ async def check_admin_user():
                 if key != '_id':
                     print(f"   {key}")
     
-    await client.close()
+    client.close()
 
 if __name__ == "__main__":
     asyncio.run(check_admin_user())
