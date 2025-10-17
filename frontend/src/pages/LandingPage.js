@@ -284,15 +284,15 @@ const LandingPage = () => {
             {/* Quick Filters - Native Mobile Pills */}
             <div className="mt-6 flex flex-wrap gap-2 justify-center">
               <span className="text-sm font-medium text-gray-500 py-2">Popular:</span>
-              <button className="px-6 py-3 bg-gray-50 active:bg-blue-50 border-2 border-gray-200 active:border-blue-400 rounded-full text-sm font-semibold text-gray-700 active:text-blue-700 transition-all duration-100 touch-manipulation min-h-[48px] transform active:scale-95">
+              <RippleButton variant="pill" className="text-gray-700 active:text-blue-700">
                 Houses in Douala
-              </button>
-              <button className="px-6 py-3 bg-gray-50 active:bg-blue-50 border-2 border-gray-200 active:border-blue-400 rounded-full text-sm font-semibold text-gray-700 active:text-blue-700 transition-all duration-100 touch-manipulation min-h-[48px] transform active:scale-95">
+              </RippleButton>
+              <RippleButton variant="pill" className="text-gray-700 active:text-blue-700">
                 Apartments
-              </button>
-              <button className="px-6 py-3 bg-gray-50 active:bg-blue-50 border-2 border-gray-200 active:border-blue-400 rounded-full text-sm font-semibold text-gray-700 active:text-blue-700 transition-all duration-100 touch-manipulation min-h-[48px] transform active:scale-95">
+              </RippleButton>
+              <RippleButton variant="pill" className="text-gray-700 active:text-blue-700">
                 Land for Sale
-              </button>
+              </RippleButton>
             </div>
           </div>
         </div>
