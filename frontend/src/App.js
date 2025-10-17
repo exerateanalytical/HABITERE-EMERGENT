@@ -79,20 +79,29 @@ function ProtectedRoute({ children }) {
 function AdminRoute({ children }) {
   const { user, loading } = useAuth();
   
+  console.log('[AdminRoute] Loading:', loading, 'User:', user);
+  
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading admin panel...</p>
+        </div>
       </div>
     );
   }
   
+  console.log('[AdminRoute] User authenticated:', !!user, 'Role:', user?.role);
+  
   if (!user) {
-    return <Navigate to="/auth/login" replace />;
+    console.log('[AdminRoute] No user - redirecting to login');
+    return <Navigate to="/auth/login" replace state={{ from: '/admin' }} />;
   }
   
   // Check if user is admin
   if (user.role !== 'admin') {
+    console.log('[AdminRoute] User is not admin - showing access denied');
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="max-w-md w-full bg-white shadow-lg rounded-lg p-8 text-center">
@@ -102,7 +111,8 @@ function AdminRoute({ children }) {
             </svg>
           </div>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Access Denied</h2>
-          <p className="text-gray-600 mb-6">You do not have permission to access the admin panel. Only administrators can view this page.</p>
+          <p className="text-gray-600 mb-4">You do not have permission to access the admin panel.</p>
+          <p className="text-sm text-gray-500 mb-6">Your role: <span className="font-semibold">{user.role || 'None'}</span></p>
           <button
             onClick={() => window.location.href = '/'}
             className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
@@ -114,6 +124,7 @@ function AdminRoute({ children }) {
     );
   }
   
+  console.log('[AdminRoute] Access granted - rendering admin content');
   return children;
 }
 
