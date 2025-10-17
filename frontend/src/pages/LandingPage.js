@@ -364,12 +364,12 @@ const LandingPage = () => {
               <RippleButton
                 type="submit"
                 variant="primary"
-                className="w-full text-lg flex items-center justify-center gap-2"
+                className="w-full"
                 ariaLabel="Search properties"
                 data-testid="search-btn"
               >
-                <Search className="w-6 h-6" />
-                <span>Search Properties</span>
+                <Search className="w-5 h-5" />
+                Search Properties
               </RippleButton>
             </form>
             
