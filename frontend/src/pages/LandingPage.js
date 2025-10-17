@@ -18,6 +18,9 @@ import {
   CheckCircle,
   Phone
 } from 'lucide-react';
+import RippleButton from '../components/RippleButton';
+import StickySearchBar from '../components/StickySearchBar';
+import { LazyImage, LazySection } from '../components/LazyComponents';
 
 const LandingPage = () => {
   const { login } = useAuth();
