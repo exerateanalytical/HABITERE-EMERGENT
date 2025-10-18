@@ -567,7 +567,7 @@ class AssetManagementTester:
             }
             
             # Step 1: Create asset
-            async with self.session.post(f"{BASE_URL}/assets", json=workflow_asset_data) as response:
+            async with self.session.post(f"{BASE_URL}/assets/", json=workflow_asset_data) as response:
                 if response.status != 200:
                     self.record_test("Complete Workflow", False, "Failed to create workflow asset")
                     return False
