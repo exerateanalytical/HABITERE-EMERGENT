@@ -29,6 +29,13 @@ const GuardApplication = () => {
     photo_url: ''
   });
 
+  useEffect(() => {
+    if (!user) {
+      alert('Please login to submit a guard application');
+      navigate('/auth/login');
+    }
+  }, [user, navigate]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!user) {
