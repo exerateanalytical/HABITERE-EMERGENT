@@ -215,6 +215,14 @@ function AppContent() {
         <Route path="/properties/:id" element={<PropertyDetails />} />
         <Route path="/services" element={<Services />} />
         <Route path="/services/:id" element={<ServiceDetails />} />
+        <Route 
+          path="/provider/services" 
+          element={
+            <ProtectedRoute>
+              <ServiceProviderDashboard />
+            </ProtectedRoute>
+          } 
+        />
         
         {/* Static Content Pages - available to all */}
         <Route path="/about" element={<About />} />
