@@ -231,20 +231,23 @@ function AppContent() {
         <Route path="/provider/dashboard" element={<ProviderDashboard />} />
         <Route path="/admin/security" element={<SecurityAdmin />} />
         
+        {/* Asset Management Landing Page - Public */}
+        <Route path="/assets" element={<AssetManagementLanding />} />
+        
         {/* Asset Management Routes - Protected */}
-        <Route 
-          path="/assets" 
-          element={
-            <ProtectedRoute>
-              <AssetsList />
-            </ProtectedRoute>
-          } 
-        />
         <Route 
           path="/assets/dashboard" 
           element={
             <ProtectedRoute>
               <AssetDashboard />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/assets/list" 
+          element={
+            <ProtectedRoute>
+              <AssetsList />
             </ProtectedRoute>
           } 
         />
