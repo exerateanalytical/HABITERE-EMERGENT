@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Menu, X, Home, Building, Wrench, MessageSquare, User, LogOut, Grid3x3, Shield } from 'lucide-react';
+import { Menu, X, Home, Building, Wrench, MessageSquare, User, LogOut, Grid3x3, Shield, Package } from 'lucide-react';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -18,6 +18,7 @@ const Navbar = () => {
 
   const userNavItems = [
     { name: 'Dashboard', path: '/dashboard', icon: Grid3x3 },
+    { name: 'Assets', path: '/assets/dashboard', icon: Package },
     { name: 'Messages', path: '/messages', icon: MessageSquare },
     { name: 'Profile', path: '/profile', icon: User },
   ];
