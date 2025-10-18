@@ -45,6 +45,16 @@ import SecurityBookings from './pages/SecurityBookings';
 import ProviderDashboard from './pages/ProviderDashboard';
 import SecurityAdmin from './pages/admin/SecurityAdmin';
 
+// Asset Management Pages
+import AssetDashboard from './pages/AssetDashboard';
+import AssetsList from './pages/AssetsList';
+import AssetForm from './pages/AssetForm';
+import AssetDetail from './pages/AssetDetail';
+import MaintenanceList from './pages/MaintenanceList';
+import MaintenanceForm from './pages/MaintenanceForm';
+import MaintenanceDetail from './pages/MaintenanceDetail';
+import ExpensesList from './pages/ExpensesList';
+
 // New Auth Pages
 import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
