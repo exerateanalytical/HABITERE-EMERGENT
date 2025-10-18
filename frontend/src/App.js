@@ -46,6 +46,7 @@ import ProviderDashboard from './pages/ProviderDashboard';
 import SecurityAdmin from './pages/admin/SecurityAdmin';
 
 // Asset Management Pages
+import AssetManagementLanding from './pages/AssetManagementLanding';
 import AssetDashboard from './pages/AssetDashboard';
 import AssetsList from './pages/AssetsList';
 import AssetForm from './pages/AssetForm';
