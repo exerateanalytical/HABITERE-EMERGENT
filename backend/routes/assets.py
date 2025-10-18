@@ -717,3 +717,135 @@ async def get_dashboard_stats(
         "total_expenses": total_expenses,
         "assets_by_category": [{"category": c["_id"], "count": c["count"]} for c in categories]
     }
+
+
+# ==================== EXPENSE APPROVAL ====================
+
+@router.put("/expenses/{expense_id}/approve")
+async def approve_expense(
+    expense_id: str,
+    approval_data: dict,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Approve or reject an expense.
+    
+    Only property owners and admins can approve expenses.
+    
+    Args:
+        expense_id: Expense ID
+        approval_data: {"approved": true/false, "notes": "optional"}
+        current_user: Authenticated user
+        
+    Returns:
+        Updated expense
+    """
+    db = get_database()
+    
+    expense = await db.expenses.find_one({"id": expense_id})
+    
+    if not expense:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Expense not found"
+        )
+    
+    # Get asset to check ownership
+    asset = await db.assets.find_one({"id": expense["asset_id"]})
+    
+    if not asset:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Associated asset not found"
+        )
+    
+    # Check authorization
+    is_owner = asset.get("owner_id") == current_user["id"]
+    is_admin = current_user.get("role") == "admin"
+    
+    if not (is_owner or is_admin):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only asset owners and admins can approve expenses"
+        )
+    
+    # Update expense
+    approved = approval_data.get("approved", False)
+    new_status = "approved" if approved else "rejected"
+    
+    update_data = {
+        "approval_status": new_status,
+        "approved_by": current_user["id"],
+        "approval_date": datetime.now(timezone.utc).isoformat()
+    }
+    
+    if approval_data.get("notes"):
+        update_data["approval_notes"] = approval_data["notes"]
+    
+    await db.expenses.update_one(
+        {"id": expense_id},
+        {"$set": update_data}
+    )
+    
+    logger.info(f"Expense {expense_id} {new_status} by {current_user['email']}")
+    
+    # Send notification to the person who logged the expense
+    if expense.get("logged_by"):
+        try:
+            await create_in_app_notification(
+                user_id=expense["logged_by"],
+                title=f"Expense {new_status.title()}",
+                message=f"Your expense of {expense['amount']:,.0f} XAF has been {new_status}",
+                type="success" if approved else "error",
+                link=f"/assets/expenses/{expense_id}"
+            )
+        except Exception as e:
+            logger.error(f"Error sending approval notification: {str(e)}")
+    
+    # Get updated expense
+    updated_expense = await db.expenses.find_one({"id": expense_id})
+    
+    return serialize_doc(updated_expense)
+
+
+# ==================== AUTOMATION TRIGGER ====================
+
+@router.post("/automation/run")
+async def trigger_automation(
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Manually trigger automation tasks.
+    
+    Only admins and estate managers can trigger automations.
+    
+    Args:
+        current_user: Authenticated user
+        
+    Returns:
+        Automation results
+    """
+    # Check authorization
+    allowed_roles = ["estate_manager", "admin"]
+    if current_user.get("role") not in allowed_roles:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only estate managers and admins can trigger automations"
+        )
+    
+    try:
+        from utils.automation import run_daily_automations
+        
+        logger.info(f"Manual automation triggered by {current_user['email']}")
+        results = await run_daily_automations()
+        
+        return {
+            "message": "Automation tasks completed successfully",
+            "results": results
+        }
+    except Exception as e:
+        logger.error(f"Error running automations: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to run automations: {str(e)}"
+        )
