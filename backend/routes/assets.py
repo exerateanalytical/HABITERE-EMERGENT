@@ -730,6 +730,349 @@ async def approve_expense(
     return serialize_doc(updated_expense)
 
 
+
+# ==================== INVENTORY MANAGEMENT ====================
+
+@router.post("/inventory", response_model=Dict[str, Any])
+async def create_inventory_item(
+    item_data: InventoryItemCreate,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Create a new inventory item.
+    
+    Only estate managers and admins can create inventory items.
+    
+    Args:
+        item_data: Inventory item details
+        current_user: Authenticated user
+        
+    Returns:
+        Created inventory item
+    """
+    db = get_database()
+    
+    # Check authorization
+    allowed_roles = ["estate_manager", "admin"]
+    if current_user.get("role") not in allowed_roles:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only estate managers and admins can create inventory items"
+        )
+    
+    # Create inventory item
+    item_id = str(uuid.uuid4())
+    item = {
+        "id": item_id,
+        "name": item_data.name,
+        "category": item_data.category,
+        "property_id": item_data.property_id,
+        "quantity": item_data.quantity,
+        "unit": item_data.unit,
+        "reorder_level": item_data.reorder_level,
+        "reorder_quantity": item_data.reorder_quantity,
+        "unit_cost": item_data.unit_cost,
+        "supplier_name": item_data.supplier_name,
+        "supplier_contact": item_data.supplier_contact,
+        "location": item_data.location,
+        "notes": item_data.notes,
+        "created_by": current_user["id"],
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "updated_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.inventory.insert_one(item)
+    
+    logger.info(f"Inventory item created: {item_id} by {current_user['email']}")
+    
+    # Check if below reorder level and send alert
+    if item_data.quantity <= item_data.reorder_level:
+        try:
+            await create_in_app_notification(
+                user_id=current_user["id"],
+                title="Low Stock Alert",
+                message=f"{item_data.name} is at or below reorder level ({item_data.quantity} {item_data.unit})",
+                type="warning",
+                link=f"/assets/inventory/{item_id}"
+            )
+        except Exception as e:
+            logger.error(f"Error sending low stock notification: {str(e)}")
+    
+    return serialize_doc(item)
+
+
+@router.get("/inventory", response_model=List[Dict[str, Any]])
+async def list_inventory_items(
+    category: Optional[str] = None,
+    property_id: Optional[str] = None,
+    low_stock: Optional[bool] = None,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    List all inventory items with optional filters.
+    
+    Args:
+        category: Filter by category
+        property_id: Filter by property
+        low_stock: Show only low stock items
+        current_user: Authenticated user
+        
+    Returns:
+        List of inventory items
+    """
+    db = get_database()
+    
+    # Build filter
+    filter_query = {}
+    
+    if category:
+        filter_query["category"] = category
+    
+    if property_id:
+        filter_query["property_id"] = property_id
+    
+    # Get items
+    items = await db.inventory.find(filter_query).to_list(None)
+    
+    # Filter low stock if requested
+    if low_stock:
+        items = [item for item in items if item.get("quantity", 0) <= item.get("reorder_level", 0)]
+    
+    logger.info(f"Retrieved {len(items)} inventory items")
+    
+    return [serialize_doc(item) for item in items]
+
+
+@router.get("/inventory/{item_id}", response_model=Dict[str, Any])
+async def get_inventory_item(
+    item_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Get a specific inventory item by ID.
+    
+    Args:
+        item_id: Inventory item ID
+        current_user: Authenticated user
+        
+    Returns:
+        Inventory item details
+    """
+    db = get_database()
+    
+    item = await db.inventory.find_one({"id": item_id})
+    
+    if not item:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Inventory item not found"
+        )
+    
+    return serialize_doc(item)
+
+
+@router.put("/inventory/{item_id}", response_model=Dict[str, Any])
+async def update_inventory_item(
+    item_id: str,
+    item_data: InventoryItemUpdate,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Update an inventory item.
+    
+    Only estate managers and admins can update inventory items.
+    
+    Args:
+        item_id: Inventory item ID
+        item_data: Updated inventory item data
+        current_user: Authenticated user
+        
+    Returns:
+        Updated inventory item
+    """
+    db = get_database()
+    
+    # Check authorization
+    allowed_roles = ["estate_manager", "admin"]
+    if current_user.get("role") not in allowed_roles:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only estate managers and admins can update inventory items"
+        )
+    
+    item = await db.inventory.find_one({"id": item_id})
+    
+    if not item:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Inventory item not found"
+        )
+    
+    # Update fields
+    update_data = {k: v for k, v in item_data.dict().items() if v is not None}
+    update_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+    
+    await db.inventory.update_one(
+        {"id": item_id},
+        {"$set": update_data}
+    )
+    
+    # Get updated item
+    updated_item = await db.inventory.find_one({"id": item_id})
+    
+    logger.info(f"Inventory item updated: {item_id} by {current_user['email']}")
+    
+    # Check if now below reorder level
+    if updated_item.get("quantity", 0) <= updated_item.get("reorder_level", 0):
+        try:
+            await create_in_app_notification(
+                user_id=current_user["id"],
+                title="Low Stock Alert",
+                message=f"{updated_item['name']} is at or below reorder level ({updated_item['quantity']} {updated_item['unit']})",
+                type="warning",
+                link=f"/assets/inventory/{item_id}"
+            )
+        except Exception as e:
+            logger.error(f"Error sending low stock notification: {str(e)}")
+    
+    return serialize_doc(updated_item)
+
+
+@router.delete("/inventory/{item_id}")
+async def delete_inventory_item(
+    item_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Delete an inventory item.
+    
+    Only admins can delete inventory items.
+    
+    Args:
+        item_id: Inventory item ID
+        current_user: Authenticated user
+        
+    Returns:
+        Success message
+    """
+    db = get_database()
+    
+    # Check authorization
+    if current_user.get("role") != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only admins can delete inventory items"
+        )
+    
+    item = await db.inventory.find_one({"id": item_id})
+    
+    if not item:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Inventory item not found"
+        )
+    
+    await db.inventory.delete_one({"id": item_id})
+    
+    logger.info(f"Inventory item deleted: {item_id} by {current_user['email']}")
+    
+    return {"message": "Inventory item deleted successfully"}
+
+
+@router.post("/inventory/{item_id}/adjust-stock")
+async def adjust_inventory_stock(
+    item_id: str,
+    adjustment_data: dict,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Adjust inventory stock quantity (add or subtract).
+    
+    Args:
+        item_id: Inventory item ID
+        adjustment_data: {"quantity": int, "reason": str, "type": "add" or "subtract"}
+        current_user: Authenticated user
+        
+    Returns:
+        Updated inventory item
+    """
+    db = get_database()
+    
+    # Check authorization
+    allowed_roles = ["estate_manager", "technician", "admin"]
+    if current_user.get("role") not in allowed_roles:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Insufficient permissions to adjust stock"
+        )
+    
+    item = await db.inventory.find_one({"id": item_id})
+    
+    if not item:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Inventory item not found"
+        )
+    
+    quantity = adjustment_data.get("quantity", 0)
+    adjustment_type = adjustment_data.get("type", "add")
+    reason = adjustment_data.get("reason", "Manual adjustment")
+    
+    # Calculate new quantity
+    current_quantity = item.get("quantity", 0)
+    if adjustment_type == "subtract":
+        new_quantity = max(0, current_quantity - quantity)
+    else:
+        new_quantity = current_quantity + quantity
+    
+    # Update quantity
+    await db.inventory.update_one(
+        {"id": item_id},
+        {
+            "$set": {
+                "quantity": new_quantity,
+                "updated_at": datetime.now(timezone.utc).isoformat()
+            }
+        }
+    )
+    
+    # Log the adjustment
+    adjustment_log = {
+        "id": str(uuid.uuid4()),
+        "item_id": item_id,
+        "item_name": item["name"],
+        "type": adjustment_type,
+        "quantity": quantity,
+        "previous_quantity": current_quantity,
+        "new_quantity": new_quantity,
+        "reason": reason,
+        "adjusted_by": current_user["id"],
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.inventory_adjustments.insert_one(adjustment_log)
+    
+    logger.info(f"Inventory adjusted: {item_id} ({adjustment_type} {quantity}) by {current_user['email']}")
+    
+    # Check if below reorder level
+    if new_quantity <= item.get("reorder_level", 0):
+        try:
+            await create_in_app_notification(
+                user_id=current_user["id"],
+                title="Low Stock Alert",
+                message=f"{item['name']} is at or below reorder level ({new_quantity} {item['unit']})",
+                type="warning",
+                link=f"/assets/inventory/{item_id}"
+            )
+        except Exception as e:
+            logger.error(f"Error sending low stock notification: {str(e)}")
+    
+    # Get updated item
+    updated_item = await db.inventory.find_one({"id": item_id})
+    
+    return serialize_doc(updated_item)
+
+
 # ==================== AUTOMATION TRIGGER ====================
 
 @router.post("/automation/run")
