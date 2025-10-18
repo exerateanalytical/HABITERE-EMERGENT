@@ -883,6 +883,79 @@ async def upload_security_image(
     }
 
 
+@router.post("/upload/document")
+async def upload_document(
+    file: UploadFile = File(...),
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Upload a document (PDF, DOC, XLS, etc.) for assets or maintenance tasks.
+    
+    Supports various document formats for asset management.
+    
+    Args:
+        file: Document file to upload
+        current_user: Authenticated user
+        
+    Returns:
+        Dict with document URL
+        
+    Raises:
+        HTTPException: 400 if file type invalid or too large
+    """
+    # Validate file type
+    allowed_types = [
+        'application/pdf',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/vnd.ms-excel',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'text/plain',
+        'image/jpeg',
+        'image/png',
+        'image/webp'
+    ]
+    
+    if file.content_type not in allowed_types:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid file type. Allowed: PDF, DOC, DOCX, XLS, XLSX, TXT, images"
+        )
+    
+    # Validate file size (max 10MB for documents)
+    file_content = await file.read()
+    if len(file_content) > 10 * 1024 * 1024:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="File too large. Maximum size is 10MB"
+        )
+    
+    # Create uploads directory
+    upload_dir = Path("/app/backend/uploads/documents")
+    upload_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Generate unique filename
+    file_ext = file.filename.split('.')[-1] if '.' in file.filename else 'bin'
+    unique_filename = f"{uuid.uuid4()}.{file_ext}"
+    file_path = upload_dir / unique_filename
+    
+    # Save file
+    with open(file_path, 'wb') as f:
+        f.write(file_content)
+    
+    # Return URL
+    document_url = f"/uploads/documents/{unique_filename}"
+    
+    logger.info(f"Document uploaded: {unique_filename} by {current_user['email']}")
+    
+    return {
+        "url": document_url,
+        "filename": unique_filename,
+        "original_name": file.filename,
+        "size": len(file_content)
+    }
+
+
 # ==================== PAYMENT TRACKING ====================
 
 @router.post("/bookings/{booking_id}/payment")
