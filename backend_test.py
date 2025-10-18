@@ -325,9 +325,8 @@ class AssetManagementTester:
                 if not self.test_asset_id:  # Only update if we don't have one
                     self.test_asset_id = maintenance_asset_id
             
-        try:
             task_data = {
-                "asset_id": self.test_asset_id,
+                "asset_id": maintenance_asset_id,
                 "task_title": "Quarterly HVAC Maintenance",
                 "description": "Routine maintenance including filter replacement and system inspection",
                 "priority": "High",
