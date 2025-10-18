@@ -42,6 +42,8 @@ import SecurityServiceDetail from './pages/SecurityServiceDetail';
 import GuardProfile from './pages/GuardProfile';
 import SecurityGuards from './pages/SecurityGuards';
 import SecurityBookings from './pages/SecurityBookings';
+import ProviderDashboard from './pages/ProviderDashboard';
+import SecurityAdmin from './pages/admin/SecurityAdmin';
 
 // New Auth Pages
 import LoginPage from './pages/auth/LoginPage';
