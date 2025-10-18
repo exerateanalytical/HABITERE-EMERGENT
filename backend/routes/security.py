@@ -798,6 +798,26 @@ async def confirm_security_booking(
     
     logger.info(f"Security booking confirmed: {booking_id}")
     
+    # Send notifications
+    try:
+        # Get user details
+        user = await db.users.find_one({"id": booking["user_id"]})
+        
+        if user:
+            # Email notification
+            await send_booking_confirmed_email(booking, user["email"], user["name"])
+            
+            # In-app notification
+            await create_in_app_notification(
+                user_id=booking["user_id"],
+                title="Booking Confirmed!",
+                message=f"Your booking for {booking['service_title']} has been confirmed",
+                type="success",
+                link=f"/security/bookings/{booking_id}"
+            )
+    except Exception as e:
+        logger.error(f"Error sending confirmation notifications: {str(e)}")
+    
     return {"message": "Booking confirmed successfully"}
 
 
