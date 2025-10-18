@@ -257,12 +257,12 @@ const Dashboard = () => {
             
             {canProvideServices && (
               <Link
-                to="/services/new"
+                to="/provider/services"
                 className="btn-primary w-full sm:w-auto justify-center"
                 data-testid="add-service-btn"
               >
                 <Plus className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-                Add Service
+                Manage Services
               </Link>
             )}
 
