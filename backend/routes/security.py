@@ -753,6 +753,68 @@ async def confirm_security_booking(
     return {"message": "Booking confirmed successfully"}
 
 
+# ==================== IMAGE UPLOAD ====================
+
+@router.post("/upload/image")
+async def upload_security_image(
+    file: UploadFile = File(...),
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Upload an image for security services or guard profiles.
+    
+    Supports profile photos, service images, and ID documents.
+    
+    Args:
+        file: Image file to upload
+        current_user: Authenticated user
+        
+    Returns:
+        Dict with image URL
+        
+    Raises:
+        HTTPException: 400 if file type invalid
+    """
+    # Validate file type
+    allowed_types = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
+    if file.content_type not in allowed_types:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid file type. Only JPEG, PNG, and WebP images allowed"
+        )
+    
+    # Validate file size (max 5MB)
+    file_content = await file.read()
+    if len(file_content) > 5 * 1024 * 1024:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="File too large. Maximum size is 5MB"
+        )
+    
+    # Create uploads directory if it doesn't exist
+    upload_dir = Path("/app/backend/uploads/security")
+    upload_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Generate unique filename
+    file_ext = file.filename.split('.')[-1]
+    unique_filename = f"{uuid.uuid4()}.{file_ext}"
+    file_path = upload_dir / unique_filename
+    
+    # Save file
+    with open(file_path, 'wb') as f:
+        f.write(file_content)
+    
+    # Return URL (in production, this would be a CDN URL)
+    image_url = f"/uploads/security/{unique_filename}"
+    
+    logger.info(f"Image uploaded: {unique_filename} by {current_user['email']}")
+    
+    return {
+        "url": image_url,
+        "filename": unique_filename
+    }
+
+
 # ==================== STATISTICS ====================
 
 @router.get("/stats")
