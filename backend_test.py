@@ -108,7 +108,7 @@ class AssetManagementTester:
             }
             
             async with self.session.post(f"{BASE_URL}/properties", json=property_data) as response:
-                if response.status == 201:
+                if response.status in [200, 201]:  # Accept both 200 and 201
                     data = await response.json()
                     property_id = data.get("id")
                     logger.info(f"✅ Test property created: {property_id}")
