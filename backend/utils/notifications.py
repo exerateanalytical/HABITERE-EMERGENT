@@ -275,3 +275,53 @@ async def send_booking_confirmed_email(booking: dict, user_email: str, user_name
     except Exception as e:
         logger.error(f"Error sending booking confirmed email: {str(e)}")
         return False
+
+
+async def send_email_notification(user_email: str, subject: str, message: str):
+    """
+    Send a generic email notification.
+    
+    Args:
+        user_email: Recipient email address
+        subject: Email subject
+        message: Email message content
+    
+    Returns:
+        bool: True if sent successfully, False otherwise
+    """
+    if not SENDGRID_API_KEY:
+        logger.warning("SendGrid API key not configured - skipping email")
+        return False
+    
+    mail = Mail(
+        from_email=(SENDGRID_FROM_EMAIL, SENDGRID_FROM_NAME),
+        to_emails=user_email,
+        subject=subject,
+        html_content=f'''
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+            <div style="background: #10B981; padding: 30px; border-radius: 10px 10px 0 0;">
+                <h1 style="color: white; margin: 0; font-size: 24px;">Habitere Notification</h1>
+            </div>
+            
+            <div style="background: #f9fafb; padding: 30px; border-radius: 0 0 10px 10px;">
+                <div style="color: #374151; font-size: 16px; line-height: 1.6;">
+                    {message}
+                </div>
+                
+                <p style="font-size: 12px; color: #9CA3AF; margin-top: 30px; padding-top: 20px; border-top: 1px solid #E5E7EB;">
+                    Habitere Platform - Your Property & Services Partner<br>
+                    For questions, contact us at support@habitere.com
+                </p>
+            </div>
+        </div>
+        '''
+    )
+    
+    try:
+        sg = SendGridAPIClient(SENDGRID_API_KEY)
+        response = sg.send(mail)
+        logger.info(f"Email notification sent to {user_email}, status: {response.status_code}")
+        return True
+    except Exception as e:
+        logger.error(f"Error sending email notification: {str(e)}")
+        return False
