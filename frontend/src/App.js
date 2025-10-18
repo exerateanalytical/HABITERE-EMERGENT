@@ -210,6 +210,10 @@ function AppContent() {
         {/* Homeland Security Routes */}
         <Route path="/security" element={<HomelandSecurity />} />
         <Route path="/security/services" element={<SecurityServices />} />
+        <Route path="/security/services/:id" element={<SecurityServiceDetail />} />
+        <Route path="/security/guards" element={<SecurityGuards />} />
+        <Route path="/security/guards/:id" element={<GuardProfile />} />
+        <Route path="/security/bookings" element={<SecurityBookings />} />
         <Route path="/security/apply" element={<GuardApplication />} />
         
         {/* Protected Routes */}
