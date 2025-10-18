@@ -362,7 +362,7 @@ const ProviderDashboard = () => {
               <div>
                 <label className="block text-sm font-medium mb-2\">Title *</label>
                 <input
-                  type="text\"
+                  type="text"
                   required
                   className="w-full px-4 py-2 border rounded-lg"
                   value={serviceForm.title}
@@ -402,9 +402,9 @@ const ProviderDashboard = () => {
                 <div>
                   <label className="block text-sm font-medium mb-2\">Price Range *</label>
                   <input
-                    type="text\"
+                    type="text"
                     required
-                    placeholder=\"e.g., 100,000 - 300,000 XAF/month\"
+                    placeholder="e.g., 100,000 - 300,000 XAF/month\"
                     className="w-full px-4 py-2 border rounded-lg"
                     value={serviceForm.price_range}
                     onChange={(e) => setServiceForm({ ...serviceForm, price_range: e.target.value })}
@@ -416,9 +416,9 @@ const ProviderDashboard = () => {
                 <div>
                   <label className="block text-sm font-medium mb-2\">Location *</label>
                   <input
-                    type="text\"
+                    type="text"
                     required
-                    placeholder=\"City or region\"
+                    placeholder="City or region\"
                     className="w-full px-4 py-2 border rounded-lg"
                     value={serviceForm.location}
                     onChange={(e) => setServiceForm({ ...serviceForm, location: e.target.value })}
@@ -428,8 +428,8 @@ const ProviderDashboard = () => {
                 <div>
                   <label className="block text-sm font-medium mb-2\">Response Time</label>
                   <input
-                    type="text\"
-                    placeholder=\"e.g., 15 minutes\"
+                    type="text"
+                    placeholder="e.g., 15 minutes\"
                     className="w-full px-4 py-2 border rounded-lg"
                     value={serviceForm.response_time}
                     onChange={(e) => setServiceForm({ ...serviceForm, response_time: e.target.value })}
@@ -440,8 +440,8 @@ const ProviderDashboard = () => {
               <div>
                 <label className="block text-sm font-medium mb-2\">Features (comma separated)</label>
                 <input
-                  type="text\"
-                  placeholder=\"24/7 Service, Armed Guards, Rapid Response\"
+                  type="text"
+                  placeholder="24/7 Service, Armed Guards, Rapid Response\"
                   className="w-full px-4 py-2 border rounded-lg"
                   value={serviceForm.features}
                   onChange={(e) => setServiceForm({ ...serviceForm, features: e.target.value })}
@@ -451,8 +451,8 @@ const ProviderDashboard = () => {
               <div>
                 <label className="block text-sm font-medium mb-2\">Certifications (comma separated)</label>
                 <input
-                  type="text\"
-                  placeholder=\"Armed Security License, First Aid Certified\"
+                  type="text"
+                  placeholder="Armed Security License, First Aid Certified\"
                   className="w-full px-4 py-2 border rounded-lg"
                   value={serviceForm.certifications}
                   onChange={(e) => setServiceForm({ ...serviceForm, certifications: e.target.value })}
