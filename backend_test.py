@@ -1,53 +1,58 @@
 #!/usr/bin/env python3
+"""
+Asset Management Module - Comprehensive Backend API Testing
+===========================================================
 
-import requests
-import sys
+Tests all 16 asset management endpoints with complete CRUD operations,
+authentication, and business logic validation.
+
+Test Coverage:
+- Asset CRUD (5 endpoints)
+- Maintenance Tasks (4 endpoints) 
+- Expenses (3 endpoints)
+- Dashboard & Automation (2 endpoints)
+- Authentication protection
+- Role-based authorization
+- Data validation and error handling
+- Complete workflows
+
+Author: Testing Agent
+Date: 2025-01-27
+"""
+
+import asyncio
+import aiohttp
 import json
-import os
-import io
-from datetime import datetime, timedelta
-from typing import Dict, Any, Optional
-from PIL import Image
-import uuid
+import logging
+from datetime import datetime, timezone, timedelta
+from typing import Dict, List, Any, Optional
 
-class HabitereAPITester:
-    def __init__(self, base_url="https://habitere.com"):
-        self.base_url = base_url
-        self.api_url = f"{base_url}/api"
-        self.session = requests.Session()
-        self.session.headers.update({
-            'Content-Type': 'application/json',
-            'User-Agent': 'Habitere-Test-Client/1.0'
-        })
-        self.tests_run = 0
-        self.tests_passed = 0
-        self.test_results = []
-        
-        # Authentication tokens
-        self.admin_token = None
-        self.client_token = None
-        self.owner_token = None
-        self.provider_token = None
-        
-        # Test data IDs
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+
+# Test configuration
+BASE_URL = "https://proptech-assets.preview.emergentagent.com/api"
+ADMIN_EMAIL = "admin@habitere.com"
+ADMIN_PASSWORD = "admin123"
+
+class AssetManagementTester:
+    """Comprehensive tester for Asset Management Module."""
+    
+    def __init__(self):
+        self.session = None
+        self.auth_token = None
+        self.admin_user = None
         self.test_property_id = None
-        self.test_service_id = None
-        self.test_booking_id = None
-        self.test_review_id = None
-        self.test_message_id = None
-
-    def log_test(self, test_name: str, success: bool, details: str = "", response_data: Any = None):
-        """Log test result"""
-        self.tests_run += 1
-        if success:
-            self.tests_passed += 1
-            print(f"✅ {test_name}: PASSED")
-        else:
-            print(f"❌ {test_name}: FAILED - {details}")
-        
-        self.test_results.append({
-            "test_name": test_name,
-            "success": success,
+        self.test_asset_id = None
+        self.test_task_id = None
+        self.test_expense_id = None
+        self.results = {
+            "total_tests": 0,
+            "passed": 0,
+            "failed": 0,
+            "errors": []
+        }
             "details": details,
             "response_data": response_data,
             "timestamp": datetime.now().isoformat()
