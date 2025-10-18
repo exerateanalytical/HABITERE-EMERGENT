@@ -38,6 +38,10 @@ import AdminProperties from './pages/admin/AdminProperties';
 import HomelandSecurity from './pages/HomelandSecurity';
 import SecurityServices from './pages/SecurityServices';
 import GuardApplication from './pages/GuardApplication';
+import SecurityServiceDetail from './pages/SecurityServiceDetail';
+import GuardProfile from './pages/GuardProfile';
+import SecurityGuards from './pages/SecurityGuards';
+import SecurityBookings from './pages/SecurityBookings';
 
 // New Auth Pages
 import LoginPage from './pages/auth/LoginPage';
