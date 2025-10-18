@@ -301,9 +301,29 @@ class AssetManagementTester:
     
     async def test_create_maintenance_task(self):
         """Test POST /api/assets/maintenance - Create maintenance task."""
-        if not self.test_asset_id:
-            self.record_test("Create Maintenance Task", False, "No test asset ID available")
-            return False
+        # Create a new asset for maintenance testing since the previous one might be deleted
+        maintenance_asset_data = {
+            "name": "Maintenance Test Asset",
+            "category": "Building Equipment", 
+            "property_id": self.test_property_id,
+            "location": "Test Location for Maintenance",
+            "status": "Active",
+            "condition": "Good"
+        }
+        
+        try:
+            # Create asset for maintenance testing
+            async with self.session.post(f"{BASE_URL}/assets/", json=maintenance_asset_data) as response:
+                if response.status != 200:
+                    self.record_test("Create Maintenance Task", False, "Failed to create maintenance test asset")
+                    return False
+                
+                maintenance_asset = await response.json()
+                maintenance_asset_id = maintenance_asset.get("id")
+                
+                # Store this for other maintenance tests
+                if not self.test_asset_id:  # Only update if we don't have one
+                    self.test_asset_id = maintenance_asset_id
             
         try:
             task_data = {
