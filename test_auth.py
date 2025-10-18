@@ -7,7 +7,7 @@ import asyncio
 import aiohttp
 import json
 
-BACKEND_URL = "https://fastapi-modules-1.preview.emergentagent.com"
+BACKEND_URL = "https://proptech-assets.preview.emergentagent.com"
 
 async def test_auth():
     connector = aiohttp.TCPConnector(ssl=False)

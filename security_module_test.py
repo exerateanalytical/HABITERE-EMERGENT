@@ -31,7 +31,7 @@ from datetime import datetime, timezone
 from typing import Dict, List, Optional, Any
 
 # Configuration
-BACKEND_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://fastapi-modules-1.preview.emergentagent.com')
+BACKEND_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://proptech-assets.preview.emergentagent.com')
 BASE_URL = f"{BACKEND_URL}/api"
 
 # Test data for realistic testing
