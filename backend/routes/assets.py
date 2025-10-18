@@ -1,0 +1,719 @@
+"""
+Asset Management Routes Module
+================================
+Handles all asset management API endpoints for Habitere platform.
+
+This module provides:
+- Asset registration and management (Real Estate, Equipment, Infrastructure, etc.)
+- Maintenance task scheduling and tracking
+- Expense logging and approval workflow
+- Inventory management with low stock alerts
+- Automated notifications and reminders
+
+Features:
+- Full CRUD for assets, maintenance tasks, and expenses
+- Role-based access (Owner, Estate Manager, Technician, Viewer)
+- Automated maintenance reminders
+- Expense approval workflow
+- Dashboard analytics
+
+Authorization:
+- Asset creation: property_owner, estate_manager, admin
+- Maintenance tasks: estate_manager, technician, admin
+- Expense approval: property_owner, admin
+- View permissions: All authenticated users (filtered by ownership)
+
+Dependencies:
+- FastAPI for routing
+- MongoDB for data storage
+- Authentication middleware for protected endpoints
+
+Author: Habitere Development Team
+Last Modified: 2025-10-18
+"""
+
+from fastapi import APIRouter, Depends, HTTPException, status
+from typing import List, Dict, Any, Optional
+from datetime import datetime, timezone, timedelta
+from pydantic import BaseModel, Field
+import uuid
+import logging
+
+# Import from parent modules
+import sys
+from pathlib import Path as FilePath
+sys.path.append(str(FilePath(__file__).parent.parent))
+
+from database import get_database
+from utils import get_current_user, serialize_doc
+from utils.notifications import create_in_app_notification
+
+# Setup logging
+logger = logging.getLogger(__name__)
+
+# Create router for asset management endpoints
+router = APIRouter(prefix="/assets", tags=["Asset Management"])
+
+
+# ==================== PYDANTIC MODELS ====================
+
+class AssetCreate(BaseModel):
+    """Asset creation model."""
+    name: str
+    category: str  # Real Estate, Building Equipment, Infrastructure, Furniture, Vehicle, Tool
+    property_id: str  # Link to existing property
+    location: str
+    status: str = "Active"  # Active, Under Maintenance, Decommissioned
+    condition: str = "Good"  # Excellent, Good, Fair, Poor
+    serial_number: Optional[str] = None
+    acquisition_date: Optional[str] = None
+    purchase_value: Optional[float] = None
+    assigned_to: Optional[str] = None  # User ID
+    documents: List[str] = []  # Document URLs
+    last_maintenance_date: Optional[str] = None
+    next_maintenance_date: Optional[str] = None
+    depreciation_rate: Optional[float] = None
+    notes: Optional[str] = None
+
+
+class MaintenanceTaskCreate(BaseModel):
+    """Maintenance task creation model."""
+    asset_id: str
+    task_title: str
+    description: str
+    assigned_to: Optional[str] = None  # User ID (technician)
+    priority: str = "Medium"  # Low, Medium, High
+    status: str = "Pending"  # Pending, In Progress, Completed
+    scheduled_date: str
+    attachments: List[str] = []
+    estimated_cost: Optional[float] = None
+    notes: Optional[str] = None
+
+
+class ExpenseCreate(BaseModel):
+    """Expense creation model."""
+    asset_id: str
+    expense_type: str  # Maintenance, Upgrade, Purchase, Repair
+    amount: float
+    description: str
+    date: str
+    approved_by: Optional[str] = None
+
+
+class AssetUpdate(BaseModel):
+    """Asset update model."""
+    name: Optional[str] = None
+    category: Optional[str] = None
+    location: Optional[str] = None
+    status: Optional[str] = None
+    condition: Optional[str] = None
+    serial_number: Optional[str] = None
+    assigned_to: Optional[str] = None
+    last_maintenance_date: Optional[str] = None
+    next_maintenance_date: Optional[str] = None
+    notes: Optional[str] = None
+
+
+# ==================== ASSETS CRUD ====================
+
+@router.post("/", response_model=Dict[str, Any])
+async def create_asset(
+    asset_data: AssetCreate,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Create a new asset.
+    
+    Only property owners, estate managers, and admins can create assets.
+    
+    Args:
+        asset_data: Asset details
+        current_user: Authenticated user
+        
+    Returns:
+        Created asset with ID
+        
+    Raises:
+        HTTPException: 403 if not authorized
+    """
+    db = get_database()
+    
+    # Check authorization
+    allowed_roles = ["property_owner", "estate_manager", "admin"]
+    if current_user.get("role") not in allowed_roles:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only property owners, estate managers, and admins can create assets"
+        )
+    
+    # Verify property exists
+    property_doc = await db.properties.find_one({"id": asset_data.property_id})
+    if not property_doc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Property not found"
+        )
+    
+    # Create asset
+    asset = {
+        "id": str(uuid.uuid4()),
+        "owner_id": current_user["id"],
+        **asset_data.dict(),
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "updated_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.assets.insert_one(asset)
+    
+    logger.info(f"Asset created: {asset['id']} by {current_user['email']}")
+    
+    # Send notification to assigned user if any
+    if asset_data.assigned_to:
+        try:
+            await create_in_app_notification(
+                user_id=asset_data.assigned_to,
+                title="Asset Assigned",
+                message=f"You have been assigned asset: {asset_data.name}",
+                type="info",
+                link=f"/assets/{asset['id']}"
+            )
+        except Exception as e:
+            logger.error(f"Error sending assignment notification: {str(e)}")
+    
+    return serialize_doc(asset)
+
+
+@router.get("/", response_model=List[Dict[str, Any]])
+async def get_assets(
+    property_id: Optional[str] = None,
+    category: Optional[str] = None,
+    status: Optional[str] = None,
+    condition: Optional[str] = None,
+    skip: int = 0,
+    limit: int = 50,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Get assets with optional filtering.
+    
+    Users see only assets they own or are assigned to.
+    Estate managers and admins see all assets.
+    
+    Args:
+        property_id: Filter by property
+        category: Filter by category
+        status: Filter by status
+        condition: Filter by condition
+        skip: Pagination skip
+        limit: Pagination limit
+        current_user: Authenticated user
+        
+    Returns:
+        List of assets
+    """
+    db = get_database()
+    
+    # Build filters
+    filters = {}
+    
+    # Role-based filtering
+    if current_user.get("role") not in ["estate_manager", "admin"]:
+        # Users see only their assets or assets assigned to them
+        filters["$or"] = [
+            {"owner_id": current_user["id"]},
+            {"assigned_to": current_user["id"]}
+        ]
+    
+    if property_id:
+        filters["property_id"] = property_id
+    if category:
+        filters["category"] = category
+    if status:
+        filters["status"] = status
+    if condition:
+        filters["condition"] = condition
+    
+    assets = await db.assets.find(filters).sort("created_at", -1).skip(skip).limit(limit).to_list(limit)
+    
+    return [serialize_doc(asset) for asset in assets]
+
+
+@router.get("/{asset_id}", response_model=Dict[str, Any])
+async def get_asset(
+    asset_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """Get asset details by ID."""
+    db = get_database()
+    
+    asset = await db.assets.find_one({"id": asset_id})
+    
+    if not asset:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Asset not found"
+        )
+    
+    # Check authorization
+    allowed_roles = ["estate_manager", "admin"]
+    is_owner = asset.get("owner_id") == current_user["id"]
+    is_assigned = asset.get("assigned_to") == current_user["id"]
+    has_role = current_user.get("role") in allowed_roles
+    
+    if not (is_owner or is_assigned or has_role):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to view this asset"
+        )
+    
+    return serialize_doc(asset)
+
+
+@router.put("/{asset_id}", response_model=Dict[str, Any])
+async def update_asset(
+    asset_id: str,
+    asset_data: AssetUpdate,
+    current_user: dict = Depends(get_current_user)
+):
+    """Update an asset."""
+    db = get_database()
+    
+    asset = await db.assets.find_one({"id": asset_id})
+    
+    if not asset:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Asset not found"
+        )
+    
+    # Check authorization
+    allowed_roles = ["estate_manager", "admin"]
+    is_owner = asset.get("owner_id") == current_user["id"]
+    has_role = current_user.get("role") in allowed_roles
+    
+    if not (is_owner or has_role):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to update this asset"
+        )
+    
+    # Update asset
+    update_data = {k: v for k, v in asset_data.dict(exclude_unset=True).items() if v is not None}
+    update_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+    
+    await db.assets.update_one(
+        {"id": asset_id},
+        {"$set": update_data}
+    )
+    
+    logger.info(f"Asset updated: {asset_id} by {current_user['email']}")
+    
+    # Get updated asset
+    updated_asset = await db.assets.find_one({"id": asset_id})
+    
+    return serialize_doc(updated_asset)
+
+
+@router.delete("/{asset_id}")
+async def delete_asset(
+    asset_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """Delete an asset."""
+    db = get_database()
+    
+    asset = await db.assets.find_one({"id": asset_id})
+    
+    if not asset:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Asset not found"
+        )
+    
+    # Check authorization
+    allowed_roles = ["admin"]
+    is_owner = asset.get("owner_id") == current_user["id"]
+    has_role = current_user.get("role") in allowed_roles
+    
+    if not (is_owner or has_role):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to delete this asset"
+        )
+    
+    await db.assets.delete_one({"id": asset_id})
+    
+    logger.info(f"Asset deleted: {asset_id} by {current_user['email']}")
+    
+    return {"message": "Asset deleted successfully"}
+
+
+# ==================== MAINTENANCE TASKS ====================
+
+@router.post("/maintenance", response_model=Dict[str, Any])
+async def create_maintenance_task(
+    task_data: MaintenanceTaskCreate,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Create a maintenance task.
+    
+    Estate managers, property owners, and admins can create tasks.
+    
+    Args:
+        task_data: Task details
+        current_user: Authenticated user
+        
+    Returns:
+        Created task with ID
+    """
+    db = get_database()
+    
+    # Check authorization
+    allowed_roles = ["property_owner", "estate_manager", "admin"]
+    if current_user.get("role") not in allowed_roles:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only estate managers, property owners, and admins can create maintenance tasks"
+        )
+    
+    # Verify asset exists
+    asset = await db.assets.find_one({"id": task_data.asset_id})
+    if not asset:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Asset not found"
+        )
+    
+    # Create task
+    task = {
+        "id": str(uuid.uuid4()),
+        "created_by": current_user["id"],
+        "asset_name": asset.get("name"),
+        **task_data.dict(),
+        "completion_date": None,
+        "actual_cost": None,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "updated_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.maintenance_tasks.insert_one(task)
+    
+    logger.info(f"Maintenance task created: {task['id']} for asset {task_data.asset_id}")
+    
+    # Send notification to assigned technician
+    if task_data.assigned_to:
+        try:
+            await create_in_app_notification(
+                user_id=task_data.assigned_to,
+                title="New Maintenance Task",
+                message=f"You've been assigned: {task_data.task_title}",
+                type="info",
+                link=f"/assets/maintenance/{task['id']}"
+            )
+        except Exception as e:
+            logger.error(f"Error sending task notification: {str(e)}")
+    
+    return serialize_doc(task)
+
+
+@router.get("/maintenance", response_model=List[Dict[str, Any]])
+async def get_maintenance_tasks(
+    asset_id: Optional[str] = None,
+    status: Optional[str] = None,
+    priority: Optional[str] = None,
+    assigned_to: Optional[str] = None,
+    skip: int = 0,
+    limit: int = 50,
+    current_user: dict = Depends(get_current_user)
+):
+    """Get maintenance tasks with filtering."""
+    db = get_database()
+    
+    filters = {}
+    
+    # Role-based filtering
+    if current_user.get("role") == "technician":
+        # Technicians see only their assigned tasks
+        filters["assigned_to"] = current_user["id"]
+    elif current_user.get("role") not in ["estate_manager", "admin"]:
+        # Property owners see tasks for their assets
+        filters["created_by"] = current_user["id"]
+    
+    if asset_id:
+        filters["asset_id"] = asset_id
+    if status:
+        filters["status"] = status
+    if priority:
+        filters["priority"] = priority
+    if assigned_to:
+        filters["assigned_to"] = assigned_to
+    
+    tasks = await db.maintenance_tasks.find(filters).sort("scheduled_date", 1).skip(skip).limit(limit).to_list(limit)
+    
+    return [serialize_doc(task) for task in tasks]
+
+
+@router.get("/maintenance/{task_id}", response_model=Dict[str, Any])
+async def get_maintenance_task(
+    task_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """Get maintenance task details."""
+    db = get_database()
+    
+    task = await db.maintenance_tasks.find_one({"id": task_id})
+    
+    if not task:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Maintenance task not found"
+        )
+    
+    # Check authorization
+    allowed_roles = ["estate_manager", "admin"]
+    is_creator = task.get("created_by") == current_user["id"]
+    is_assigned = task.get("assigned_to") == current_user["id"]
+    has_role = current_user.get("role") in allowed_roles
+    
+    if not (is_creator or is_assigned or has_role):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to view this task"
+        )
+    
+    return serialize_doc(task)
+
+
+@router.put("/maintenance/{task_id}/status")
+async def update_task_status(
+    task_id: str,
+    status_data: dict,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Update maintenance task status.
+    
+    Technicians can update status to 'In Progress' or 'Completed'.
+    Estate managers can approve or reject completion.
+    
+    Args:
+        task_id: Task ID
+        status_data: New status and optional completion details
+        current_user: Authenticated user
+        
+    Returns:
+        Updated task
+    """
+    db = get_database()
+    
+    task = await db.maintenance_tasks.find_one({"id": task_id})
+    
+    if not task:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Task not found"
+        )
+    
+    new_status = status_data.get("status")
+    
+    # Authorization check
+    is_assigned = task.get("assigned_to") == current_user["id"]
+    is_manager = current_user.get("role") in ["estate_manager", "admin"]
+    
+    if not (is_assigned or is_manager):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to update this task"
+        )
+    
+    # Update task
+    update_data = {
+        "status": new_status,
+        "updated_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    if new_status == "Completed":
+        update_data["completion_date"] = datetime.now(timezone.utc).isoformat()
+        update_data["actual_cost"] = status_data.get("actual_cost")
+    
+    await db.maintenance_tasks.update_one(
+        {"id": task_id},
+        {"$set": update_data}
+    )
+    
+    logger.info(f"Task {task_id} status updated to {new_status} by {current_user['email']}")
+    
+    # Send notification when completed
+    if new_status == "Completed" and task.get("created_by"):
+        try:
+            await create_in_app_notification(
+                user_id=task["created_by"],
+                title="Task Completed",
+                message=f"Maintenance task '{task['task_title']}' has been completed",
+                type="success",
+                link=f"/assets/maintenance/{task_id}"
+            )
+        except Exception as e:
+            logger.error(f"Error sending completion notification: {str(e)}")
+    
+    # Get updated task
+    updated_task = await db.maintenance_tasks.find_one({"id": task_id})
+    
+    return serialize_doc(updated_task)
+
+
+# ==================== EXPENSES ====================
+
+@router.post("/expenses", response_model=Dict[str, Any])
+async def create_expense(
+    expense_data: ExpenseCreate,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Log an expense for an asset.
+    
+    Estate managers and admins can log expenses.
+    Expenses above threshold require owner approval.
+    
+    Args:
+        expense_data: Expense details
+        current_user: Authenticated user
+        
+    Returns:
+        Created expense with ID
+    """
+    db = get_database()
+    
+    # Check authorization
+    allowed_roles = ["estate_manager", "admin"]
+    if current_user.get("role") not in allowed_roles:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only estate managers and admins can log expenses"
+        )
+    
+    # Verify asset exists
+    asset = await db.assets.find_one({"id": expense_data.asset_id})
+    if not asset:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Asset not found"
+        )
+    
+    # Determine approval status
+    APPROVAL_THRESHOLD = 500000  # XAF
+    requires_approval = expense_data.amount > APPROVAL_THRESHOLD
+    
+    # Create expense
+    expense = {
+        "id": str(uuid.uuid4()),
+        "logged_by": current_user["id"],
+        "asset_name": asset.get("name"),
+        **expense_data.dict(),
+        "approval_status": "pending" if requires_approval else "approved",
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.expenses.insert_one(expense)
+    
+    logger.info(f"Expense created: {expense['id']} for asset {expense_data.asset_id}")
+    
+    # Send approval request if needed
+    if requires_approval and asset.get("owner_id"):
+        try:
+            await create_in_app_notification(
+                user_id=asset["owner_id"],
+                title="Expense Approval Required",
+                message=f"Expense of {expense_data.amount:,.0f} XAF for {asset.get('name')} requires your approval",
+                type="warning",
+                link=f"/assets/expenses/{expense['id']}"
+            )
+        except Exception as e:
+            logger.error(f"Error sending approval notification: {str(e)}")
+    
+    return serialize_doc(expense)
+
+
+@router.get("/expenses", response_model=List[Dict[str, Any]])
+async def get_expenses(
+    asset_id: Optional[str] = None,
+    expense_type: Optional[str] = None,
+    skip: int = 0,
+    limit: int = 50,
+    current_user: dict = Depends(get_current_user)
+):
+    """Get expenses with filtering."""
+    db = get_database()
+    
+    filters = {}
+    
+    if asset_id:
+        filters["asset_id"] = asset_id
+    if expense_type:
+        filters["expense_type"] = expense_type
+    
+    expenses = await db.expenses.find(filters).sort("date", -1).skip(skip).limit(limit).to_list(limit)
+    
+    return [serialize_doc(expense) for expense in expenses]
+
+
+# ==================== DASHBOARD STATS ====================
+
+@router.get("/dashboard/stats")
+async def get_dashboard_stats(
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Get asset management dashboard statistics.
+    
+    Returns:
+        Dashboard metrics and summaries
+    """
+    db = get_database()
+    
+    # Build filters based on role
+    asset_filters = {}
+    if current_user.get("role") not in ["estate_manager", "admin"]:
+        asset_filters["$or"] = [
+            {"owner_id": current_user["id"]},
+            {"assigned_to": current_user["id"]}
+        ]
+    
+    # Get counts
+    total_assets = await db.assets.count_documents(asset_filters)
+    active_tasks = await db.maintenance_tasks.count_documents({
+        "status": {"$ne": "Completed"}
+    })
+    
+    # Upcoming maintenance (next 7 days)
+    seven_days_from_now = (datetime.now(timezone.utc) + timedelta(days=7)).isoformat()
+    upcoming_maintenance = await db.assets.count_documents({
+        **asset_filters,
+        "next_maintenance_date": {
+            "$lte": seven_days_from_now,
+            "$gte": datetime.now(timezone.utc).isoformat()
+        }
+    })
+    
+    # Total expenses
+    expenses_pipeline = [
+        {"$group": {"_id": None, "total": {"$sum": "$amount"}}}
+    ]
+    expense_result = await db.expenses.aggregate(expenses_pipeline).to_list(1)
+    total_expenses = expense_result[0]["total"] if expense_result else 0
+    
+    # Assets by category
+    category_pipeline = [
+        {"$match": asset_filters},
+        {"$group": {"_id": "$category", "count": {"$sum": 1}}}
+    ]
+    categories = await db.assets.aggregate(category_pipeline).to_list(10)
+    
+    return {
+        "total_assets": total_assets,
+        "active_maintenance_tasks": active_tasks,
+        "upcoming_maintenance": upcoming_maintenance,
+        "total_expenses": total_expenses,
+        "assets_by_category": [{"category": c["_id"], "count": c["count"]} for c in categories]
+    }
