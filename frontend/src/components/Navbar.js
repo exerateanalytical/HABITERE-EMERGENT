@@ -14,6 +14,7 @@ const Navbar = () => {
     { name: 'Properties', path: '/properties', icon: Building, public: true },
     { name: 'Services', path: '/services', icon: Wrench, public: true },
     { name: 'Security', path: '/security', icon: Shield, public: true },
+    { name: 'Asset Management', path: '/assets', icon: Package, public: true },
   ];
 
   const userNavItems = [
