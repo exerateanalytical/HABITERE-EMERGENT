@@ -152,7 +152,7 @@ class AssetManagementTester:
                 "notes": "Central air conditioning system for main building"
             }
             
-            async with self.session.post(f"{BASE_URL}/assets", json=asset_data) as response:
+            async with self.session.post(f"{BASE_URL}/assets/", json=asset_data) as response:
                 if response.status == 200:
                     data = await response.json()
                     self.test_asset_id = data.get("id")
