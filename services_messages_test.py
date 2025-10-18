@@ -65,13 +65,24 @@ class ServicesMessagesTest:
             response = self.session.post(f"{BACKEND_URL}/auth/login", json=login_data)
             
             if response.status_code == 200:
-                # Check if session cookie is set
-                if 'session' in self.session.cookies:
-                    print(f"✅ Admin authentication successful")
+                login_result = response.json()
+                user_data = login_result.get('user', {})
+                session_token = user_data.get('session_token')
+                
+                if session_token:
+                    # Set session token in cookies for subsequent requests
+                    self.session.cookies.set('session', session_token)
+                    print(f"✅ Admin authentication successful (Token: {session_token[:20]}...)")
                     return True
                 else:
-                    print(f"❌ Admin authentication failed: No session cookie")
-                    return False
+                    # Check if session cookie is set by server
+                    if 'session' in self.session.cookies:
+                        print(f"✅ Admin authentication successful (Server cookie)")
+                        return True
+                    else:
+                        print(f"❌ Admin authentication failed: No session token or cookie")
+                        print(f"Response: {response.text}")
+                        return False
             else:
                 print(f"❌ Admin authentication failed: {response.status_code} - {response.text}")
                 return False
