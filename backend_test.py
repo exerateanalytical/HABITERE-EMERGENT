@@ -436,13 +436,28 @@ class AssetManagementTester:
     
     async def test_create_expense(self):
         """Test POST /api/assets/expenses - Create expense."""
-        if not self.test_asset_id:
-            self.record_test("Create Expense", False, "No test asset ID available")
-            return False
-            
+        # Create a new asset for expense testing
+        expense_asset_data = {
+            "name": "Expense Test Asset",
+            "category": "Building Equipment", 
+            "property_id": self.test_property_id,
+            "location": "Test Location for Expenses",
+            "status": "Active",
+            "condition": "Good"
+        }
+        
         try:
+            # Create asset for expense testing
+            async with self.session.post(f"{BASE_URL}/assets/", json=expense_asset_data) as response:
+                if response.status != 200:
+                    self.record_test("Create Expense", False, "Failed to create expense test asset")
+                    return False
+                
+                expense_asset = await response.json()
+                expense_asset_id = expense_asset.get("id")
+            
             expense_data = {
-                "asset_id": self.test_asset_id,
+                "asset_id": expense_asset_id,
                 "expense_type": "Maintenance",
                 "amount": 75000.0,
                 "description": "HVAC filter replacement and cleaning",
