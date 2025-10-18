@@ -1124,6 +1124,79 @@ async def get_contract(
     return serialize_doc(contract)
 
 
+# ==================== NOTIFICATIONS ====================
+
+@router.get("/notifications")
+async def get_notifications(
+    unread_only: bool = False,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Get user's notifications.
+    
+    Args:
+        unread_only: If True, return only unread notifications
+        current_user: Authenticated user
+        
+    Returns:
+        List of notifications
+    """
+    db = get_database()
+    
+    filters = {"user_id": current_user["id"]}
+    if unread_only:
+        filters["read"] = False
+    
+    notifications = await db.notifications.find(filters).sort("created_at", -1).limit(50).to_list(50)
+    
+    return [serialize_doc(n) for n in notifications]
+
+
+@router.put("/notifications/{notification_id}/read")
+async def mark_notification_read(
+    notification_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """Mark a notification as read."""
+    db = get_database()
+    
+    notification = await db.notifications.find_one({"id": notification_id})
+    
+    if not notification:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Notification not found"
+        )
+    
+    if notification["user_id"] != current_user["id"]:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized"
+        )
+    
+    await db.notifications.update_one(
+        {"id": notification_id},
+        {"$set": {"read": True, "read_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    
+    return {"message": "Notification marked as read"}
+
+
+@router.put("/notifications/mark-all-read")
+async def mark_all_notifications_read(
+    current_user: dict = Depends(get_current_user)
+):
+    """Mark all notifications as read."""
+    db = get_database()
+    
+    result = await db.notifications.update_many(
+        {"user_id": current_user["id"], "read": False},
+        {"$set": {"read": True, "read_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    
+    return {"message": f"{result.modified_count} notifications marked as read"}
+
+
 # ==================== STATISTICS ====================
 
 @router.get("/stats")
