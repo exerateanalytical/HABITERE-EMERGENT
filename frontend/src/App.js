@@ -217,6 +217,8 @@ function AppContent() {
         <Route path="/security/guards/:id" element={<GuardProfile />} />
         <Route path="/security/bookings" element={<SecurityBookings />} />
         <Route path="/security/apply" element={<GuardApplication />} />
+        <Route path="/provider/dashboard" element={<ProviderDashboard />} />
+        <Route path="/admin/security" element={<SecurityAdmin />} />
         
         {/* Protected Routes */}
         <Route 
