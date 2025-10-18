@@ -342,6 +342,9 @@ app.include_router(admin.router, prefix="/api", tags=["Admin"])
 # Homeland Security services
 app.include_router(security.router, prefix="/api", tags=["Homeland Security"])
 
+# Asset Management
+app.include_router(assets.router, prefix="/api", tags=["Asset Management"])
+
 # Legacy api_router (for any remaining routes not yet extracted)
 app.include_router(api_router)
 
