@@ -135,40 +135,40 @@ const ProviderDashboard = () => {
   }
 
   return (
-    <div className=\"min-h-screen bg-gray-50 py-8\">
-      <div className=\"container mx-auto px-4\">
-        <div className=\"mb-8\">
-          <h1 className=\"text-3xl font-bold mb-2\">Provider Dashboard</h1>
-          <p className=\"text-gray-600\">Manage your security services and bookings</p>
+    <div className="min-h-screen bg-gray-50 py-8\">
+      <div className="container mx-auto px-4\">
+        <div className="mb-8\">
+          <h1 className="text-3xl font-bold mb-2\">Provider Dashboard</h1>
+          <p className="text-gray-600\">Manage your security services and bookings</p>
         </div>
 
         {/* Stats Overview */}
-        <div className=\"grid grid-cols-1 md:grid-cols-4 gap-6 mb-8\">
-          <div className=\"bg-white rounded-lg shadow-md p-6\">
-            <div className=\"text-3xl font-bold text-green-600 mb-2\">{services.length}</div>
-            <div className=\"text-gray-600\">Active Services</div>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8\">
+          <div className="bg-white rounded-lg shadow-md p-6\">
+            <div className="text-3xl font-bold text-green-600 mb-2\">{services.length}</div>
+            <div className="text-gray-600\">Active Services</div>
           </div>
-          <div className=\"bg-white rounded-lg shadow-md p-6\">
-            <div className=\"text-3xl font-bold text-blue-600 mb-2\">
+          <div className="bg-white rounded-lg shadow-md p-6\">
+            <div className="text-3xl font-bold text-blue-600 mb-2\">
               {bookings.filter(b => b.status === 'pending').length}
             </div>
-            <div className=\"text-gray-600\">Pending Bookings</div>
+            <div className="text-gray-600\">Pending Bookings</div>
           </div>
-          <div className=\"bg-white rounded-lg shadow-md p-6\">
-            <div className=\"text-3xl font-bold text-green-600 mb-2\">
+          <div className="bg-white rounded-lg shadow-md p-6\">
+            <div className="text-3xl font-bold text-green-600 mb-2\">
               {bookings.filter(b => b.status === 'confirmed' || b.status === 'active').length}
             </div>
-            <div className=\"text-gray-600\">Active Bookings</div>
+            <div className="text-gray-600\">Active Bookings</div>
           </div>
-          <div className=\"bg-white rounded-lg shadow-md p-6\">
-            <div className=\"text-3xl font-bold text-gray-600 mb-2\">{bookings.length}</div>
-            <div className=\"text-gray-600\">Total Bookings</div>
+          <div className="bg-white rounded-lg shadow-md p-6\">
+            <div className="text-3xl font-bold text-gray-600 mb-2\">{bookings.length}</div>
+            <div className="text-gray-600\">Total Bookings</div>
           </div>
         </div>
 
         {/* Tab Navigation */}
-        <div className=\"bg-white rounded-lg shadow-md mb-6\">
-          <div className=\"flex border-b\">
+        <div className="bg-white rounded-lg shadow-md mb-6\">
+          <div className="flex border-b\">
             <button
               onClick={() => setActiveTab('services')}
               className={`px-6 py-4 font-semibold ${
@@ -195,34 +195,34 @@ const ProviderDashboard = () => {
         {/* Services Tab */}
         {activeTab === 'services' && (
           <div>
-            <div className=\"mb-6\">
+            <div className="mb-6\">
               <button
                 onClick={() => setShowCreateModal(true)}
-                className=\"bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 flex items-center\"
+                className="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 flex items-center\"
               >
-                <Plus className=\"w-5 h-5 mr-2\" />
+                <Plus className="w-5 h-5 mr-2\" />
                 Create New Service
               </button>
             </div>
 
             {services.length === 0 ? (
-              <div className=\"bg-white rounded-lg shadow-md p-12 text-center\">
-                <Shield className=\"w-16 h-16 text-gray-400 mx-auto mb-4\" />
-                <h3 className=\"text-xl font-bold mb-2\">No services yet</h3>
-                <p className=\"text-gray-600 mb-6\">Create your first security service offering</p>
+              <div className="bg-white rounded-lg shadow-md p-12 text-center\">
+                <Shield className="w-16 h-16 text-gray-400 mx-auto mb-4\" />
+                <h3 className="text-xl font-bold mb-2\">No services yet</h3>
+                <p className="text-gray-600 mb-6\">Create your first security service offering</p>
                 <button
                   onClick={() => setShowCreateModal(true)}
-                  className=\"bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700\"
+                  className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700\"
                 >
                   Create Service
                 </button>
               </div>
             ) : (
-              <div className=\"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6\">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6\">
                 {services.map((service) => (
-                  <div key={service.id} className=\"bg-white rounded-lg shadow-md p-6\">
-                    <div className=\"flex items-start justify-between mb-3\">
-                      <h3 className=\"text-lg font-bold\">{service.title}</h3>
+                  <div key={service.id} className="bg-white rounded-lg shadow-md p-6\">
+                    <div className="flex items-start justify-between mb-3\">
+                      <h3 className="text-lg font-bold\">{service.title}</h3>
                       <span className={`text-xs px-2 py-1 rounded-full ${
                         service.availability === 'Available'
                           ? 'bg-green-100 text-green-800'
@@ -232,32 +232,32 @@ const ProviderDashboard = () => {
                       </span>
                     </div>
                     
-                    <p className=\"text-sm text-gray-600 mb-3 line-clamp-2\">{service.description}</p>
+                    <p className="text-sm text-gray-600 mb-3 line-clamp-2\">{service.description}</p>
                     
-                    <div className=\"flex items-center justify-between text-sm mb-4\">
+                    <div className="flex items-center justify-between text-sm mb-4\">
                       <div>
-                        <div className=\"text-gray-600\">Bookings</div>
-                        <div className=\"font-bold\">{service.booking_count || 0}</div>
+                        <div className="text-gray-600\">Bookings</div>
+                        <div className="font-bold\">{service.booking_count || 0}</div>
                       </div>
                       <div>
-                        <div className=\"text-gray-600\">Type</div>
-                        <div className=\"font-bold text-sm\">{service.service_type}</div>
+                        <div className="text-gray-600\">Type</div>
+                        <div className="font-bold text-sm\">{service.service_type}</div>
                       </div>
                     </div>
 
-                    <div className=\"flex gap-2\">
+                    <div className="flex gap-2\">
                       <button
                         onClick={() => navigate(`/security/services/${service.id}`)}
-                        className=\"flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 flex items-center justify-center\"
+                        className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 flex items-center justify-center\"
                       >
-                        <Eye className=\"w-4 h-4 mr-1\" />
+                        <Eye className="w-4 h-4 mr-1\" />
                         View
                       </button>
                       <button
                         onClick={() => handleDeleteService(service.id)}
-                        className=\"bg-red-600 text-white p-2 rounded-lg hover:bg-red-700\"
+                        className="bg-red-600 text-white p-2 rounded-lg hover:bg-red-700\"
                       >
-                        <Trash2 className=\"w-4 h-4\" />
+                        <Trash2 className="w-4 h-4\" />
                       </button>
                     </div>
                   </div>
@@ -271,19 +271,19 @@ const ProviderDashboard = () => {
         {activeTab === 'bookings' && (
           <div>
             {bookings.length === 0 ? (
-              <div className=\"bg-white rounded-lg shadow-md p-12 text-center\">
-                <Calendar className=\"w-16 h-16 text-gray-400 mx-auto mb-4\" />
-                <h3 className=\"text-xl font-bold mb-2\">No bookings yet</h3>
-                <p className=\"text-gray-600\">Bookings for your services will appear here</p>
+              <div className="bg-white rounded-lg shadow-md p-12 text-center\">
+                <Calendar className="w-16 h-16 text-gray-400 mx-auto mb-4\" />
+                <h3 className="text-xl font-bold mb-2\">No bookings yet</h3>
+                <p className="text-gray-600\">Bookings for your services will appear here</p>
               </div>
             ) : (
-              <div className=\"space-y-4\">
+              <div className="space-y-4\">
                 {bookings.map((booking) => (
-                  <div key={booking.id} className=\"bg-white rounded-lg shadow-md p-6\">
-                    <div className=\"flex items-start justify-between mb-4\">
+                  <div key={booking.id} className="bg-white rounded-lg shadow-md p-6\">
+                    <div className="flex items-start justify-between mb-4\">
                       <div>
-                        <h3 className=\"text-xl font-bold mb-2\">{booking.service_title}</h3>
-                        <div className=\"text-sm text-gray-600\">
+                        <h3 className="text-xl font-bold mb-2\">{booking.service_title}</h3>
+                        <div className="text-sm text-gray-600\">
                           Customer: {booking.user_name} ({booking.user_email})
                         </div>
                       </div>
@@ -297,41 +297,41 @@ const ProviderDashboard = () => {
                       </span>
                     </div>
 
-                    <div className=\"grid grid-cols-2 md:grid-cols-4 gap-4 mb-4\">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4\">
                       <div>
-                        <div className=\"text-sm text-gray-600\">Start Date</div>
-                        <div className=\"font-semibold\">{booking.start_date}</div>
+                        <div className="text-sm text-gray-600\">Start Date</div>
+                        <div className="font-semibold\">{booking.start_date}</div>
                       </div>
                       <div>
-                        <div className=\"text-sm text-gray-600\">Duration</div>
-                        <div className=\"font-semibold\">{booking.duration}</div>
+                        <div className="text-sm text-gray-600\">Duration</div>
+                        <div className="font-semibold\">{booking.duration}</div>
                       </div>
                       <div>
-                        <div className=\"text-sm text-gray-600\">Guards</div>
-                        <div className=\"font-semibold\">{booking.num_guards}</div>
+                        <div className="text-sm text-gray-600\">Guards</div>
+                        <div className="font-semibold\">{booking.num_guards}</div>
                       </div>
                       <div>
-                        <div className=\"text-sm text-gray-600\">Type</div>
-                        <div className=\"font-semibold capitalize\">{booking.booking_type}</div>
+                        <div className="text-sm text-gray-600\">Type</div>
+                        <div className="font-semibold capitalize\">{booking.booking_type}</div>
                       </div>
                     </div>
 
-                    <div className=\"mb-4\">
-                      <div className=\"text-sm text-gray-600 mb-1\">Location</div>
-                      <div className=\"font-medium\">{booking.location}</div>
+                    <div className="mb-4\">
+                      <div className="text-sm text-gray-600 mb-1\">Location</div>
+                      <div className="font-medium\">{booking.location}</div>
                     </div>
 
                     {booking.special_requirements && (
-                      <div className=\"mb-4\">
-                        <div className=\"text-sm text-gray-600 mb-1\">Special Requirements</div>
-                        <div className=\"text-sm bg-gray-50 p-3 rounded\">{booking.special_requirements}</div>
+                      <div className="mb-4\">
+                        <div className="text-sm text-gray-600 mb-1\">Special Requirements</div>
+                        <div className="text-sm bg-gray-50 p-3 rounded\">{booking.special_requirements}</div>
                       </div>
                     )}
 
                     {booking.status === 'pending' && (
                       <button
                         onClick={() => handleConfirmBooking(booking.id)}
-                        className=\"bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 font-semibold\"
+                        className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 font-semibold\"
                       >
                         Confirm Booking
                       </button>
@@ -346,47 +346,47 @@ const ProviderDashboard = () => {
 
       {/* Create Service Modal */}
       {showCreateModal && (
-        <div className=\"fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4\">
-          <div className=\"bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6\">
-            <div className=\"flex items-center justify-between mb-6\">
-              <h2 className=\"text-2xl font-bold\">Create Security Service</h2>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4\">
+          <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6\">
+            <div className="flex items-center justify-between mb-6\">
+              <h2 className="text-2xl font-bold\">Create Security Service</h2>
               <button
                 onClick={() => setShowCreateModal(false)}
-                className=\"text-gray-500 hover:text-gray-700\"
+                className="text-gray-500 hover:text-gray-700\"
               >
                 ✕
               </button>
             </div>
 
-            <form onSubmit={handleCreateService} className=\"space-y-4\">
+            <form onSubmit={handleCreateService} className="space-y-4\">
               <div>
-                <label className=\"block text-sm font-medium mb-2\">Title *</label>
+                <label className="block text-sm font-medium mb-2\">Title *</label>
                 <input
                   type=\"text\"
                   required
-                  className=\"w-full px-4 py-2 border rounded-lg\"
+                  className="w-full px-4 py-2 border rounded-lg\"
                   value={serviceForm.title}
                   onChange={(e) => setServiceForm({ ...serviceForm, title: e.target.value })}
                 />
               </div>
 
               <div>
-                <label className=\"block text-sm font-medium mb-2\">Description *</label>
+                <label className="block text-sm font-medium mb-2\">Description *</label>
                 <textarea
                   required
                   rows={4}
-                  className=\"w-full px-4 py-2 border rounded-lg\"
+                  className="w-full px-4 py-2 border rounded-lg\"
                   value={serviceForm.description}
                   onChange={(e) => setServiceForm({ ...serviceForm, description: e.target.value })}
                 />
               </div>
 
-              <div className=\"grid grid-cols-1 md:grid-cols-2 gap-4\">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4\">
                 <div>
-                  <label className=\"block text-sm font-medium mb-2\">Service Type *</label>
+                  <label className="block text-sm font-medium mb-2\">Service Type *</label>
                   <select
                     required
-                    className=\"w-full px-4 py-2 border rounded-lg\"
+                    className="w-full px-4 py-2 border rounded-lg\"
                     value={serviceForm.service_type}
                     onChange={(e) => setServiceForm({ ...serviceForm, service_type: e.target.value })}
                   >
@@ -400,37 +400,37 @@ const ProviderDashboard = () => {
                 </div>
 
                 <div>
-                  <label className=\"block text-sm font-medium mb-2\">Price Range *</label>
+                  <label className="block text-sm font-medium mb-2\">Price Range *</label>
                   <input
                     type=\"text\"
                     required
                     placeholder=\"e.g., 100,000 - 300,000 XAF/month\"
-                    className=\"w-full px-4 py-2 border rounded-lg\"
+                    className="w-full px-4 py-2 border rounded-lg\"
                     value={serviceForm.price_range}
                     onChange={(e) => setServiceForm({ ...serviceForm, price_range: e.target.value })}
                   />
                 </div>
               </div>
 
-              <div className=\"grid grid-cols-1 md:grid-cols-2 gap-4\">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4\">
                 <div>
-                  <label className=\"block text-sm font-medium mb-2\">Location *</label>
+                  <label className="block text-sm font-medium mb-2\">Location *</label>
                   <input
                     type=\"text\"
                     required
                     placeholder=\"City or region\"
-                    className=\"w-full px-4 py-2 border rounded-lg\"
+                    className="w-full px-4 py-2 border rounded-lg\"
                     value={serviceForm.location}
                     onChange={(e) => setServiceForm({ ...serviceForm, location: e.target.value })}
                   />
                 </div>
 
                 <div>
-                  <label className=\"block text-sm font-medium mb-2\">Response Time</label>
+                  <label className="block text-sm font-medium mb-2\">Response Time</label>
                   <input
                     type=\"text\"
                     placeholder=\"e.g., 15 minutes\"
-                    className=\"w-full px-4 py-2 border rounded-lg\"
+                    className="w-full px-4 py-2 border rounded-lg\"
                     value={serviceForm.response_time}
                     onChange={(e) => setServiceForm({ ...serviceForm, response_time: e.target.value })}
                   />
@@ -438,31 +438,31 @@ const ProviderDashboard = () => {
               </div>
 
               <div>
-                <label className=\"block text-sm font-medium mb-2\">Features (comma separated)</label>
+                <label className="block text-sm font-medium mb-2\">Features (comma separated)</label>
                 <input
                   type=\"text\"
                   placeholder=\"24/7 Service, Armed Guards, Rapid Response\"
-                  className=\"w-full px-4 py-2 border rounded-lg\"
+                  className="w-full px-4 py-2 border rounded-lg\"
                   value={serviceForm.features}
                   onChange={(e) => setServiceForm({ ...serviceForm, features: e.target.value })}
                 />
               </div>
 
               <div>
-                <label className=\"block text-sm font-medium mb-2\">Certifications (comma separated)</label>
+                <label className="block text-sm font-medium mb-2\">Certifications (comma separated)</label>
                 <input
                   type=\"text\"
                   placeholder=\"Armed Security License, First Aid Certified\"
-                  className=\"w-full px-4 py-2 border rounded-lg\"
+                  className="w-full px-4 py-2 border rounded-lg\"
                   value={serviceForm.certifications}
                   onChange={(e) => setServiceForm({ ...serviceForm, certifications: e.target.value })}
                 />
               </div>
 
               <div>
-                <label className=\"block text-sm font-medium mb-2\">Availability</label>
+                <label className="block text-sm font-medium mb-2\">Availability</label>
                 <select
-                  className=\"w-full px-4 py-2 border rounded-lg\"
+                  className="w-full px-4 py-2 border rounded-lg\"
                   value={serviceForm.availability}
                   onChange={(e) => setServiceForm({ ...serviceForm, availability: e.target.value })}
                 >
@@ -472,17 +472,17 @@ const ProviderDashboard = () => {
                 </select>
               </div>
 
-              <div className=\"flex gap-4\">
+              <div className="flex gap-4\">
                 <button
                   type=\"submit\"
-                  className=\"flex-1 bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700\"
+                  className="flex-1 bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700\"
                 >
                   Create Service
                 </button>
                 <button
                   type=\"button\"
                   onClick={() => setShowCreateModal(false)}
-                  className=\"px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50\"
+                  className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50\"
                 >
                   Cancel
                 </button>
