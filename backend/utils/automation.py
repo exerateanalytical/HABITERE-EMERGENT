@@ -225,6 +225,53 @@ async def check_high_expense_approvals():
 
 
 async def run_daily_automations():
+
+
+async def check_low_stock_inventory():
+    """
+    Check for inventory items at or below reorder level and send alerts.
+    """
+    try:
+        db = get_database()
+        
+        # Find all inventory items
+        all_items = await db.inventory.find({}).to_list(None)
+        
+        # Filter items at or below reorder level
+        low_stock_items = [
+            item for item in all_items 
+            if item.get("quantity", 0) <= item.get("reorder_level", 0)
+        ]
+        
+        logger.info(f"Found {len(low_stock_items)} low stock items")
+        
+        # Get estate managers to notify
+        estate_managers = await db.users.find({"role": "estate_manager"}).to_list(None)
+        admins = await db.users.find({"role": "admin"}).to_list(None)
+        
+        managers_to_notify = estate_managers + admins
+        
+        for item in low_stock_items:
+            for manager in managers_to_notify:
+                try:
+                    reorder_needed = item.get("reorder_quantity", 0)
+                    current_qty = item.get("quantity", 0)
+                    
+                    await create_in_app_notification(
+                        user_id=manager["id"],
+                        title=f"Low Stock Alert: {item['name']}",
+                        message=f"Stock level is low ({current_qty} {item['unit']}). Reorder quantity: {reorder_needed} {item['unit']}. Supplier: {item.get('supplier_name', 'N/A')}",
+                        type="warning",
+                        link=f"/assets/inventory/{item['id']}"
+                    )
+                except Exception as e:
+                    logger.error(f"Error sending low stock notification: {str(e)}")
+        
+        return len(low_stock_items)
+    except Exception as e:
+        logger.error(f"Error in check_low_stock_inventory: {str(e)}")
+        return 0
+
     """
     Run all daily automation tasks.
     This should be called by a scheduler (cron job or similar).
