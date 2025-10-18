@@ -79,45 +79,30 @@ const HomelandSecurity = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <div 
-        className="relative bg-black text-white py-20 md:py-32"
-        style={{
-          backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(https://images.unsplash.com/photo-1552622594-9a37efeec618?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1ODB8MHwxfHNlYXJjaHwzfHxwcm9mZXNzaW9uYWwlMjB1bmlmb3JtJTIwc2VjdXJpdHl8ZW58MHx8fHwxNzYwNzQzMjY0fDA&ixlib=rb-4.1.0&q=85)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center'
-        }}
-      >
-        <div className="container mx-auto px-4 text-center">
-          <div className="max-w-4xl mx-auto">
-            <div className="inline-flex items-center bg-green-600 text-white px-4 py-2 rounded-full mb-6">
-              <Shield className="w-5 h-5 mr-2" />
-              <span className="font-semibold">Homeland Security by Habitere</span>
-            </div>
-            
-            <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              Protect What Matters Most
-            </h1>
-            
-            <p className="text-xl md:text-2xl mb-8 text-gray-200">
-              Hire trusted guards and advanced security services for your home, estate, or business.
-            </p>
-            
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button
-                onClick={() => navigate('/security/services')}
-                className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-colors flex items-center justify-center"
-              >
-                Book Security Now
-                <ArrowRight className="ml-2 w-5 h-5" />
-              </button>
+      <div className="relative bg-white py-12 md:py-20 overflow-hidden">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+            {/* Left Content */}
+            <div className="max-w-2xl">
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 mb-6 leading-tight">
+                Homeland Security
+              </h1>
               
-              <button
-                onClick={() => navigate('/security/apply')}
-                className="bg-white hover:bg-gray-100 text-black px-8 py-4 rounded-lg font-semibold text-lg transition-colors flex items-center justify-center"
-              >
-                Apply to Become a Guard
-                <Users className="ml-2 w-5 h-5" />
-              </button>
+              <p className="text-xl md:text-2xl text-gray-700 mb-8 leading-relaxed">
+                Book professional security services and hire trained guards for homes, estates, and businesses.
+              </p>
+            </div>
+
+            {/* Right Image - Security Guard */}
+            <div className="relative flex justify-center lg:justify-end">
+              <div className="relative w-full max-w-md lg:max-w-lg">
+                <img 
+                  src="https://images.unsplash.com/photo-1552622594-9a37efeec618?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1ODB8MHwxfHNlYXJjaHwzfHxwcm9mZXNzaW9uYWwlMjB1bmlmb3JtJTIwc2VjdXJpdHl8ZW58MHx8fHwxNzYwNzQzMjY0fDA&ixlib=rb-4.1.0&q=85"
+                  alt="Professional Security Guard"
+                  className="w-full h-auto object-contain"
+                  style={{ maxHeight: '600px' }}
+                />
+              </div>
             </div>
           </div>
         </div>
