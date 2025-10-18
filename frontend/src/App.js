@@ -55,6 +55,9 @@ import MaintenanceList from './pages/MaintenanceList';
 import MaintenanceForm from './pages/MaintenanceForm';
 import MaintenanceDetail from './pages/MaintenanceDetail';
 import ExpensesList from './pages/ExpensesList';
+import InventoryList from './pages/InventoryList';
+import InventoryForm from './pages/InventoryForm';
+import InventoryDetail from './pages/InventoryDetail';
 
 // New Auth Pages
 import LoginPage from './pages/auth/LoginPage';
