@@ -497,6 +497,14 @@ const PropertyDetails = () => {
                         <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" />
                         Message Owner
                       </Link>
+                      
+                      <Link
+                        to="/security/services"
+                        className="bg-green-600 hover:bg-green-700 text-white px-4 py-2.5 rounded-lg font-medium transition-colors flex items-center w-full justify-center text-sm sm:text-base"
+                      >
+                        <Shield className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" />
+                        Hire Security
+                      </Link>
                     </div>
                   </div>
                 ) : (
