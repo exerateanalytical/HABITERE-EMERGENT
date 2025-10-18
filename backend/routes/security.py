@@ -42,8 +42,9 @@ import logging
 
 # Import from parent modules
 import sys
+from pathlib import Path as FilePath
+sys.path.append(str(FilePath(__file__).parent.parent))
 from pathlib import Path
-sys.path.append(str(Path(__file__).parent.parent))
 
 from database import get_database
 from utils import get_current_user, serialize_doc
