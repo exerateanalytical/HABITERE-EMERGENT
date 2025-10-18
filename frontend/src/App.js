@@ -17,6 +17,7 @@ import PropertyDetails from './pages/PropertyDetails';
 import PropertyForm from './pages/PropertyForm';
 import PropertyEditForm from './pages/PropertyEditForm';
 import ServiceDetails from './pages/ServiceDetails';
+import ServiceProviderDashboard from './pages/ServiceProviderDashboard';
 import BookingPage from './pages/BookingPage';
 import Messages from './pages/Messages';
 import Profile from './pages/Profile';
