@@ -585,7 +585,7 @@ class AssetManagementTester:
                 "estimated_cost": 50000.0
             }
             
-            async with self.session.post(f"{BASE_URL}/assets/maintenance", json=task_data) as response:
+            async with self.session.post(f"{BASE_URL}/assets/maintenance/", json=task_data) as response:
                 if response.status != 200:
                     self.record_test("Complete Workflow", False, "Failed to create maintenance task")
                     return False
