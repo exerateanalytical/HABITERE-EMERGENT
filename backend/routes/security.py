@@ -563,6 +563,22 @@ async def approve_guard_application(
     
     logger.info(f"Guard application approved: {application_id} by {current_user['email']}")
     
+    # Send notifications
+    try:
+        # Email notification
+        await send_application_status_email(application, application["email"], "approved")
+        
+        # In-app notification
+        await create_in_app_notification(
+            user_id=application["user_id"],
+            title="Application Approved! 🎉",
+            message="Congratulations! You are now a verified security guard",
+            type="success",
+            link="/dashboard"
+        )
+    except Exception as e:
+        logger.error(f"Error sending approval notifications: {str(e)}")
+    
     return {"message": "Application approved successfully"}
 
 
