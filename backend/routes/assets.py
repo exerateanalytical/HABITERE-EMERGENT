@@ -100,6 +100,37 @@ class ExpenseCreate(BaseModel):
     approved_by: Optional[str] = None
 
 
+class InventoryItemCreate(BaseModel):
+    """Inventory item creation model."""
+    name: str
+    category: str  # Spare Parts, Tools, Consumables, Equipment, Safety Gear
+    property_id: Optional[str] = None  # Link to property if specific
+    quantity: int
+    unit: str  # pcs, kg, liters, meters, etc.
+    reorder_level: int  # Minimum quantity before reorder
+    reorder_quantity: int  # Quantity to reorder
+    unit_cost: Optional[float] = None
+    supplier_name: Optional[str] = None
+    supplier_contact: Optional[str] = None
+    location: Optional[str] = None  # Storage location
+    notes: Optional[str] = None
+
+
+class InventoryItemUpdate(BaseModel):
+    """Inventory item update model."""
+    name: Optional[str] = None
+    category: Optional[str] = None
+    quantity: Optional[int] = None
+    unit: Optional[str] = None
+    reorder_level: Optional[int] = None
+    reorder_quantity: Optional[int] = None
+    unit_cost: Optional[float] = None
+    supplier_name: Optional[str] = None
+    supplier_contact: Optional[str] = None
+    location: Optional[str] = None
+    notes: Optional[str] = None
+
+
 class AssetUpdate(BaseModel):
     """Asset update model."""
     name: Optional[str] = None
