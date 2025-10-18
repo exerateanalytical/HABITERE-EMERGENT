@@ -26,6 +26,8 @@ const FooterMobile = () => {
       links: [
         { name: 'Properties', path: '/properties' },
         { name: 'Services', path: '/services' },
+        { name: 'Security', path: '/security' },
+        { name: 'Asset Management', path: '/assets/dashboard' },
         { name: 'FAQ', path: '/faq' }
       ]
     },
