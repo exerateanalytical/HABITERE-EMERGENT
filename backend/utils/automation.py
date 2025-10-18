@@ -224,9 +224,6 @@ async def check_high_expense_approvals():
         return 0
 
 
-async def run_daily_automations():
-
-
 async def check_low_stock_inventory():
     """
     Check for inventory items at or below reorder level and send alerts.
@@ -272,6 +269,8 @@ async def check_low_stock_inventory():
         logger.error(f"Error in check_low_stock_inventory: {str(e)}")
         return 0
 
+
+async def run_daily_automations():
     """
     Run all daily automation tasks.
     This should be called by a scheduler (cron job or similar).
@@ -282,7 +281,8 @@ async def check_low_stock_inventory():
         "upcoming_maintenance": 0,
         "overdue_maintenance": 0,
         "task_reminders": 0,
-        "expense_reminders": 0
+        "expense_reminders": 0,
+        "low_stock_alerts": 0
     }
     
     try:
@@ -290,6 +290,7 @@ async def check_low_stock_inventory():
         results["overdue_maintenance"] = await check_overdue_maintenance()
         results["task_reminders"] = await check_pending_task_reminders()
         results["expense_reminders"] = await check_high_expense_approvals()
+        results["low_stock_alerts"] = await check_low_stock_inventory()
         
         logger.info(f"Daily automations completed: {results}")
         return results
