@@ -230,6 +230,80 @@ function AppContent() {
         <Route path="/provider/dashboard" element={<ProviderDashboard />} />
         <Route path="/admin/security" element={<SecurityAdmin />} />
         
+        {/* Asset Management Routes - Protected */}
+        <Route 
+          path="/assets" 
+          element={
+            <ProtectedRoute>
+              <AssetsList />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/assets/dashboard" 
+          element={
+            <ProtectedRoute>
+              <AssetDashboard />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/assets/create" 
+          element={
+            <ProtectedRoute>
+              <AssetForm mode="create" />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/assets/:assetId" 
+          element={
+            <ProtectedRoute>
+              <AssetDetail />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/assets/:assetId/edit" 
+          element={
+            <ProtectedRoute>
+              <AssetForm mode="edit" />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/assets/maintenance" 
+          element={
+            <ProtectedRoute>
+              <MaintenanceList />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/assets/maintenance/create" 
+          element={
+            <ProtectedRoute>
+              <MaintenanceForm />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/assets/maintenance/:taskId" 
+          element={
+            <ProtectedRoute>
+              <MaintenanceDetail />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/assets/expenses" 
+          element={
+            <ProtectedRoute>
+              <ExpensesList />
+            </ProtectedRoute>
+          } 
+        />
+        
         {/* Protected Routes */}
         <Route 
           path="/dashboard" 
