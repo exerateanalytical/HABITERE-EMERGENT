@@ -48,6 +48,12 @@ from pathlib import Path
 
 from database import get_database
 from utils import get_current_user, serialize_doc
+from utils.notifications import (
+    create_in_app_notification,
+    send_booking_confirmation_email,
+    send_application_status_email,
+    send_booking_confirmed_email
+)
 
 # Setup logging
 logger = logging.getLogger(__name__)
