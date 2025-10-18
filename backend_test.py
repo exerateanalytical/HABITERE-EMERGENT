@@ -430,7 +430,7 @@ class AssetManagementTester:
                 "date": datetime.now(timezone.utc).isoformat()
             }
             
-            async with self.session.post(f"{BASE_URL}/assets/expenses", json=expense_data) as response:
+            async with self.session.post(f"{BASE_URL}/assets/expenses/", json=expense_data) as response:
                 if response.status == 200:
                     data = await response.json()
                     self.test_expense_id = data.get("id")
