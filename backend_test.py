@@ -277,14 +277,28 @@ class AssetManagementTester:
     
     async def test_delete_asset_unauthorized(self):
         """Test DELETE /api/assets/{asset_id} - Delete asset (should require admin)."""
-        if not self.test_asset_id:
-            self.record_test("Delete Asset (Authorization Check)", False, "No test asset ID available")
-            return False
-            
+        # Create a separate asset just for deletion testing
+        delete_asset_data = {
+            "name": "Delete Test Asset",
+            "category": "Equipment", 
+            "property_id": self.test_property_id,
+            "location": "Test Location for Deletion",
+            "status": "Active",
+            "condition": "Good"
+        }
+        
         try:
-            # Note: We're testing with admin user, so this should work
-            # In a real scenario, we'd test with a non-admin user
-            async with self.session.delete(f"{BASE_URL}/assets/{self.test_asset_id}") as response:
+            # Create asset for deletion testing
+            async with self.session.post(f"{BASE_URL}/assets/", json=delete_asset_data) as response:
+                if response.status != 200:
+                    self.record_test("Delete Asset (Authorization Check)", False, "Failed to create delete test asset")
+                    return False
+                
+                delete_asset = await response.json()
+                delete_asset_id = delete_asset.get("id")
+            
+            # Now test deletion
+            async with self.session.delete(f"{BASE_URL}/assets/{delete_asset_id}") as response:
                 if response.status in [200, 403]:  # Either success or forbidden
                     self.record_test("Delete Asset (Authorization Check)", True)
                     return True
