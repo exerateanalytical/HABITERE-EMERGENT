@@ -222,6 +222,19 @@ const AssetDashboard = () => {
                   </div>
                 </div>
               </button>
+
+              <button
+                onClick={() => navigate('/assets/inventory')}
+                className="w-full bg-gray-100 hover:bg-gray-200 p-4 rounded-lg text-left transition-colors flex items-center justify-between"
+              >
+                <div className="flex items-center">
+                  <Package className="w-6 h-6 text-orange-600 mr-3" />
+                  <div>
+                    <div className="font-semibold">Inventory</div>
+                    <div className="text-sm text-gray-600">Manage parts and supplies</div>
+                  </div>
+                </div>
+              </button>
             </div>
           </div>
         </div>
