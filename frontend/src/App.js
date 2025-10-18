@@ -310,6 +310,38 @@ function AppContent() {
             </ProtectedRoute>
           } 
         />
+        <Route 
+          path="/assets/inventory" 
+          element={
+            <ProtectedRoute>
+              <InventoryList />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/assets/inventory/create" 
+          element={
+            <ProtectedRoute>
+              <InventoryForm mode="create" />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/assets/inventory/:itemId" 
+          element={
+            <ProtectedRoute>
+              <InventoryDetail />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/assets/inventory/:itemId/edit" 
+          element={
+            <ProtectedRoute>
+              <InventoryForm mode="edit" />
+            </ProtectedRoute>
+          } 
+        />
         
         {/* Protected Routes */}
         <Route 
