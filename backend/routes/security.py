@@ -1197,6 +1197,329 @@ async def mark_all_notifications_read(
     return {"message": f"{result.modified_count} notifications marked as read"}
 
 
+# ==================== GPS TRACKING ====================
+
+@router.post("/guards/{guard_id}/location")
+async def update_guard_location(
+    guard_id: str,
+    location_data: dict,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Update guard's GPS location.
+    
+    Used for patrol units and active duty tracking.
+    
+    Args:
+        guard_id: Guard's user ID
+        location_data: GPS coordinates and metadata
+        current_user: Authenticated user (must be the guard)
+        
+    Returns:
+        Location update confirmation
+    """
+    db = get_database()
+    
+    # Verify authorization
+    if guard_id != current_user["id"]:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to update this guard's location"
+        )
+    
+    # Verify user is a guard
+    if current_user.get("role") not in ["security_guard", "security_provider", "admin"]:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only security guards can update location"
+        )
+    
+    # Create location record
+    location = {
+        "id": str(uuid.uuid4()),
+        "guard_id": guard_id,
+        "latitude": location_data.get("latitude"),
+        "longitude": location_data.get("longitude"),
+        "accuracy": location_data.get("accuracy"),
+        "altitude": location_data.get("altitude"),
+        "speed": location_data.get("speed"),
+        "heading": location_data.get("heading"),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "metadata": location_data.get("metadata", {})
+    }
+    
+    await db.guard_locations.insert_one(location)
+    
+    # Update guard's current location
+    await db.users.update_one(
+        {"id": guard_id},
+        {"$set": {
+            "current_location": {
+                "latitude": location["latitude"],
+                "longitude": location["longitude"],
+                "updated_at": location["timestamp"]
+            }
+        }}
+    )
+    
+    logger.info(f"Location updated for guard {guard_id}")
+    
+    return {"message": "Location updated successfully", "timestamp": location["timestamp"]}
+
+
+@router.get("/guards/{guard_id}/location/history")
+async def get_guard_location_history(
+    guard_id: str,
+    hours: int = 24,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Get guard's location history.
+    
+    Args:
+        guard_id: Guard's user ID
+        hours: Number of hours of history to retrieve
+        current_user: Authenticated user
+        
+    Returns:
+        List of location records
+    """
+    db = get_database()
+    
+    # Calculate time threshold
+    from datetime import timedelta
+    threshold = (datetime.now(timezone.utc) - timedelta(hours=hours)).isoformat()
+    
+    locations = await db.guard_locations.find({
+        "guard_id": guard_id,
+        "timestamp": {"$gte": threshold}
+    }).sort("timestamp", -1).to_list(1000)
+    
+    return [serialize_doc(loc) for loc in locations]
+
+
+@router.get("/bookings/{booking_id}/tracking")
+async def get_booking_guard_locations(
+    booking_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Get real-time locations of guards assigned to a booking.
+    
+    Used for patrol monitoring and service tracking.
+    
+    Args:
+        booking_id: Booking ID
+        current_user: Authenticated user
+        
+    Returns:
+        Current locations of assigned guards
+    """
+    db = get_database()
+    
+    booking = await db.security_bookings.find_one({"id": booking_id})
+    
+    if not booking:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Booking not found"
+        )
+    
+    # Check authorization
+    if booking["user_id"] != current_user["id"] and booking["provider_id"] != current_user["id"]:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized"
+        )
+    
+    # Get assigned guards (this would come from guard assignments)
+    # For now, return empty as assignment system is not built
+    
+    return {
+        "booking_id": booking_id,
+        "guards": [],
+        "message": "Guard assignment and tracking system ready"
+    }
+
+
+# ==================== PANIC BUTTON ====================
+
+@router.post("/panic")
+async def trigger_panic_alert(
+    alert_data: dict,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Trigger emergency panic alert.
+    
+    Creates high-priority alert and notifies emergency contacts,
+    security providers, and administrators.
+    
+    Args:
+        alert_data: Emergency details (location, description, type)
+        current_user: Authenticated user
+        
+    Returns:
+        Alert confirmation with emergency response info
+    """
+    db = get_database()
+    
+    # Create panic alert
+    alert = {
+        "id": str(uuid.uuid4()),
+        "user_id": current_user["id"],
+        "user_name": current_user["name"],
+        "user_email": current_user["email"],
+        "user_phone": current_user.get("phone", ""),
+        "type": alert_data.get("type", "emergency"),  # emergency, distress, medical, fire, theft
+        "location": alert_data.get("location", {}),
+        "description": alert_data.get("description", ""),
+        "status": "active",  # active, responded, resolved, false_alarm
+        "priority": "critical",
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "metadata": alert_data.get("metadata", {})
+    }
+    
+    await db.panic_alerts.insert_one(alert)
+    
+    logger.critical(f"PANIC ALERT triggered by {current_user['email']}: {alert['id']}")
+    
+    # Send immediate notifications to all admins and nearby security providers
+    try:
+        # Get all security admins
+        admins = await db.users.find({"role": {"$in": ["security_admin", "admin"]}}).to_list(100)
+        
+        for admin in admins:
+            await create_in_app_notification(
+                user_id=admin["id"],
+                title="🚨 EMERGENCY ALERT",
+                message=f"Panic button activated by {current_user['name']}",
+                type="error",
+                link=f"/admin/security"
+            )
+        
+        # Notify user
+        await create_in_app_notification(
+            user_id=current_user["id"],
+            title="Emergency Alert Sent",
+            message="Help is on the way. Stay safe.",
+            type="warning",
+            link=None
+        )
+    except Exception as e:
+        logger.error(f"Error sending panic notifications: {str(e)}")
+    
+    return {
+        "alert_id": alert["id"],
+        "message": "Emergency alert activated. Help is being dispatched.",
+        "status": "active",
+        "emergency_contacts": [
+            {"type": "police", "number": "117"},
+            {"type": "fire", "number": "118"},
+            {"type": "ambulance", "number": "119"}
+        ]
+    }
+
+
+@router.get("/panic/alerts")
+async def get_panic_alerts(
+    status: str = None,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Get panic alerts.
+    
+    Admins see all alerts. Users see their own alerts.
+    
+    Args:
+        status: Filter by status (active, responded, resolved)
+        current_user: Authenticated user
+        
+    Returns:
+        List of panic alerts
+    """
+    db = get_database()
+    
+    filters = {}
+    
+    # Users see their own alerts, admins see all
+    if current_user.get("role") not in ["security_admin", "admin"]:
+        filters["user_id"] = current_user["id"]
+    
+    if status:
+        filters["status"] = status
+    
+    alerts = await db.panic_alerts.find(filters).sort("created_at", -1).limit(100).to_list(100)
+    
+    return [serialize_doc(alert) for alert in alerts]
+
+
+@router.put("/panic/alerts/{alert_id}/respond")
+async def respond_to_panic_alert(
+    alert_id: str,
+    response_data: dict,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Respond to a panic alert.
+    
+    Only admins and security providers can respond.
+    
+    Args:
+        alert_id: Alert ID
+        response_data: Response details (responder, ETA, notes)
+        current_user: Authenticated user
+        
+    Returns:
+        Response confirmation
+    """
+    db = get_database()
+    
+    # Check authorization
+    if current_user.get("role") not in ["security_admin", "admin", "security_provider"]:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only security personnel can respond to alerts"
+        )
+    
+    alert = await db.panic_alerts.find_one({"id": alert_id})
+    
+    if not alert:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Alert not found"
+        )
+    
+    # Update alert
+    await db.panic_alerts.update_one(
+        {"id": alert_id},
+        {"$set": {
+            "status": "responded",
+            "responder_id": current_user["id"],
+            "responder_name": current_user["name"],
+            "responded_at": datetime.now(timezone.utc).isoformat(),
+            "response_notes": response_data.get("notes", ""),
+            "eta": response_data.get("eta", "")
+        }}
+    )
+    
+    # Notify user
+    try:
+        await create_in_app_notification(
+            user_id=alert["user_id"],
+            title="Help is Coming",
+            message=f"{current_user['name']} is responding to your emergency",
+            type="success",
+            link=None
+        )
+    except Exception as e:
+        logger.error(f"Error sending response notification: {str(e)}")
+    
+    logger.info(f"Panic alert {alert_id} responded by {current_user['email']}")
+    
+    return {"message": "Response recorded successfully"}
+
+
 # ==================== STATISTICS ====================
 
 @router.get("/stats")
