@@ -658,7 +658,7 @@ class AssetManagementTester:
                 "date": datetime.now(timezone.utc).isoformat()
             }
             
-            async with self.session.post(f"{BASE_URL}/assets/expenses/", json=expense_data) as response:
+            async with self.session.post(f"{BASE_URL}/assets/expenses", json=expense_data) as response:
                 if response.status != 200:
                     self.record_test("Complete Workflow", False, "Failed to create expense")
                     return False
