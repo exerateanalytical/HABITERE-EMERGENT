@@ -630,6 +630,31 @@ async def create_security_booking(
     
     logger.info(f"Security booking created: {booking['id']} by {current_user['email']}")
     
+    # Send notifications
+    try:
+        # Email notification
+        await send_booking_confirmation_email(booking, current_user["email"], current_user["name"])
+        
+        # In-app notification for user
+        await create_in_app_notification(
+            user_id=current_user["id"],
+            title="Booking Submitted",
+            message=f"Your booking for {service['title']} has been submitted",
+            type="success",
+            link=f"/security/bookings/{booking['id']}"
+        )
+        
+        # In-app notification for provider
+        await create_in_app_notification(
+            user_id=service["provider_id"],
+            title="New Booking Request",
+            message=f"New booking request from {current_user['name']} for {service['title']}",
+            type="info",
+            link=f"/provider/dashboard"
+        )
+    except Exception as e:
+        logger.error(f"Error sending notifications: {str(e)}")
+    
     return {
         "message": "Booking request submitted successfully",
         "booking_id": booking["id"],
