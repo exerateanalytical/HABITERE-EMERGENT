@@ -316,7 +316,7 @@ class AssetManagementTester:
                 "notes": "Schedule during low-usage hours"
             }
             
-            async with self.session.post(f"{BASE_URL}/assets/maintenance", json=task_data) as response:
+            async with self.session.post(f"{BASE_URL}/assets/maintenance/", json=task_data) as response:
                 if response.status == 200:
                     data = await response.json()
                     self.test_task_id = data.get("id")
