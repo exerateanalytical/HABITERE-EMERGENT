@@ -816,6 +816,247 @@ async def upload_security_image(
     }
 
 
+# ==================== PAYMENT TRACKING ====================
+
+@router.post("/bookings/{booking_id}/payment")
+async def record_payment(
+    booking_id: str,
+    payment_data: dict,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Record payment for a security booking.
+    
+    Supports manual payment tracking for cash, bank transfer, or mobile money.
+    
+    Args:
+        booking_id: UUID of the booking
+        payment_data: Payment details (amount, method, reference, status)
+        current_user: Authenticated user
+        
+    Returns:
+        Payment confirmation
+    """
+    db = get_database()
+    
+    booking = await db.security_bookings.find_one({"id": booking_id})
+    if not booking:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Booking not found"
+        )
+    
+    # Check authorization (user or provider)
+    if booking["user_id"] != current_user["id"] and booking["provider_id"] != current_user["id"]:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized"
+        )
+    
+    # Create payment record
+    payment = {
+        "id": str(uuid.uuid4()),
+        "booking_id": booking_id,
+        "amount": payment_data.get("amount"),
+        "currency": payment_data.get("currency", "XAF"),
+        "method": payment_data.get("method", "manual"),  # manual, mobile_money, bank_transfer
+        "reference": payment_data.get("reference", ""),
+        "status": payment_data.get("status", "pending"),  # pending, completed, failed
+        "paid_by": current_user["id"],
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "notes": payment_data.get("notes", "")
+    }
+    
+    await db.security_payments.insert_one(payment)
+    
+    # Update booking payment status
+    await db.security_bookings.update_one(
+        {"id": booking_id},
+        {"$set": {"payment_status": payment["status"], "payment_id": payment["id"]}}
+    )
+    
+    logger.info(f"Payment recorded for booking {booking_id}: {payment['amount']} {payment['currency']}")
+    
+    return serialize_doc(payment)
+
+
+@router.get("/bookings/{booking_id}/payments")
+async def get_booking_payments(
+    booking_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """Get all payment records for a booking."""
+    db = get_database()
+    
+    booking = await db.security_bookings.find_one({"id": booking_id})
+    if not booking:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Booking not found"
+        )
+    
+    # Check authorization
+    if booking["user_id"] != current_user["id"] and booking["provider_id"] != current_user["id"]:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized"
+        )
+    
+    payments = await db.security_payments.find({"booking_id": booking_id}).to_list(100)
+    
+    return [serialize_doc(p) for p in payments]
+
+
+# ==================== DIGITAL CONTRACTS ====================
+
+@router.post("/bookings/{booking_id}/contract")
+async def create_contract(
+    booking_id: str,
+    contract_data: dict,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Create a digital contract for a security booking.
+    
+    Args:
+        booking_id: UUID of the booking
+        contract_data: Contract terms and conditions
+        current_user: Authenticated user (must be provider)
+        
+    Returns:
+        Contract details
+    """
+    db = get_database()
+    
+    booking = await db.security_bookings.find_one({"id": booking_id})
+    if not booking:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Booking not found"
+        )
+    
+    # Only provider can create contract
+    if booking["provider_id"] != current_user["id"]:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only the provider can create a contract"
+        )
+    
+    # Create contract
+    contract = {
+        "id": str(uuid.uuid4()),
+        "booking_id": booking_id,
+        "provider_id": current_user["id"],
+        "client_id": booking["user_id"],
+        "terms": contract_data.get("terms", ""),
+        "start_date": booking["start_date"],
+        "end_date": booking.get("end_date"),
+        "duration": booking.get("duration"),
+        "amount": contract_data.get("amount"),
+        "payment_terms": contract_data.get("payment_terms", ""),
+        "cancellation_policy": contract_data.get("cancellation_policy", ""),
+        "status": "pending_signature",  # pending_signature, signed, active, completed, terminated
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "provider_signed": False,
+        "client_signed": False
+    }
+    
+    await db.security_contracts.insert_one(contract)
+    
+    # Update booking with contract
+    await db.security_bookings.update_one(
+        {"id": booking_id},
+        {"$set": {"contract_id": contract["id"], "contract_status": "pending_signature"}}
+    )
+    
+    logger.info(f"Contract created for booking {booking_id}")
+    
+    return serialize_doc(contract)
+
+
+@router.post("/contracts/{contract_id}/sign")
+async def sign_contract(
+    contract_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Sign a digital contract.
+    
+    Args:
+        contract_id: UUID of the contract
+        current_user: Authenticated user
+        
+    Returns:
+        Updated contract
+    """
+    db = get_database()
+    
+    contract = await db.security_contracts.find_one({"id": contract_id})
+    if not contract:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Contract not found"
+        )
+    
+    # Check if user is authorized to sign
+    is_provider = contract["provider_id"] == current_user["id"]
+    is_client = contract["client_id"] == current_user["id"]
+    
+    if not (is_provider or is_client):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to sign this contract"
+        )
+    
+    # Update signature
+    update_data = {
+        f"{'provider' if is_provider else 'client'}_signed": True,
+        f"{'provider' if is_provider else 'client'}_signed_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    # If both signed, activate contract
+    if (is_provider and contract.get("client_signed")) or (is_client and contract.get("provider_signed")):
+        update_data["status"] = "active"
+        update_data["activated_at"] = datetime.now(timezone.utc).isoformat()
+    
+    await db.security_contracts.update_one(
+        {"id": contract_id},
+        {"$set": update_data}
+    )
+    
+    logger.info(f"Contract {contract_id} signed by {current_user['email']}")
+    
+    # Get updated contract
+    updated_contract = await db.security_contracts.find_one({"id": contract_id})
+    
+    return serialize_doc(updated_contract)
+
+
+@router.get("/contracts/{contract_id}")
+async def get_contract(
+    contract_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """Get contract details."""
+    db = get_database()
+    
+    contract = await db.security_contracts.find_one({"id": contract_id})
+    if not contract:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Contract not found"
+        )
+    
+    # Check authorization
+    if contract["provider_id"] != current_user["id"] and contract["client_id"] != current_user["id"]:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to view this contract"
+        )
+    
+    return serialize_doc(contract)
+
+
 # ==================== STATISTICS ====================
 
 @router.get("/stats")
