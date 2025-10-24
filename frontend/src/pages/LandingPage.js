@@ -449,7 +449,7 @@ const LandingPage = () => {
                   </div>
                   
                   {/* Content */}
-                  <h3 className="text-xl md:text-2xl font-black text-gray-900 mb-3 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-purple-600 transition-all duration-300">
+                  <h3 className="text-xl md:text-2xl font-black text-gray-900 mb-3 group-hover:text-blue-600 transition-all duration-300">
                     {feature.title}
                   </h3>
                   <p className="text-base text-gray-600 leading-relaxed font-medium">
