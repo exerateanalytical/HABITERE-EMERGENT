@@ -81,7 +81,10 @@ axios.defaults.withCredentials = true;
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
   
+  console.log('[ProtectedRoute] Loading:', loading, 'User:', user);
+  
   if (loading) {
+    console.log('[ProtectedRoute] Still loading, showing spinner');
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
@@ -90,14 +93,17 @@ function ProtectedRoute({ children }) {
   }
   
   if (!user) {
+    console.log('[ProtectedRoute] No user found, redirecting to /auth/login');
     return <Navigate to="/auth/login" replace />;
   }
   
   // Redirect to role selection if user doesn't have a role
   if (!user.role && window.location.pathname !== '/choose-role') {
+    console.log('[ProtectedRoute] User has no role, redirecting to /choose-role');
     return <Navigate to="/choose-role" replace />;
   }
   
+  console.log('[ProtectedRoute] User authenticated, rendering protected content');
   return children;
 }
 
