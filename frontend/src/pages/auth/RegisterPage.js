@@ -5,10 +5,9 @@ import { Mail, Lock, User, AlertCircle, CheckCircle, Phone } from 'lucide-react'
 
 const RegisterPage = () => {
   const navigate = useNavigate();
-  const { register, loginWithGoogle } = useAuth();
+  const { register } = useAuth();
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', password: '', confirmPassword: '' });
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
@@ -43,37 +42,6 @@ const RegisterPage = () => {
     }
     setLoading(false);
   };
-
-  const handleGoogleSignup = () => {
-    loginWithGoogle();
-  };
-
-  if (success) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center px-4 py-8">
-        <div className="max-w-md w-full">
-          <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <CheckCircle className="w-8 h-8 text-green-600" />
-            </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Check your email!</h2>
-            <p className="text-gray-600 mb-6">
-              We've sent a verification link to <strong>{formData.email}</strong>
-            </p>
-            <p className="text-sm text-gray-500 mb-6">
-              Please check your inbox and click the verification link to complete your registration.
-            </p>
-            <Link
-              to="/auth/login"
-              className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-200"
-            >
-              Go to Login
-            </Link>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center px-4 py-8">
