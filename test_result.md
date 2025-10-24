@@ -502,7 +502,7 @@
     file: "/app/frontend/src/pages/PropertyForm.js, /app/frontend/src/pages/Dashboard.js"
     stuck_count: 1
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
         - working: "NA"
           agent: "testing"
