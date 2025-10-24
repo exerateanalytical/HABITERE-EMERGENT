@@ -372,7 +372,7 @@ class ValidationTester:
                 "bathrooms": 2,
                 "area_sqm": 120
             },
-            201
+            200
         ))
         
         # Summary
