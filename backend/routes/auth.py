@@ -407,13 +407,6 @@ async def login(request: LoginRequest, response: Response):
             detail="Invalid email or password"
         )
     
-    # Check email verification
-    if not user.get('email_verified', False):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Email not verified. Please check your email for verification link."
-        )
-    
     # Create session token
     session_token = str(uuid.uuid4())
     expires_at = datetime.now(timezone.utc) + timedelta(days=7)
