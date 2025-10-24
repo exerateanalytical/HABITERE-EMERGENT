@@ -282,20 +282,20 @@ const LandingPage = () => {
               </p>
             </div>
             
-            {/* Search Form - Mobile Optimized Stack */}
-            <form onSubmit={handleSearchSubmit} className="space-y-4" role="search" aria-label="Property search form">
+            {/* Search Form - Enhanced Desktop Grid Layout */}
+            <form onSubmit={handleSearchSubmit} className="space-y-6 md:space-y-0 md:grid md:grid-cols-3 md:gap-4 lg:gap-6" role="search" aria-label="Property search form">
               {/* Property Type */}
               <div className="space-y-2">
-                <label htmlFor="property-type" className="block text-sm font-semibold text-gray-700">
+                <label htmlFor="property-type" className="block text-sm font-bold text-gray-800">
                   Property Type
-                  <span className="text-gray-400 text-xs ml-1">(Optional)</span>
+                  <span className="text-gray-400 text-xs ml-2 font-normal">(Optional)</span>
                 </label>
                 <select 
                   id="property-type"
                   name="propertyType"
                   value={searchForm.propertyType}
                   onChange={(e) => handleInputChange('propertyType', e.target.value)}
-                  className="w-full px-4 py-4 bg-white border-2 border-gray-200 rounded-2xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 active:border-blue-400 transition-all duration-100 text-base appearance-none cursor-pointer touch-manipulation min-h-[56px] h-14" 
+                  className="w-full px-4 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl shadow-sm hover:border-blue-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white active:border-blue-400 transition-all duration-200 text-base appearance-none cursor-pointer touch-manipulation min-h-[56px] h-14 font-medium" 
                   data-testid="search-type"
                   aria-describedby="property-type-hint"
                 >
@@ -310,9 +310,9 @@ const LandingPage = () => {
               
               {/* Location */}
               <div className="space-y-2">
-                <label htmlFor="location" className="block text-sm font-semibold text-gray-700">
+                <label htmlFor="location" className="block text-sm font-bold text-gray-800">
                   Location
-                  <span className="text-gray-400 text-xs ml-1">(Optional)</span>
+                  <span className="text-gray-400 text-xs ml-2 font-normal">(Optional)</span>
                 </label>
                 <select 
                   id="location"
@@ -320,7 +320,7 @@ const LandingPage = () => {
                   value={searchForm.location}
                   onChange={(e) => handleInputChange('location', e.target.value)}
                   autoComplete="address-level2"
-                  className="w-full px-4 py-4 bg-white border-2 border-gray-200 rounded-2xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 active:border-blue-400 transition-all duration-100 text-base appearance-none cursor-pointer touch-manipulation min-h-[56px] h-14" 
+                  className="w-full px-4 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl shadow-sm hover:border-blue-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white active:border-blue-400 transition-all duration-200 text-base appearance-none cursor-pointer touch-manipulation min-h-[56px] h-14 font-medium" 
                   data-testid="search-location"
                   aria-describedby="location-hint"
                 >
@@ -337,16 +337,16 @@ const LandingPage = () => {
               
               {/* Price Range */}
               <div className="space-y-2">
-                <label htmlFor="price-range" className="block text-sm font-semibold text-gray-700">
+                <label htmlFor="price-range" className="block text-sm font-bold text-gray-800">
                   Price Range
-                  <span className="text-gray-400 text-xs ml-1">(Optional)</span>
+                  <span className="text-gray-400 text-xs ml-2 font-normal">(Optional)</span>
                 </label>
                 <select 
                   id="price-range"
                   name="priceRange"
                   value={searchForm.priceRange}
                   onChange={(e) => handleInputChange('priceRange', e.target.value)}
-                  className="w-full px-4 py-4 bg-white border-2 border-gray-200 rounded-2xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 active:border-blue-400 transition-all duration-100 text-base appearance-none cursor-pointer touch-manipulation min-h-[56px] h-14" 
+                  className="w-full px-4 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl shadow-sm hover:border-blue-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white active:border-blue-400 transition-all duration-200 text-base appearance-none cursor-pointer touch-manipulation min-h-[56px] h-14 font-medium" 
                   data-testid="search-price"
                   aria-describedby="price-hint"
                 >
@@ -359,39 +359,41 @@ const LandingPage = () => {
                 <span id="price-hint" className="sr-only">Select your budget range</span>
               </div>
               
-              {/* Error Message */}
+              {/* Error Message - Full width on desktop */}
               {searchError && (
-                <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-xl" role="alert">
-                  <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="md:col-span-3 flex items-center gap-2 p-4 bg-red-50 border-2 border-red-200 rounded-xl" role="alert">
+                  <svg className="w-5 h-5 text-red-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  <span className="text-sm text-red-700">{searchError}</span>
+                  <span className="text-sm font-medium text-red-700">{searchError}</span>
                 </div>
               )}
               
-              {/* Search Button */}
-              <RippleButton
-                type="submit"
-                variant="primary"
-                className="w-full"
-                ariaLabel="Search properties"
-                data-testid="search-btn"
-              >
-                Search Properties
-                <Search className="w-5 h-5" />
-              </RippleButton>
+              {/* Search Button - Full width on desktop */}
+              <div className="md:col-span-3 mt-6">
+                <RippleButton
+                  type="submit"
+                  variant="primary"
+                  className="w-full md:w-auto md:px-16 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 py-5 text-lg font-bold rounded-xl"
+                  ariaLabel="Search properties"
+                  data-testid="search-btn"
+                >
+                  <Search className="w-6 h-6 mr-2" />
+                  Search Properties Now
+                </RippleButton>
+              </div>
             </form>
             
-            {/* Quick Filters - Native Mobile Pills */}
-            <div className="mt-6 flex flex-wrap gap-2 justify-center">
-              <span className="text-sm font-medium text-gray-500 py-2">Popular:</span>
-              <RippleButton variant="pill" className="text-gray-700 active:text-blue-700">
+            {/* Quick Filters - Enhanced Desktop Pills */}
+            <div className="mt-8 md:mt-10 flex flex-wrap gap-3 justify-center items-center">
+              <span className="text-sm font-bold text-gray-500 py-2">🔥 Popular Searches:</span>
+              <RippleButton variant="pill" className="text-gray-700 hover:text-blue-700 hover:bg-blue-50 border-2 border-gray-200 hover:border-blue-300 font-semibold px-5 py-2.5 transition-all duration-300">
                 Houses in Douala
               </RippleButton>
-              <RippleButton variant="pill" className="text-gray-700 active:text-blue-700">
-                Apartments
+              <RippleButton variant="pill" className="text-gray-700 hover:text-blue-700 hover:bg-blue-50 border-2 border-gray-200 hover:border-blue-300 font-semibold px-5 py-2.5 transition-all duration-300">
+                Luxury Apartments
               </RippleButton>
-              <RippleButton variant="pill" className="text-gray-700 active:text-blue-700">
+              <RippleButton variant="pill" className="text-gray-700 hover:text-blue-700 hover:bg-blue-50 border-2 border-gray-200 hover:border-blue-300 font-semibold px-5 py-2.5 transition-all duration-300">
                 Land for Sale
               </RippleButton>
             </div>
