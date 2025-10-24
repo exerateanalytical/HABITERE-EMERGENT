@@ -115,10 +115,45 @@ class PropertyBackendTester:
             if auth_required:
                 test_headers.update(self.get_auth_headers())
             
-            # Make request
-            async with self.session.request(
-                method, url, json=data, headers=test_headers
-            ) as response:
+            # For unauthenticated tests, use a fresh session to avoid cookie persistence
+            if not auth_required:
+                async with aiohttp.ClientSession() as fresh_session:
+                    async with fresh_session.request(
+                        method, url, json=data, headers=test_headers
+                    ) as response:
+                        response_time = (time.time() - start_time) * 1000
+                        response_text = await response.text()
+                        
+                        try:
+                            response_data = json.loads(response_text) if response_text else {}
+                        except json.JSONDecodeError:
+                            response_data = {"raw_response": response_text}
+                        
+                        success = response.status == expected_status
+                        
+                        result = {
+                            "test_name": name,
+                            "method": method,
+                            "url": url,
+                            "status_code": response.status,
+                            "expected_status": expected_status,
+                            "success": success,
+                            "response_time_ms": round(response_time, 2),
+                            "response_data": response_data,
+                            "error": None if success else f"Expected {expected_status}, got {response.status}"
+                        }
+                        
+                        if success:
+                            logger.info(f"✅ {name}: {response.status} ({response_time:.0f}ms)")
+                        else:
+                            logger.error(f"❌ {name}: {response.status} (expected {expected_status}) - {response_text[:200]}")
+                        
+                        return result
+            else:
+                # Use authenticated session for auth_required tests
+                async with self.session.request(
+                    method, url, json=data, headers=test_headers
+                ) as response:
                 response_time = (time.time() - start_time) * 1000
                 response_text = await response.text()
                 
