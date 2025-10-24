@@ -265,16 +265,21 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Search Section - Mobile Native Design */}
-      <section className="py-8 sm:py-12 bg-white">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6">
-          <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-5 sm:p-6 md:p-8">
+      {/* Search Section - Enhanced Desktop Design */}
+      <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-b from-white to-gray-50">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-white rounded-3xl shadow-2xl border-2 border-gray-100 p-6 sm:p-8 md:p-10 lg:p-12 hover:shadow-3xl transition-shadow duration-500">
             {/* Header */}
-            <div className="text-center mb-6">
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+            <div className="text-center mb-8 md:mb-10">
+              <div className="inline-block px-4 py-2 bg-gradient-to-r from-blue-50 to-purple-50 rounded-full mb-4">
+                <span className="text-sm font-bold text-blue-600">Start Your Search</span>
+              </div>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 mb-3 tracking-tight">
                 Find Your Dream Property
               </h2>
-              <p className="text-base text-gray-600">1,000+ verified properties</p>
+              <p className="text-base md:text-lg text-gray-600 font-medium">
+                <span className="text-blue-600 font-bold">1,000+</span> verified properties waiting for you
+              </p>
             </div>
             
             {/* Search Form - Mobile Optimized Stack */}
