@@ -610,14 +610,63 @@ const LandingPage = () => {
             </p>
           </div>
 
-
-          {/* Testimonial Cards - Native Swipe on Mobile */}
+          {/* Testimonial Cards - Mobile Swipe */}
           <div className="md:hidden">
             <div className="flex overflow-x-auto gap-4 pb-4 snap-x snap-mandatory -mx-4 px-4 scrollbar-hide">
               {testimonials.map((testimonial, index) => (
                 <div 
                   key={index} 
-                  className="flex-none w-[85%] sm:w-80 bg-white rounded-3xl p-6 shadow-lg snap-center touch-manipulation transform hover:scale-105 transition-transform duration-200"
+                  className="flex-none w-[85%] sm:w-80 bg-white rounded-3xl p-8 shadow-xl snap-center touch-manipulation transform hover:scale-105 transition-transform duration-200 border-2 border-blue-100"
+                  data-testid={`testimonial-${index}`}
+                >
+                  <div className="flex items-center mb-6">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
+                    ))}
+                  </div>
+                  <p className="text-gray-700 mb-6 text-base leading-relaxed font-medium italic">"{testimonial.text}"</p>
+                  <div className="flex items-center">
+                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-lg mr-3">
+                      {testimonial.name[0]}
+                    </div>
+                    <div>
+                      <div className="font-bold text-gray-900">{testimonial.name}</div>
+                      <div className="text-sm text-gray-600">{testimonial.role}</div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Testimonial Grid - Desktop */}
+          <div className="hidden md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {testimonials.map((testimonial, index) => (
+              <div 
+                key={index} 
+                className="group bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 border-2 border-blue-100 hover:border-blue-300 transform hover:-translate-y-2"
+                data-testid={`testimonial-${index}`}
+              >
+                <div className="flex items-center mb-6">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
+                  ))}
+                </div>
+                <p className="text-gray-700 mb-8 text-base md:text-lg leading-relaxed font-medium italic">"{testimonial.text}"</p>
+                <div className="flex items-center">
+                  <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xl mr-4 group-hover:scale-110 transition-transform">
+                    {testimonial.name[0]}
+                  </div>
+                  <div>
+                    <div className="font-bold text-gray-900 text-lg">{testimonial.name}</div>
+                    <div className="text-sm text-gray-600">{testimonial.role}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
                   data-testid={`testimonial-${index}`}
                 >
                   {/* Rating */}
