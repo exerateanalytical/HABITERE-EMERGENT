@@ -6,7 +6,7 @@ from datetime import datetime
 
 class SimpleHabitereAPITester:
     def __init__(self):
-        self.base_url = "https://proptech-assets.preview.emergentagent.com"
+        self.base_url = "https://habitere-inventory.preview.emergentagent.com"
         self.api_url = f"{self.base_url}/api"
         self.session = requests.Session()
         self.session.headers.update({

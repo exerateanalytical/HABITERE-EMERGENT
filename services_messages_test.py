@@ -18,7 +18,7 @@ import sys
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = "https://proptech-assets.preview.emergentagent.com/api"
+BACKEND_URL = "https://habitere-inventory.preview.emergentagent.com/api"
 ADMIN_EMAIL = "admin@habitere.com"
 ADMIN_PASSWORD = "admin123"
 

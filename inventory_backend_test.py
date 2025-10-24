@@ -23,7 +23,7 @@ import sys
 from datetime import datetime, timezone
 
 # Backend URL from environment
-BACKEND_URL = "https://proptech-assets.preview.emergentagent.com/api"
+BACKEND_URL = "https://habitere-inventory.preview.emergentagent.com/api"
 
 # Test credentials
 ADMIN_EMAIL = "admin@habitere.com"
