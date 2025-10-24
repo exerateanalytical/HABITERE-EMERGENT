@@ -154,8 +154,8 @@ class PropertyBackendTester:
                 async with self.session.request(
                     method, url, json=data, headers=test_headers
                 ) as response:
-                response_time = (time.time() - start_time) * 1000
-                response_text = await response.text()
+                    response_time = (time.time() - start_time) * 1000
+                    response_text = await response.text()
                 
                 try:
                     response_data = json.loads(response_text) if response_text else {}
