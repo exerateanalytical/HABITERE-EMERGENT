@@ -304,35 +304,56 @@ async def register(request: RegisterRequest):
     # Hash password
     hashed_password = hash_password(request.password)
     
-    # Generate verification token
-    verification_token = generate_verification_token()
-    
-    # Create user document
+    # Create user document - auto-verified, no email confirmation needed
     user_data = {
         "id": str(uuid.uuid4()),
         "email": request.email,
         "name": request.name,
         "password": hashed_password,
         "phone": request.phone,
-        "email_verified": False,
-        "verification_token": verification_token,
+        "email_verified": True,  # Auto-verified - no email confirmation needed
         "created_at": datetime.now(timezone.utc)
     }
     
     # Insert into database
     await db.users.insert_one(user_data)
-    logger.info(f"New user registered: {request.email}")
+    logger.info(f"New user registered (auto-verified): {request.email}")
     
-    # Send verification email
-    try:
-        await send_verification_email(request.email, verification_token)
-    except Exception as e:
-        logger.error(f"Failed to send verification email: {e}")
-        # Don't fail registration if email fails
+    # Create session token for auto-login
+    session_token = str(uuid.uuid4())
+    expires_at = datetime.now(timezone.utc) + timedelta(days=7)
     
+    # Create session document
+    session_data = {
+        "session_token": session_token,
+        "user_id": user_data["id"],
+        "email": user_data["email"],
+        "created_at": datetime.now(timezone.utc),
+        "expires_at": expires_at
+    }
+    
+    await db.sessions.insert_one(session_data)
+    
+    # Set session cookie
+    response.set_cookie(
+        key="session_token",
+        value=session_token,
+        httponly=True,
+        secure=True,
+        samesite="lax",
+        max_age=7 * 24 * 60 * 60  # 7 days
+    )
+    
+    # Return user data with session for auto-login
     return {
-        "message": "Registration successful. Please check your email to verify your account.",
-        "email": request.email
+        "message": "Registration successful",
+        "user": {
+            "id": user_data["id"],
+            "email": user_data["email"],
+            "name": user_data["name"],
+            "phone": user_data["phone"],
+            "email_verified": True
+        }
     }
 
 
