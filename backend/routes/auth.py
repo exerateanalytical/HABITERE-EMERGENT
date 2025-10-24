@@ -645,7 +645,7 @@ async def reset_password(reset_data: dict):
         {"id": user_doc["id"]},
         {
             "$set": {
-                "password_hash": password_hash,
+                "password": password_hash,
                 "password_reset_token": None,
                 "password_reset_expires": None
             }
