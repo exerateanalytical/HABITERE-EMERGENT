@@ -595,15 +595,18 @@ const LandingPage = () => {
         </section>
       </LazySection>
 
-      {/* Testimonials Section - Mobile Optimized */}
-      <section className="py-12 md:py-20 bg-blue-50">
+      {/* Testimonials Section - Enhanced Desktop Design */}
+      <section className="py-16 md:py-24 bg-gradient-to-br from-blue-50 via-blue-100/50 to-blue-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-8 md:mb-16">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 md:mb-4">
+          <div className="text-center mb-12 md:mb-16">
+            <div className="inline-block px-4 py-2 bg-blue-600 rounded-full mb-6">
+              <span className="text-sm font-bold text-white uppercase tracking-wider">Testimonials</span>
+            </div>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 mb-4">
               What Our Users Say
             </h2>
-            <p className="text-base md:text-lg text-gray-600">
-              Join thousands of satisfied users across Cameroon
+            <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
+              Join <span className="font-bold text-blue-600">10,000+ satisfied users</span> across Cameroon
             </p>
           </div>
 
