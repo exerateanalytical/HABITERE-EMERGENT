@@ -276,7 +276,7 @@ const LandingPage = () => {
           <div className="bg-white rounded-3xl shadow-2xl border-2 border-gray-100 p-6 sm:p-8 md:p-10 lg:p-12 hover:shadow-3xl transition-shadow duration-500">
             {/* Header */}
             <div className="text-center mb-8 md:mb-10">
-              <div className="inline-block px-4 py-2 bg-gradient-to-r from-blue-50 to-purple-50 rounded-full mb-4">
+              <div className="inline-block px-4 py-2 bg-blue-50 rounded-full mb-4">
                 <span className="text-sm font-bold text-blue-600">Start Your Search</span>
               </div>
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 mb-3 tracking-tight">
