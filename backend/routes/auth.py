@@ -260,7 +260,7 @@ def set_auth_cookie(response: Response, session_token: str):
 # ==================== API ENDPOINTS ====================
 
 @router.post("/register")
-async def register(request: RegisterRequest):
+async def register(request: RegisterRequest, response: Response):
     """
     Register a new user account.
     
