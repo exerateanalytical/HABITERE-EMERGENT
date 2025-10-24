@@ -57,18 +57,26 @@ class PropertyCreate(BaseModel):
     
     Used for creating new properties or updating existing ones.
     All property fields except system-generated ones (id, owner_id, timestamps).
+    
+    Validation Rules:
+    - title: 5-200 characters
+    - description: 50-2000 characters
+    - price: must be positive (> 0)
+    - bedrooms: 0-50 (non-negative)
+    - bathrooms: 0-50 (non-negative)
+    - area_sqm: must be positive if provided
     """
-    title: str
-    description: str
-    price: float
-    location: str
+    title: str = Field(..., min_length=5, max_length=200, description="Property title (5-200 characters)")
+    description: str = Field(..., min_length=50, max_length=2000, description="Property description (50-2000 characters)")
+    price: float = Field(..., gt=0, description="Property price (must be positive)")
+    location: str = Field(..., min_length=3, max_length=200, description="Property location")
     property_type: Optional[str] = None  # Keeping for backward compatibility
     property_sector: Optional[str] = None  # New: Residential, Commercial, etc.
     property_category: Optional[str] = None  # New: Specific category
     listing_type: str  # sale, rent, lease, short_let, auction
-    bedrooms: Optional[int] = 0
-    bathrooms: Optional[int] = 0
-    area_sqm: Optional[float] = None
+    bedrooms: Optional[int] = Field(default=0, ge=0, le=50, description="Number of bedrooms (0-50)")
+    bathrooms: Optional[int] = Field(default=0, ge=0, le=50, description="Number of bathrooms (0-50)")
+    area_sqm: Optional[float] = Field(default=None, gt=0, description="Area in square meters (must be positive)")
     images: List[str] = []
     amenities: List[str] = []
 
