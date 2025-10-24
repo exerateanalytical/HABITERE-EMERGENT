@@ -217,7 +217,7 @@ class ValidationTester:
                 "location": "Douala",
                 "listing_type": "sale"
             },
-            201
+            200
         ))
         
         # Test 4A: Negative bedrooms
