@@ -259,7 +259,7 @@ class ValidationTester:
                 "listing_type": "sale",
                 "bedrooms": 3  # Valid bedrooms
             },
-            201
+            200
         ))
         
         # Test 4D: Negative bathrooms
