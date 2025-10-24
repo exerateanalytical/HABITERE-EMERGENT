@@ -36,7 +36,8 @@ const RegisterPage = () => {
     const result = await register(formData.email, formData.password, formData.name, formData.phone);
     
     if (result.success) {
-      setSuccess(true);
+      // Auto-redirect to dashboard after successful registration
+      navigate('/dashboard');
     } else {
       setError(result.error);
     }
