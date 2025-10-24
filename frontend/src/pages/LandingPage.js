@@ -402,46 +402,52 @@ const LandingPage = () => {
       </section>
 
 
-      {/* Features Section - Mobile Native Cards */}
-      <section className="py-12 sm:py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+      {/* Features Section - Enhanced Desktop Design */}
+      <section className="py-16 sm:py-20 md:py-24 lg:py-28 bg-gradient-to-b from-gray-50 to-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
-          <div className="text-center mb-10 sm:mb-12">
-            <div className="inline-block px-4 py-2 bg-blue-50 rounded-full mb-4">
-              <span className="text-sm font-bold text-blue-600">Why Habitere?</span>
+          <div className="text-center mb-12 md:mb-16">
+            <div className="inline-block px-6 py-3 bg-gradient-to-r from-blue-50 to-purple-50 rounded-full mb-6 shadow-lg">
+              <span className="text-sm md:text-base font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">Why Choose Habitere?</span>
             </div>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            <h2 className="text-4xl sm:text-5xl md:text-6xl font-black text-gray-900 mb-6 tracking-tight">
               The Most Trusted Platform
-              <span className="block text-blue-600">in Cameroon</span>
+              <span className="block mt-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">in Cameroon</span>
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Making real estate accessible and secure for everyone
+            <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+              Making real estate <span className="font-bold text-gray-900">accessible, secure</span> and <span className="font-bold text-gray-900">transparent</span> for everyone
             </p>
           </div>
 
-          {/* Feature Cards - Mobile Optimized */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+          {/* Feature Cards - Enhanced Desktop Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
             {features.map((feature, index) => {
               const Icon = feature.icon;
-              const colors = ['blue', 'purple', 'green', 'orange'];
-              const color = colors[index % 4];
+              const colors = [
+                { bg: 'bg-blue-500', light: 'bg-blue-50', text: 'text-blue-600', border: 'border-blue-200', hover: 'hover:border-blue-400' },
+                { bg: 'bg-purple-500', light: 'bg-purple-50', text: 'text-purple-600', border: 'border-purple-200', hover: 'hover:border-purple-400' },
+                { bg: 'bg-green-500', light: 'bg-green-50', text: 'text-green-600', border: 'border-green-200', hover: 'hover:border-green-400' },
+                { bg: 'bg-orange-500', light: 'bg-orange-50', text: 'text-orange-600', border: 'border-orange-200', hover: 'hover:border-orange-400' }
+              ];
+              const colorScheme = colors[index % 4];
               
               return (
                 <div 
                   key={index} 
-                  className={`bg-white rounded-3xl p-6 sm:p-8 shadow-md border-2 border-gray-100 active:border-${color}-200 transform active:scale-95 transition-all duration-100 touch-manipulation`}
+                  className={`group bg-white rounded-3xl p-8 shadow-lg border-2 ${colorScheme.border} ${colorScheme.hover} hover:shadow-2xl transform hover:scale-105 hover:-translate-y-2 transition-all duration-300 cursor-pointer`}
                   data-testid={`feature-${index}`}
                 >
-                  {/* Icon */}
-                  <div className={`w-16 h-16 bg-${color}-100 rounded-2xl flex items-center justify-center mb-5`}>
-                    <Icon className={`w-8 h-8 text-${color}-600`} />
+                  {/* Icon with gradient background */}
+                  <div className={`relative w-20 h-20 ${colorScheme.light} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-md`}>
+                    <div className={`absolute inset-0 ${colorScheme.bg} opacity-0 group-hover:opacity-10 rounded-2xl transition-opacity duration-300`}></div>
+                    <Icon className={`w-10 h-10 ${colorScheme.text} relative z-10`} />
                   </div>
                   
                   {/* Content */}
-                  <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3">
+                  <h3 className="text-xl md:text-2xl font-black text-gray-900 mb-3 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-purple-600 transition-all duration-300">
                     {feature.title}
                   </h3>
-                  <p className="text-base text-gray-600 leading-relaxed">
+                  <p className="text-base text-gray-600 leading-relaxed font-medium">
                     {feature.description}
                   </p>
                 </div>
@@ -449,34 +455,38 @@ const LandingPage = () => {
             })}
           </div>
           
-          {/* Trust Badges - Mobile Grid */}
-          <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
-            <div className="flex flex-col items-center p-4 bg-white rounded-2xl shadow-sm">
-              <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mb-2">
-                <CheckCircle className="w-6 h-6 text-green-600" />
+          {/* Trust Badges - Enhanced Desktop Grid */}
+          <div className="mt-16 md:mt-20 grid grid-cols-2 sm:grid-cols-4 gap-6 md:gap-8">
+            <div className="flex flex-col items-center p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-3xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 border-2 border-green-100">
+              <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center mb-4 shadow-lg">
+                <CheckCircle className="w-8 h-8 text-white" />
               </div>
-              <span className="text-sm font-semibold text-gray-700 text-center">Verified</span>
+              <span className="text-base md:text-lg font-black text-gray-800 text-center">100% Verified</span>
+              <span className="text-sm text-gray-600 mt-1">Properties Checked</span>
             </div>
             
-            <div className="flex flex-col items-center p-4 bg-white rounded-2xl shadow-sm">
-              <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-2">
-                <Shield className="w-6 h-6 text-blue-600" />
+            <div className="flex flex-col items-center p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-3xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 border-2 border-blue-100">
+              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-2xl flex items-center justify-center mb-4 shadow-lg">
+                <Shield className="w-8 h-8 text-white" />
               </div>
-              <span className="text-sm font-semibold text-gray-700 text-center">Secure</span>
+              <span className="text-base md:text-lg font-black text-gray-800 text-center">Secure Payments</span>
+              <span className="text-sm text-gray-600 mt-1">Protected Transactions</span>
             </div>
             
-            <div className="flex flex-col items-center p-4 bg-white rounded-2xl shadow-sm">
-              <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-2">
-                <Users className="w-6 h-6 text-purple-600" />
+            <div className="flex flex-col items-center p-6 bg-gradient-to-br from-purple-50 to-pink-50 rounded-3xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 border-2 border-purple-100">
+              <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mb-4 shadow-lg">
+                <Users className="w-8 h-8 text-white" />
               </div>
-              <span className="text-sm font-semibold text-gray-700 text-center">Trusted</span>
+              <span className="text-base md:text-lg font-black text-gray-800 text-center">Trusted by 10K+</span>
+              <span className="text-sm text-gray-600 mt-1">Happy Customers</span>
             </div>
             
-            <div className="flex flex-col items-center p-4 bg-white rounded-2xl shadow-sm">
-              <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mb-2">
-                <Clock className="w-6 h-6 text-orange-600" />
+            <div className="flex flex-col items-center p-6 bg-gradient-to-br from-orange-50 to-red-50 rounded-3xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 border-2 border-orange-100">
+              <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl flex items-center justify-center mb-4 shadow-lg">
+                <Clock className="w-8 h-8 text-white" />
               </div>
-              <span className="text-sm font-semibold text-gray-700 text-center">24/7</span>
+              <span className="text-base md:text-lg font-black text-gray-800 text-center">24/7 Support</span>
+              <span className="text-sm text-gray-600 mt-1">Always Available</span>
             </div>
           </div>
         </div>
