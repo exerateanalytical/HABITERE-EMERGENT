@@ -329,7 +329,7 @@ class ValidationTester:
                 "listing_type": "sale",
                 "area_sqm": 120  # Valid positive area
             },
-            201
+            200
         ))
         
         # Test 6A: Location too short (< 3 chars)
