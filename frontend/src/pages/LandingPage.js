@@ -205,60 +205,60 @@ const LandingPage = () => {
               </p>
             </div>
             
-            {/* CTA Buttons - Native mobile feel with ripple effects */}
-            <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto px-4">
+            {/* CTA Buttons - Enhanced desktop design */}
+            <div className="flex flex-col sm:flex-row gap-5 max-w-2xl mx-auto px-4">
               <RippleButton
                 onClick={handleGetStarted}
                 variant="primary"
-                className="w-full sm:flex-1"
+                className="w-full sm:flex-1 bg-white text-blue-600 hover:bg-blue-50 shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-300 py-5 px-8 text-lg font-bold rounded-2xl"
                 ariaLabel="Get started for free"
                 data-testid="get-started-btn"
               >
                 Get Started Free
-                <ArrowRight className="w-5 h-5" />
+                <ArrowRight className="w-6 h-6 ml-2" />
               </RippleButton>
               
               <RippleButton
                 onClick={handleBrowseProperties}
                 variant="secondary"
-                className="w-full sm:flex-1"
+                className="w-full sm:flex-1 bg-transparent text-white border-3 border-white/30 hover:bg-white/10 backdrop-blur-sm shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 py-5 px-8 text-lg font-bold rounded-2xl"
                 ariaLabel="Browse available properties"
                 data-testid="browse-properties-btn"
               >
                 Browse Properties
-                <Home className="w-5 h-5" />
+                <Home className="w-6 h-6 ml-2" />
               </RippleButton>
             </div>
 
-            {/* Stats - Optimized for mobile screens */}
-            <div className="grid grid-cols-3 gap-3 sm:gap-4 max-w-xl mx-auto pt-8 px-4">
-              <div className="bg-white rounded-2xl p-4 sm:p-5 text-center shadow-md border border-gray-100">
-                <div className="text-2xl sm:text-3xl font-extrabold text-blue-600">1000+</div>
-                <div className="text-xs sm:text-sm text-gray-600 font-medium mt-1">Properties</div>
+            {/* Stats - Enhanced desktop design */}
+            <div className="grid grid-cols-3 gap-4 md:gap-8 max-w-4xl mx-auto pt-12 px-4">
+              <div className="bg-white/10 backdrop-blur-md rounded-3xl p-6 md:p-8 text-center shadow-2xl border border-white/20 hover:bg-white/20 transform hover:scale-105 transition-all duration-300">
+                <div className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white mb-2">1000+</div>
+                <div className="text-sm sm:text-base md:text-lg text-blue-100 font-semibold">Properties Listed</div>
               </div>
-              <div className="bg-white rounded-2xl p-4 sm:p-5 text-center shadow-md border border-gray-100">
-                <div className="text-2xl sm:text-3xl font-extrabold text-purple-600">500+</div>
-                <div className="text-xs sm:text-sm text-gray-600 font-medium mt-1">Professionals</div>
+              <div className="bg-white/10 backdrop-blur-md rounded-3xl p-6 md:p-8 text-center shadow-2xl border border-white/20 hover:bg-white/20 transform hover:scale-105 transition-all duration-300">
+                <div className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white mb-2">500+</div>
+                <div className="text-sm sm:text-base md:text-lg text-purple-100 font-semibold">Verified Professionals</div>
               </div>
-              <div className="bg-white rounded-2xl p-4 sm:p-5 text-center shadow-md border border-gray-100">
-                <div className="text-2xl sm:text-3xl font-extrabold text-green-600">10K+</div>
-                <div className="text-xs sm:text-sm text-gray-600 font-medium mt-1">Users</div>
+              <div className="bg-white/10 backdrop-blur-md rounded-3xl p-6 md:p-8 text-center shadow-2xl border border-white/20 hover:bg-white/20 transform hover:scale-105 transition-all duration-300">
+                <div className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white mb-2">10K+</div>
+                <div className="text-sm sm:text-base md:text-lg text-green-100 font-semibold">Happy Users</div>
               </div>
             </div>
             
-            {/* Trust indicators - Mobile optimized */}
-            <div className="flex flex-wrap items-center justify-center gap-4 pt-4 px-4">
-              <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow-sm">
-                <Shield className="w-4 h-4 text-green-600" />
-                <span className="text-sm font-medium text-gray-700">Verified</span>
+            {/* Trust indicators - Enhanced desktop design */}
+            <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6 pt-8 px-4">
+              <div className="flex items-center gap-3 px-6 py-3 bg-white/10 backdrop-blur-md rounded-full shadow-xl border border-white/20 hover:bg-white/20 transition-all duration-300">
+                <Shield className="w-5 h-5 text-green-300" />
+                <span className="text-sm md:text-base font-bold text-white">100% Verified</span>
               </div>
-              <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow-sm">
-                <Star className="w-4 h-4 text-yellow-500 fill-current" />
-                <span className="text-sm font-medium text-gray-700">4.9 Rating</span>
+              <div className="flex items-center gap-3 px-6 py-3 bg-white/10 backdrop-blur-md rounded-full shadow-xl border border-white/20 hover:bg-white/20 transition-all duration-300">
+                <Star className="w-5 h-5 text-yellow-300 fill-current" />
+                <span className="text-sm md:text-base font-bold text-white">4.9★ Rating</span>
               </div>
-              <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow-sm">
-                <Users className="w-4 h-4 text-blue-600" />
-                <span className="text-sm font-medium text-gray-700">10K+ Users</span>
+              <div className="flex items-center gap-3 px-6 py-3 bg-white/10 backdrop-blur-md rounded-full shadow-xl border border-white/20 hover:bg-white/20 transition-all duration-300">
+                <Users className="w-5 h-5 text-blue-300" />
+                <span className="text-sm md:text-base font-bold text-white">10K+ Active Users</span>
               </div>
             </div>
           </div>
