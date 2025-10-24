@@ -379,7 +379,7 @@ const LandingPage = () => {
                 <RippleButton
                   type="submit"
                   variant="primary"
-                  className="w-full md:w-auto md:px-16 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 py-5 text-lg font-bold rounded-xl"
+                  className="w-full md:w-auto md:px-16 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 py-5 text-lg font-bold rounded-xl"
                   ariaLabel="Search properties"
                   data-testid="search-btn"
                 >
