@@ -412,12 +412,12 @@ const LandingPage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="text-center mb-12 md:mb-16">
-            <div className="inline-block px-6 py-3 bg-gradient-to-r from-blue-50 to-purple-50 rounded-full mb-6 shadow-lg">
-              <span className="text-sm md:text-base font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">Why Choose Habitere?</span>
+            <div className="inline-block px-6 py-3 bg-blue-50 rounded-full mb-6 shadow-lg">
+              <span className="text-sm md:text-base font-black text-blue-600">Why Choose Habitere?</span>
             </div>
             <h2 className="text-4xl sm:text-5xl md:text-6xl font-black text-gray-900 mb-6 tracking-tight">
               The Most Trusted Platform
-              <span className="block mt-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">in Cameroon</span>
+              <span className="block mt-2 text-blue-600">in Cameroon</span>
             </h2>
             <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
               Making real estate <span className="font-bold text-gray-900">accessible, secure</span> and <span className="font-bold text-gray-900">transparent</span> for everyone
