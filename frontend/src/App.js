@@ -209,7 +209,7 @@ function AppContent() {
         />
         
         {/* Property browsing - available to all */}
-        <Route path="/properties" element={<Properties />} />
+        {/* Most specific routes first to prevent wildcard matching */}
         <Route 
           path="/properties/new" 
           element={
@@ -227,6 +227,7 @@ function AppContent() {
           } 
         />
         <Route path="/properties/:id" element={<PropertyDetails />} />
+        <Route path="/properties" element={<Properties />} />
         <Route path="/services" element={<Services />} />
         <Route path="/services/:id" element={<ServiceDetails />} />
         <Route 
