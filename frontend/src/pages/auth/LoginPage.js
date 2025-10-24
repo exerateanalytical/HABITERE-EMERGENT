@@ -5,7 +5,7 @@ import { Mail, Lock, AlertCircle } from 'lucide-react';
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const { login, loginWithGoogle } = useAuth();
+  const { login } = useAuth();
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -38,10 +38,6 @@ const LoginPage = () => {
       setError(result.error);
     }
     setLoading(false);
-  };
-
-  const handleGoogleLogin = () => {
-    loginWithGoogle();
   };
 
   return (
