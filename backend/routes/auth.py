@@ -328,8 +328,8 @@ async def register(request: RegisterRequest, response: Response):
         "session_token": session_token,
         "user_id": user_data["id"],
         "email": user_data["email"],
-        "created_at": datetime.now(timezone.utc),
-        "expires_at": expires_at
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "expires_at": expires_at.isoformat()
     }
     
     await db.user_sessions.insert_one(session_data)
