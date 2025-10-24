@@ -147,6 +147,21 @@ const PropertyForm = () => {
         setTimeout(() => navigate('/login'), 2000);
       } else if (err.response?.status === 403) {
         setError('You are not authorized to list properties. Please upgrade your account.');
+      } else if (err.response?.status === 422) {
+        // Handle Pydantic validation errors
+        const validationErrors = err.response?.data?.detail;
+        if (Array.isArray(validationErrors)) {
+          const errorMessages = validationErrors.map(error => {
+            const field = error.loc?.[error.loc.length - 1] || 'field';
+            const message = error.msg || 'Invalid value';
+            return `${field}: ${message}`;
+          }).join('\n');
+          setError(`Validation errors:\n${errorMessages}`);
+        } else if (typeof validationErrors === 'string') {
+          setError(validationErrors);
+        } else {
+          setError('Please check your input and try again. Some fields have invalid values.');
+        }
       } else {
         const errorMessage = err.response?.data?.detail || err.message || 'Failed to create property. Please try again.';
         setError(errorMessage);
