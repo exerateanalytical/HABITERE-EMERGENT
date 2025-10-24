@@ -332,7 +332,7 @@ async def register(request: RegisterRequest, response: Response):
         "expires_at": expires_at
     }
     
-    await db.sessions.insert_one(session_data)
+    await db.user_sessions.insert_one(session_data)
     
     # Set session cookie
     response.set_cookie(
