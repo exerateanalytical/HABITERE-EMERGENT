@@ -497,24 +497,32 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Services Section */}
-      <section className="py-20 bg-white">
+      {/* Services Section - Enhanced Desktop Styling */}
+      <section className="py-20 md:py-28 bg-gradient-to-br from-white via-blue-50/30 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-                Professional Home Services at Your Fingertips
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            <div className="order-2 lg:order-1">
+              <div className="inline-block px-4 py-2 bg-blue-100 rounded-full mb-6">
+                <span className="text-sm font-bold text-blue-600">Professional Services</span>
+              </div>
+              
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 mb-6 leading-tight">
+                Professional Home Services 
+                <span className="block text-blue-600">at Your Fingertips</span>
               </h2>
-              <p className="text-lg text-gray-600 mb-8">
-                Connect with verified professionals for all your home improvement and maintenance needs. 
+              
+              <p className="text-lg md:text-xl text-gray-600 mb-8 leading-relaxed">
+                Connect with <span className="font-bold text-gray-900">verified professionals</span> for all your home improvement and maintenance needs. 
                 From construction to interior design, find trusted experts in your area.
               </p>
               
-              <div className="grid grid-cols-2 gap-3 mb-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
                 {services.map((service, index) => (
-                  <div key={index} className="flex items-center space-x-2">
-                    <CheckCircle className="w-5 h-5 text-green-500" />
-                    <span className="text-gray-700">{service}</span>
+                  <div key={index} className="flex items-center space-x-3 bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow border border-gray-100">
+                    <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                      <CheckCircle className="w-5 h-5 text-green-600" />
+                    </div>
+                    <span className="text-gray-800 font-semibold">{service}</span>
                   </div>
                 ))}
               </div>
@@ -522,31 +530,40 @@ const LandingPage = () => {
               <RippleButton
                 variant="primary"
                 onClick={handleExploreServices}
-                className="mt-4"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-bold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all"
                 ariaLabel="Explore services"
               >
                 Explore Services
-                <ArrowRight className="w-5 h-5" />
+                <ArrowRight className="w-5 h-5 ml-2" />
               </RippleButton>
             </div>
 
-            <div className="relative">
-              <LazyImage
-                src="https://images.unsplash.com/photo-1505798577917-a65157d3320a"
-                alt="Professional contractor"
-                width={600}
-                height={384}
-                className="rounded-2xl shadow-lg"
-              />
-              <div className="absolute top-4 right-4 bg-white rounded-lg shadow-lg p-3">
-                <div className="flex items-center space-x-2">
-                  <Users className="w-5 h-5 text-blue-600" />
-                  <div>
-                    <div className="text-sm font-semibold text-gray-900">500+ Professionals</div>
-                    <div className="text-xs text-gray-600">Verified & Trusted</div>
+            <div className="relative order-1 lg:order-2">
+              <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-blue-100">
+                <LazyImage
+                  src="https://images.unsplash.com/photo-1505798577917-a65157d3320a?w=800&q=90"
+                  alt="Professional contractor"
+                  width={600}
+                  height={384}
+                  className="w-full h-auto"
+                />
+                {/* Floating Badge */}
+                <div className="absolute top-6 right-6 bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-5 border border-blue-100">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center">
+                      <Users className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <div className="text-lg font-black text-gray-900">500+</div>
+                      <div className="text-sm text-gray-600 font-medium">Professionals</div>
+                    </div>
                   </div>
                 </div>
               </div>
+              
+              {/* Decorative Elements */}
+              <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-blue-200 rounded-full blur-3xl opacity-50 -z-10"></div>
+              <div className="absolute -top-6 -right-6 w-40 h-40 bg-purple-200 rounded-full blur-3xl opacity-50 -z-10"></div>
             </div>
           </div>
         </div>
