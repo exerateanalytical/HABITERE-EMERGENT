@@ -70,10 +70,16 @@ export const AuthProvider = ({ children }) => {
         phone
       }, { withCredentials: true });
       
+      // Registration now returns user data and session - auto-login
+      if (response.data.user) {
+        setUser(response.data.user);
+        console.log('[AuthContext] User registered and auto-logged in:', response.data.user.email);
+      }
+      
       return { 
         success: true, 
         message: response.data.message,
-        email: response.data.email
+        user: response.data.user
       };
     } catch (error) {
       console.error('Registration error:', error);
