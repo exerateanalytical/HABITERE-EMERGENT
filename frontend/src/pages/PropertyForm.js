@@ -182,7 +182,7 @@ const PropertyForm = () => {
 
           {error && (
             <div className="mb-6 bg-red-50 border border-red-200 rounded-xl p-4">
-              <p className="text-red-700">{error}</p>
+              <p className="text-red-700 whitespace-pre-line">{error}</p>
             </div>
           )}
 
