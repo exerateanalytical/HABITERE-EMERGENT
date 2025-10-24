@@ -171,36 +171,41 @@ const LandingPage = () => {
       {/* Sticky Search Bar */}
       <StickySearchBar />
       
-      {/* Hero Section - Enhanced Desktop Design */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 pt-20 pb-16 sm:pt-24 sm:pb-20 md:pt-32 md:pb-28 lg:pt-40 lg:pb-32 safe-area-top">
-        {/* Enhanced background with animated gradient */}
+      {/* Hero Section - Blue Theme with Property Image */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-blue-600 to-blue-800 pt-16 pb-12 sm:pt-20 sm:pb-16 md:pt-16 md:pb-12 lg:pt-20 lg:pb-16 safe-area-top">
+        {/* Property Image Background */}
         <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-600/90 via-purple-600/90 to-indigo-700/90"></div>
-          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDE0YzMuMzE0IDAgNiAyLjY4NiA2IDZzLTIuNjg2IDYtNiA2LTYtMi42ODYtNi02IDIuNjg2LTYgNi02em0wIDRjLTEuMTA1IDAtMiAuODk1LTIgMnMuODk1IDIgMiAyIDItLjg5NSAyLTItLjg5NS0yLTItMnoiLz48L2c+PC9nPjwvc3ZnPg==')] opacity-30"></div>
+          <img 
+            src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1920&q=80" 
+            alt="Modern property in Cameroon"
+            className="w-full h-full object-cover opacity-20"
+          />
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-600/95 to-blue-800/95"></div>
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDE0YzMuMzE0IDAgNiAyLjY4NiA2IDZzLTIuNjg2IDYtNiA2LTYtMi42ODYtNi02IDIuNjg2LTYgNi02em0wIDRjLTEuMTA1IDAtMiAuODk1LTIgMnMuODk1IDIgMiAyIDItLjg5NSAyLTItLjg5NS0yLTItMnoiLz48L2c+PC9nPjwvc3ZnPg==')] opacity-20"></div>
         </div>
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-5xl mx-auto text-center space-y-8 md:space-y-10">
-            {/* Trust badge - Enhanced styling */}
+          <div className="max-w-5xl mx-auto text-center space-y-6 md:space-y-8">
+            {/* Trust badge - Blue theme */}
             <div className="inline-flex items-center px-5 py-3 bg-white/95 backdrop-blur-sm rounded-full shadow-2xl border-2 border-white/20 hover:scale-105 transition-transform duration-300">
               <div className="w-2.5 h-2.5 bg-green-500 rounded-full mr-3 animate-pulse shadow-lg shadow-green-500/50"></div>
               <span className="text-sm font-bold text-gray-800 tracking-wide">#1 Platform in Cameroon</span>
               <Star className="w-4 h-4 text-yellow-500 fill-current ml-2" />
             </div>
             
-            {/* Heading - Enhanced desktop typography */}
-            <div className="space-y-6">
-              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black text-white leading-tight tracking-tight">
+            {/* Heading - Reduced size for desktop */}
+            <div className="space-y-4">
+              <h1 className="text-4xl sm:text-5xl md:text-5xl lg:text-6xl font-black text-white leading-tight tracking-tight">
                 Find Your Perfect
-                <span className="block mt-3 text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-pink-300 to-purple-300 animate-text-shimmer">
+                <span className="block mt-2 text-yellow-300">
                   Home & Services
                 </span>
-                <span className="block mt-3 text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-blue-100">
+                <span className="block mt-2 text-2xl sm:text-3xl md:text-3xl lg:text-4xl font-bold text-blue-100">
                   in Cameroon
                 </span>
               </h1>
               
-              <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-blue-50 leading-relaxed max-w-4xl mx-auto px-4 font-light">
+              <p className="text-base sm:text-lg md:text-xl text-blue-50 leading-relaxed max-w-3xl mx-auto px-4">
                 Cameroon's most trusted real estate platform. Browse <span className="font-semibold text-white">verified properties</span> and connect with <span className="font-semibold text-white">top professionals</span>.
               </p>
             </div>
