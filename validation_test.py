@@ -78,7 +78,7 @@ class ValidationTester:
                             print(f"   - {field}: {message}")
                     else:
                         print("✅ Validation failed (as expected)")
-                elif expected_status == 201:
+                elif expected_status in [200, 201]:
                     result = response.json()
                     print(f"✅ Property created successfully: {result.get('id', 'Unknown ID')}")
                 return True
