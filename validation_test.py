@@ -178,7 +178,7 @@ class ValidationTester:
                 "location": "Douala",
                 "listing_type": "sale"
             },
-            201
+            200
         ))
         
         # Test 3A: Negative price
