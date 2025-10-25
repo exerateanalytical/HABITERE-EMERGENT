@@ -212,7 +212,7 @@ const SecurityServiceDetail = () => {
               </button>
 
               <button
-                onClick={() => navigate(`/messages?provider=${service.provider_id}`)}
+                onClick={() => navigate(`/messages?userId=${service.provider_id}`)}
                 className="w-full bg-white border-2 border-green-600 text-green-600 py-3 rounded-lg font-semibold hover:bg-green-50"
               >
                 Contact Provider
