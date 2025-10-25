@@ -667,7 +667,7 @@ const LandingPage = () => {
             {testimonials.map((testimonial, index) => (
               <div 
                 key={index} 
-                className="group bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 border-2 border-blue-100 hover:border-blue-300 transform hover:-translate-y-2"
+                className="group bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 border-2 border-green-100 hover:border-green-300 transform hover:-translate-y-2"
                 data-testid={`testimonial-${index}`}
               >
                 <div className="flex items-center mb-6">
