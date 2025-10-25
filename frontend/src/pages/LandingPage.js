@@ -185,85 +185,108 @@ const LandingPage = () => {
         </div>
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-5xl mx-auto text-center space-y-6 md:space-y-8">
-            {/* Trust badge - Blue theme */}
-            <div className="inline-flex items-center px-5 py-3 bg-white/95 backdrop-blur-sm rounded-full shadow-2xl border-2 border-white/20 hover:scale-105 transition-transform duration-300">
-              <div className="w-2.5 h-2.5 bg-green-500 rounded-full mr-3 animate-pulse shadow-lg shadow-green-500/50"></div>
-              <span className="text-sm font-bold text-gray-800 tracking-wide">#1 Platform in Cameroon</span>
-              <Star className="w-4 h-4 text-yellow-500 fill-current ml-2" />
-            </div>
-            
-            {/* Heading - Reduced size for desktop */}
-            <div className="space-y-4">
-              <h1 className="text-4xl sm:text-5xl md:text-5xl lg:text-6xl font-black text-white leading-tight tracking-tight">
-                Find Your Perfect
-                <span className="block mt-2 text-yellow-300">
-                  Home & Services
-                </span>
-                <span className="block mt-2 text-2xl sm:text-3xl md:text-3xl lg:text-4xl font-bold text-blue-100">
-                  in Cameroon
-                </span>
-              </h1>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+            {/* Left Content */}
+            <div className="max-w-2xl">
+              {/* Trust badge - Blue theme */}
+              <div className="inline-flex items-center px-5 py-3 bg-white/95 backdrop-blur-sm rounded-full shadow-2xl border-2 border-white/20 hover:scale-105 transition-transform duration-300 mb-6">
+                <div className="w-2.5 h-2.5 bg-green-500 rounded-full mr-3 animate-pulse shadow-lg shadow-green-500/50"></div>
+                <span className="text-sm font-bold text-gray-800 tracking-wide">#1 Platform in Cameroon</span>
+                <Star className="w-4 h-4 text-yellow-500 fill-current ml-2" />
+              </div>
               
-              <p className="text-base sm:text-lg md:text-xl text-blue-50 leading-relaxed max-w-3xl mx-auto px-4">
-                Cameroon's most trusted real estate platform. Browse <span className="font-semibold text-white">verified properties</span> and connect with <span className="font-semibold text-white">top professionals</span>.
-              </p>
-            </div>
-            
-            {/* CTA Buttons - Blue theme */}
-            <div className="flex flex-col sm:flex-row gap-4 max-w-2xl mx-auto px-4">
-              <RippleButton
-                onClick={handleGetStarted}
-                variant="primary"
-                className="w-full sm:flex-1 bg-white text-blue-600 hover:bg-blue-50 shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-300 py-4 px-6 text-base font-bold rounded-xl"
-                ariaLabel="Get started for free"
-                data-testid="get-started-btn"
-              >
-                Get Started Free
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </RippleButton>
+              {/* Heading - Reduced size for desktop */}
+              <div className="space-y-4 mb-8">
+                <h1 className="text-4xl sm:text-5xl md:text-5xl lg:text-6xl font-black text-white leading-tight tracking-tight">
+                  Find Your Perfect
+                  <span className="block mt-2 text-yellow-300">
+                    Home & Services
+                  </span>
+                  <span className="block mt-2 text-2xl sm:text-3xl md:text-3xl lg:text-4xl font-bold text-blue-100">
+                    in Cameroon
+                  </span>
+                </h1>
+                
+                <p className="text-base sm:text-lg md:text-xl text-blue-50 leading-relaxed">
+                  Cameroon's most trusted real estate platform. Browse <span className="font-semibold text-white">verified properties</span> and connect with <span className="font-semibold text-white">top professionals</span>.
+                </p>
+              </div>
               
-              <RippleButton
-                onClick={handleBrowseProperties}
-                variant="secondary"
-                className="w-full sm:flex-1 bg-transparent text-white border-2 border-white/30 hover:bg-white/10 backdrop-blur-sm shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 py-4 px-6 text-base font-bold rounded-xl"
-                ariaLabel="Browse available properties"
-                data-testid="browse-properties-btn"
-              >
-                Browse Properties
-                <Home className="w-5 h-5 ml-2" />
-              </RippleButton>
+              {/* CTA Buttons - Blue theme */}
+              <div className="flex flex-col sm:flex-row gap-4 mb-8">
+                <RippleButton
+                  onClick={handleGetStarted}
+                  variant="primary"
+                  className="w-full sm:flex-1 bg-white text-blue-600 hover:bg-blue-50 shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-300 py-4 px-6 text-base font-bold rounded-xl"
+                  ariaLabel="Get started for free"
+                  data-testid="get-started-btn"
+                >
+                  Get Started Free
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </RippleButton>
+                
+                <RippleButton
+                  onClick={handleBrowseProperties}
+                  variant="secondary"
+                  className="w-full sm:flex-1 bg-transparent text-white border-2 border-white/30 hover:bg-white/10 backdrop-blur-sm shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 py-4 px-6 text-base font-bold rounded-xl"
+                  ariaLabel="Browse available properties"
+                  data-testid="browse-properties-btn"
+                >
+                  Browse Properties
+                  <Home className="w-5 h-5 ml-2" />
+                </RippleButton>
+              </div>
+
+              {/* Stats - Blue theme, reduced size */}
+              <div className="grid grid-cols-3 gap-3 md:gap-6">
+                <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 md:p-6 text-center shadow-2xl border border-white/20 hover:bg-white/20 transform hover:scale-105 transition-all duration-300">
+                  <div className="text-2xl sm:text-3xl md:text-4xl font-black text-white mb-1">1000+</div>
+                  <div className="text-xs sm:text-sm md:text-base text-blue-100 font-semibold">Properties</div>
+                </div>
+                <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 md:p-6 text-center shadow-2xl border border-white/20 hover:bg-white/20 transform hover:scale-105 transition-all duration-300">
+                  <div className="text-2xl sm:text-3xl md:text-4xl font-black text-white mb-1">500+</div>
+                  <div className="text-xs sm:text-sm md:text-base text-blue-100 font-semibold">Professionals</div>
+                </div>
+                <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 md:p-6 text-center shadow-2xl border border-white/20 hover:bg-white/20 transform hover:scale-105 transition-all duration-300">
+                  <div className="text-2xl sm:text-3xl md:text-4xl font-black text-white mb-1">10K+</div>
+                  <div className="text-xs sm:text-sm md:text-base text-blue-100 font-semibold">Users</div>
+                </div>
+              </div>
             </div>
 
-            {/* Stats - Blue theme, reduced size */}
-            <div className="grid grid-cols-3 gap-3 md:gap-6 max-w-3xl mx-auto pt-8 px-4">
-              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 md:p-6 text-center shadow-2xl border border-white/20 hover:bg-white/20 transform hover:scale-105 transition-all duration-300">
-                <div className="text-2xl sm:text-3xl md:text-4xl font-black text-white mb-1">1000+</div>
-                <div className="text-xs sm:text-sm md:text-base text-blue-100 font-semibold">Properties</div>
-              </div>
-              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 md:p-6 text-center shadow-2xl border border-white/20 hover:bg-white/20 transform hover:scale-105 transition-all duration-300">
-                <div className="text-2xl sm:text-3xl md:text-4xl font-black text-white mb-1">500+</div>
-                <div className="text-xs sm:text-sm md:text-base text-blue-100 font-semibold">Professionals</div>
-              </div>
-              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 md:p-6 text-center shadow-2xl border border-white/20 hover:bg-white/20 transform hover:scale-105 transition-all duration-300">
-                <div className="text-2xl sm:text-3xl md:text-4xl font-black text-white mb-1">10K+</div>
-                <div className="text-xs sm:text-sm md:text-base text-blue-100 font-semibold">Users</div>
-              </div>
-            </div>
-            
-            {/* Trust indicators - Blue theme */}
-            <div className="flex flex-wrap items-center justify-center gap-3 md:gap-4 pt-6 px-4">
-              <div className="flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full shadow-xl border border-white/20 hover:bg-white/20 transition-all duration-300">
-                <Shield className="w-4 h-4 text-green-300" />
-                <span className="text-xs md:text-sm font-bold text-white">100% Verified</span>
-              </div>
-              <div className="flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full shadow-xl border border-white/20 hover:bg-white/20 transition-all duration-300">
-                <Star className="w-4 h-4 text-yellow-300 fill-current" />
-                <span className="text-xs md:text-sm font-bold text-white">4.9★ Rating</span>
-              </div>
-              <div className="flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full shadow-xl border border-white/20 hover:bg-white/20 transition-all duration-300">
-                <Users className="w-4 h-4 text-blue-300" />
-                <span className="text-xs md:text-sm font-bold text-white">10K+ Users</span>
+            {/* Right - Featured Property Image with Overlay */}
+            <div className="relative hidden lg:block">
+              <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white/20">
+                <img 
+                  src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=90"
+                  alt="Featured luxury property"
+                  className="w-full h-[500px] object-cover"
+                />
+                {/* Property Info Overlay */}
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/70 to-transparent p-8">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="px-3 py-1 bg-green-500 text-white text-xs font-bold rounded-full">FOR SALE</span>
+                    <span className="px-3 py-1 bg-blue-500 text-white text-xs font-bold rounded-full">VERIFIED</span>
+                  </div>
+                  <h3 className="text-2xl font-black text-white mb-2">Modern Villa in Douala</h3>
+                  <div className="flex items-center gap-4 text-white/90 text-sm mb-3">
+                    <div className="flex items-center gap-1">
+                      <Home className="w-4 h-4" />
+                      <span>4 Beds</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Building className="w-4 h-4" />
+                      <span>3 Baths</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <MapPin className="w-4 h-4" />
+                      <span>Bonanjo</span>
+                    </div>
+                  </div>
+                  <div className="text-3xl font-black text-yellow-400">
+                    ₣150M XAF
+                  </div>
+                </div>
               </div>
             </div>
           </div>
