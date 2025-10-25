@@ -268,6 +268,10 @@ async def subscribe_to_plan(
             detail="Subscription plan not found"
         )
     
+    # Remove MongoDB ObjectId for JSON serialization
+    if '_id' in plan:
+        plan.pop('_id')
+    
     # Check if user already has active subscription
     existing_sub = await db.user_subscriptions.find_one({
         "user_id": current_user["id"],
