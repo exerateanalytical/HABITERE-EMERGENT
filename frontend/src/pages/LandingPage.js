@@ -639,7 +639,7 @@ const LandingPage = () => {
               {testimonials.map((testimonial, index) => (
                 <div 
                   key={index} 
-                  className="flex-none w-[85%] sm:w-80 bg-white rounded-3xl p-8 shadow-xl snap-center touch-manipulation transform hover:scale-105 transition-transform duration-200 border-2 border-blue-100"
+                  className="flex-none w-[85%] sm:w-80 bg-white rounded-3xl p-8 shadow-xl snap-center touch-manipulation transform hover:scale-105 transition-transform duration-200 border-2 border-green-100"
                   data-testid={`testimonial-${index}`}
                 >
                   <div className="flex items-center mb-6">
