@@ -336,6 +336,9 @@ app.include_router(images.router, prefix="/api", tags=["Images"])
 # Payment processing
 app.include_router(payments.router, prefix="/api", tags=["Payments"])
 
+# Subscriptions
+app.include_router(subscriptions.router, prefix="/api", tags=["Subscriptions"])
+
 # Admin dashboard and moderation
 app.include_router(admin.router, prefix="/api", tags=["Admin"])
 
