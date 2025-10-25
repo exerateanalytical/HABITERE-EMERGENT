@@ -14,11 +14,18 @@ const Footer = () => {
     resources: [
       { name: 'Properties', path: '/properties' },
       { name: 'Services', path: '/services' },
-      { name: 'FAQ', path: '/faq' }
+      { name: 'FAQ', path: '/faq' },
+      { name: 'Asset Management', path: '/asset-management' },
+      { name: 'Homeland Security', path: '/security' }
     ],
     legal: [
       { name: 'Privacy Policy', path: '/privacy' },
       { name: 'Terms & Conditions', path: '/terms' }
+    ],
+    support: [
+      { name: 'Help & Support', path: '/help-center' },
+      { name: 'Contact Us', path: '/contact' },
+      { name: 'Report Issue', path: '/contact' }
     ]
   };
 
