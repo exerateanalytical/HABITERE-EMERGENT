@@ -72,6 +72,18 @@ const Properties = () => {
         }
       });
 
+      // Add location-based parameters if no manual location filter
+      if (!filters.location) {
+        if (locationViewMode === 'my-location' && userLocation) {
+          // Show only properties in user's location
+          params.append('location', userLocation);
+        } else if (locationViewMode === 'nearby' && userLocation) {
+          // Show properties sorted by location (user's city first)
+          params.append('user_location', userLocation);
+          params.append('sort_by_location', 'true');
+        }
+      }
+
       const queryString = params.toString();
       const url = queryString ? `${API}/properties?${queryString}` : `${API}/properties`;
       
