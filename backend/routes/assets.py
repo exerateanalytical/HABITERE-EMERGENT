@@ -1004,6 +1004,148 @@ async def approve_expense(
 
 
 
+@router.get("/expenses/{expense_id}", response_model=Dict[str, Any])
+async def get_expense(
+    expense_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Get single expense by ID.
+    
+    Args:
+        expense_id: Expense ID
+        current_user: Authenticated user
+        
+    Returns:
+        Expense details
+        
+    Raises:
+        HTTPException: 404 if expense not found
+    """
+    db = get_database()
+    
+    expense = await db.expenses.find_one({"id": expense_id})
+    
+    if not expense:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Expense not found"
+        )
+    
+    return serialize_doc(expense)
+
+
+@router.put("/expenses/{expense_id}", response_model=Dict[str, Any])
+async def update_expense(
+    expense_id: str,
+    expense_update: ExpenseCreate,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Update expense.
+    
+    Only creator, estate managers, and admins can update expenses.
+    
+    Args:
+        expense_id: Expense ID
+        expense_update: Updated expense data
+        current_user: Authenticated user
+        
+    Returns:
+        Updated expense
+        
+    Raises:
+        HTTPException: 404 if expense not found or 403 if unauthorized
+    """
+    db = get_database()
+    
+    expense = await db.expenses.find_one({"id": expense_id})
+    
+    if not expense:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Expense not found"
+        )
+    
+    # Check authorization
+    if current_user.get("role") not in ["estate_manager", "admin"]:
+        if expense.get("created_by") != current_user["id"]:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Not authorized to update this expense"
+            )
+    
+    # Update expense
+    update_data = expense_update.dict()
+    update_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+    
+    await db.expenses.update_one(
+        {"id": expense_id},
+        {"$set": update_data}
+    )
+    
+    logger.info(f"Expense updated: {expense_id} by user {current_user['id']}")
+    
+    # Get updated expense
+    updated_expense = await db.expenses.find_one({"id": expense_id})
+    
+    return serialize_doc(updated_expense)
+
+
+@router.delete("/expenses/{expense_id}")
+async def delete_expense(
+    expense_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Delete expense.
+    
+    Only creator, estate managers, and admins can delete expenses.
+    
+    Args:
+        expense_id: Expense ID
+        current_user: Authenticated user
+        
+    Returns:
+        Success message
+        
+    Raises:
+        HTTPException: 404 if expense not found or 403 if unauthorized
+    """
+    db = get_database()
+    
+    expense = await db.expenses.find_one({"id": expense_id})
+    
+    if not expense:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Expense not found"
+        )
+    
+    # Check authorization
+    if current_user.get("role") not in ["estate_manager", "admin"]:
+        if expense.get("created_by") != current_user["id"]:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Not authorized to delete this expense"
+            )
+    
+    # Delete expense
+    result = await db.expenses.delete_one({"id": expense_id})
+    
+    if result.deleted_count == 0:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to delete expense"
+        )
+    
+    logger.info(f"Expense deleted: {expense_id} by user {current_user['id']}")
+    
+    return {"message": "Expense deleted successfully"}
+
+
+
+
 # ==================== INVENTORY MANAGEMENT ====================
 
 @router.post("/inventory", response_model=Dict[str, Any])
