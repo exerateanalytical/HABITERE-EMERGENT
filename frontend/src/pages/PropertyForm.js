@@ -126,68 +126,53 @@ const PropertyForm = () => {
     }
     
     try {
-      setError('Processing images...');
+      setError('Processing images... (Auto-cropping to 16:9)');
       
-      // Simple version - just create previews without compression
-      const newFiles = files.map((file) => {
-        console.log('Creating preview for:', file.name);
-        try {
-          const preview = URL.createObjectURL(file);
-          console.log('Preview created:', preview);
-          return {
-            file: file,
-            preview: preview,
-            originalSize: file.size,
-            compressedSize: file.size,
-            name: file.name
-          };
-        } catch (err) {
-          console.error('Error creating preview:', err);
-          throw err;
-        }
+      // Create previews immediately (original files)
+      const tempPreviews = files.map((file) => {
+        return {
+          file: file,
+          preview: URL.createObjectURL(file),
+          originalSize: file.size,
+          compressedSize: file.size,
+          name: file.name,
+          processing: true
+        };
       });
       
-      console.log('All previews created:', newFiles.length);
+      setSelectedFiles(prev => [...prev, ...tempPreviews]);
+      
+      // Process images immediately (crop + compress)
+      const processedFiles = await Promise.all(
+        files.map(async (file, idx) => {
+          try {
+            console.log('Cropping and compressing:', file.name);
+            const processed = await compressImage(file);
+            console.log('Processed:', processed.name, 'Size:', processed.size);
+            
+            return {
+              file: processed,
+              preview: URL.createObjectURL(processed),
+              originalSize: file.size,
+              compressedSize: processed.size,
+              name: file.name,
+              processing: false
+            };
+          } catch (err) {
+            console.error('Error processing:', file.name, err);
+            return tempPreviews[idx];
+          }
+        })
+      );
+      
+      // Replace temp previews with processed images
       setSelectedFiles(prev => {
-        const updated = [...prev, ...newFiles];
-        console.log('Updated selectedFiles:', updated.length);
-        return updated;
+        const filtered = prev.filter(f => !tempPreviews.find(t => t.name === f.name));
+        return [...filtered, ...processedFiles];
       });
-      setError('');
       
-      // Compress images in background (optional)
-      setTimeout(async () => {
-        try {
-          const compressed = await Promise.all(
-            newFiles.map(async (fileObj) => {
-              if (fileObj.file.size > 500000 && fileObj.file.type.startsWith('image/')) {
-                const compressedFile = await compressImage(fileObj.file);
-                return {
-                  ...fileObj,
-                  file: compressedFile,
-                  compressedSize: compressedFile.size
-                };
-              }
-              return fileObj;
-            })
-          );
-          setSelectedFiles(prev => {
-            // Replace with compressed versions
-            const newList = [...prev];
-            compressed.forEach((comp, idx) => {
-              const index = newList.findIndex(f => f.name === comp.name);
-              if (index !== -1) {
-                newList[index] = comp;
-              }
-            });
-            return newList;
-          });
-          console.log('Background compression complete');
-        } catch (err) {
-          console.error('Background compression failed:', err);
-          // Not critical - keep originals
-        }
-      }, 100);
+      setError('');
+      console.log('All images processed and ready');
       
     } catch (err) {
       console.error('Error in handleFileSelect:', err);
