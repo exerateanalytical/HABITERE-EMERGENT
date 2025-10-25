@@ -289,17 +289,17 @@ const Services = () => {
                   <button
                     key={`${category.value}-${index}`}
                     onClick={() => {
-                      setSelectedCategory(category.value);
+                      setFilters({ ...filters, category: category.value });
                       window.scrollTo({ top: 400, behavior: 'smooth' });
                     }}
                     className={`flex-shrink-0 w-32 h-32 flex flex-col items-center justify-center rounded-2xl border-2 transition-all duration-300 ${
-                      selectedCategory === category.value
+                      filters.category === category.value
                         ? 'bg-green-600 border-green-600 text-white shadow-lg scale-105'
                         : 'bg-white border-gray-200 text-gray-700 hover:border-green-500 hover:shadow-md'
                     }`}
                   >
                     <Icon className={`w-10 h-10 mb-2 ${
-                      selectedCategory === category.value ? 'text-white' : 'text-green-600'
+                      filters.category === category.value ? 'text-white' : 'text-green-600'
                     }`} />
                     <span className="text-sm font-semibold text-center px-2">
                       {category.label}
