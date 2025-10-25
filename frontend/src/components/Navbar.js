@@ -49,7 +49,7 @@ const Navbar = () => {
           </div>
 
           {/* Desktop navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-4">
             {/* Public nav items */}
             {navItems.map((item) => {
               const Icon = item.icon;
@@ -57,13 +57,13 @@ const Navbar = () => {
                 <Link
                   key={item.name}
                   to={item.path}
-                  className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+                  className={`flex items-center px-2 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
                     isActivePath(item.path)
                       ? 'text-green-600 bg-green-50'
                       : 'text-gray-700 hover:text-green-600 hover:bg-green-50'
                   }`}
                 >
-                  <Icon className="w-4 h-4 mr-2" />
+                  <Icon className="w-4 h-4 mr-1.5" />
                   {item.name}
                 </Link>
               );
@@ -76,13 +76,13 @@ const Navbar = () => {
                 <Link
                   key={item.name}
                   to={item.path}
-                  className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+                  className={`flex items-center px-2 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
                     isActivePath(item.path)
                       ? 'text-green-600 bg-green-50'
                       : 'text-gray-700 hover:text-green-600 hover:bg-green-50'
                   }`}
                 >
-                  <Icon className="w-4 h-4 mr-2" />
+                  <Icon className="w-4 h-4 mr-1.5" />
                   {item.name}
                 </Link>
               );
@@ -90,7 +90,7 @@ const Navbar = () => {
           </div>
 
           {/* User menu */}
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden md:flex items-center space-x-3">
             {/* Location Selector */}
             <LocationSelector />
             
