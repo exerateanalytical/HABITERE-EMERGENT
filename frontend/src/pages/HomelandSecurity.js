@@ -35,7 +35,7 @@ const HomelandSecurity = () => {
       icon: Shield,
       title: 'Armed Security Guards',
       description: '24/7 professional armed and unarmed security personnel with military-grade training',
-      image: 'https://images.unsplash.com/photo-1662595573446-3be7cfcb4b08?w=800&q=90',
+      image: 'https://images.unsplash.com/photo-1618371731836-2b9bff9ac72a?w=800&q=90',
       color: 'bg-red-600',
       hoverColor: 'hover:bg-red-700',
       href: '/security/services?type=Security Guards'
@@ -62,7 +62,7 @@ const HomelandSecurity = () => {
       icon: Car,
       title: 'Mobile Patrol Units',
       description: 'Rapid response mobile patrols covering wide security perimeters',
-      image: 'https://images.unsplash.com/photo-1759366035053-4b172d9b299d?w=800&q=90',
+      image: 'https://images.unsplash.com/photo-1552622594-9a37efeec618?w=800&q=90',
       color: 'bg-orange-600',
       hoverColor: 'hover:bg-orange-700',
       href: '/security/services?type=Patrol Units'
@@ -71,7 +71,7 @@ const HomelandSecurity = () => {
       icon: Dog,
       title: 'K9 Security Teams',
       description: 'Elite K9 units with specialized detection and patrol capabilities',
-      image: 'https://images.unsplash.com/photo-1727884032260-6bf73ba803b5?w=800&q=90',
+      image: 'https://images.unsplash.com/photo-1581568736305-49a04e012c13?w=800&q=90',
       color: 'bg-yellow-600',
       hoverColor: 'hover:bg-yellow-700',
       href: '/security/services?type=K9 Units'
@@ -80,7 +80,7 @@ const HomelandSecurity = () => {
       icon: AlertTriangle,
       title: 'Emergency Response',
       description: 'Tactical emergency response teams with sub-10 minute arrival times',
-      image: 'https://images.unsplash.com/photo-1646063250897-9a5c99a8c390?w=800&q=90',
+      image: 'https://images.unsplash.com/photo-1485230405346-71acb9518d9c?w=800&q=90',
       color: 'bg-red-700',
       hoverColor: 'hover:bg-red-800',
       href: '/security/services?type=Emergency Response'
