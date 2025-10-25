@@ -547,27 +547,49 @@ const ServiceProviderDashboard = () => {
                       className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     />
                     {selectedFiles.length > 0 && (
-                      <div className="mt-3 grid grid-cols-3 gap-2">
-                        {selectedFiles.map((file, index) => (
-                          <div key={index} className="relative">
-                            <img
-                              src={file.preview}
-                              alt={`Preview ${index + 1}`}
-                              className="w-full h-24 object-cover rounded"
-                            />
-                            <button
-                              type="button"
-                              onClick={() => removeFile(index)}
-                              className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
-                            >
-                              <X className="w-4 h-4" />
-                            </button>
-                          </div>
-                        ))}
+                      <div className="mt-3">
+                        <div className="text-sm text-gray-600 mb-2">
+                          {selectedFiles.length} image{selectedFiles.length > 1 ? 's' : ''} selected
+                        </div>
+                        <div className="grid grid-cols-3 gap-2">
+                          {selectedFiles.map((file, index) => (
+                            <div key={index} className="relative group">
+                              <div className="relative w-full h-24 bg-gray-100 rounded overflow-hidden">
+                                <img
+                                  src={file.preview}
+                                  alt={`Preview ${index + 1}`}
+                                  className="w-full h-full object-cover"
+                                  onError={(e) => {
+                                    e.target.style.display = 'none';
+                                    e.target.parentElement.innerHTML = '<div class="flex items-center justify-center h-full text-gray-400 text-xs">Preview Error</div>';
+                                  }}
+                                />
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => removeFile(index)}
+                                className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 opacity-0 group-hover:opacity-100 transition-opacity"
+                              >
+                                <X className="w-4 h-4" />
+                              </button>
+                              <div className="absolute bottom-1 right-1 bg-black bg-opacity-60 text-white text-xs px-1.5 py-0.5 rounded">
+                                {(file.compressedSize / 1024).toFixed(0)}KB
+                              </div>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     )}
                     {uploadingImages && (
-                      <p className="text-sm text-blue-600 mt-2">Uploading images...</p>
+                      <div className="mt-3 bg-green-50 border border-green-200 rounded p-3">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-sm font-semibold text-green-700">Uploading...</span>
+                          <span className="text-sm font-bold text-green-700">{uploadProgress}%</span>
+                        </div>
+                        <div className="w-full bg-green-200 rounded-full h-2 overflow-hidden">
+                          <div className="bg-green-600 h-2 transition-all" style={{ width: `${uploadProgress}%` }}></div>
+                        </div>
+                      </div>
                     )}
                   </div>
                 </div>
