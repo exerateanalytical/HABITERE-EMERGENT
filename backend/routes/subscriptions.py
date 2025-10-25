@@ -509,6 +509,11 @@ async def get_my_commissions(current_user: dict = Depends(get_current_user)):
         "hotel_user_id": current_user["id"]
     }).sort("created_at", -1).to_list(length=None)
     
+    # Remove MongoDB ObjectIds for JSON serialization
+    for commission in commissions:
+        if '_id' in commission:
+            commission.pop('_id')
+    
     total_pending = sum(c["commission_amount"] for c in commissions if c["status"] == "pending")
     total_paid = sum(c["commission_amount"] for c in commissions if c["status"] == "paid")
     
