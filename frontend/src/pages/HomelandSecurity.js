@@ -4,7 +4,8 @@ import axios from 'axios';
 import { 
   Shield, Users, Camera, Eye, Car, Dog, Phone, CheckCircle, 
   ArrowRight, Lock, Clock, Award, AlertTriangle, Zap, 
-  MapPin, Star, BadgeCheck
+  MapPin, Star, BadgeCheck, Target, Headphones, TrendingUp,
+  FileCheck, UserCheck, Calendar
 } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
