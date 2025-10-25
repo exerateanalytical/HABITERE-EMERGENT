@@ -354,14 +354,19 @@ app.include_router(api_router)
 # CORS middleware - DISABLED
 # Kubernetes ingress handles CORS headers to prevent duplication
 # Previously caused: "The 'Access-Control-Allow-Origin' header contains multiple values" error
-# app.add_middleware(
-#     CORSMiddleware,
-#     allow_origins=["*"],
-#     allow_credentials=False,
-#     allow_methods=["*"],
-#     allow_headers=["*"],
-#     expose_headers=["*"]
-# )
+# Configure CORS - MUST allow credentials for cookie-based auth
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "https://habitere-home.preview.emergentagent.com",
+        "http://localhost:3000",
+        "http://localhost:8001"
+    ],
+    allow_credentials=True,  # CRITICAL: Required for cookies
+    allow_methods=["*"],
+    allow_headers=["*"],
+    expose_headers=["*"]
+)
 
 # Logging configuration
 logging.basicConfig(
