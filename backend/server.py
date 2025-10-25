@@ -392,6 +392,10 @@ async def startup_event():
     """Run on application startup"""
     logger.info("Application starting up...")
     
+    # Initialize subscription plans
+    from routes.subscriptions import initialize_subscription_plans
+    await initialize_subscription_plans()
+    
     # Run initial cleanup
     deleted = await cleanup_old_properties()
     logger.info(f"Initial cleanup: {deleted} old properties removed")
