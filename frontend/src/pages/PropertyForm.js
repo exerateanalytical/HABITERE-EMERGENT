@@ -215,7 +215,10 @@ const PropertyForm = () => {
         bathrooms: parseInt(formData.bathrooms) || 0,
         area_sqm: parseFloat(formData.area_sqm) || 0,
         images: imageUrls,
-        amenities: []
+        amenities: [],
+        contact_phone: formData.contact_phone || '',
+        contact_whatsapp: formData.contact_whatsapp || '',
+        contact_name: formData.contact_name || user.name || ''
       };
 
       console.log('Creating property with data:', propertyData);
