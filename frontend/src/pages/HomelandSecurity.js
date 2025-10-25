@@ -317,7 +317,7 @@ const HomelandSecurity = () => {
         </div>
       )}
 
-      {/* Services Grid - Dark Professional */}
+      {/* Services Grid - Dark Professional with Images */}
       <section className="py-20 bg-gray-900">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
@@ -339,21 +339,29 @@ const HomelandSecurity = () => {
                 <Link
                   key={index}
                   to={service.href}
-                  className="group relative bg-gray-800 rounded-xl shadow-xl hover:shadow-2xl transition-all p-8 border-2 border-gray-700 hover:border-red-600 overflow-hidden"
+                  className="group relative bg-gray-800 rounded-xl shadow-xl hover:shadow-2xl transition-all overflow-hidden border-2 border-gray-700 hover:border-red-600"
                 >
-                  {/* Hover Effect Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-red-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                  
-                  <div className="relative z-10">
-                    <div className={`w-16 h-16 rounded-xl ${service.color} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-lg`}>
-                      <Icon className="w-8 h-8 text-white" />
+                  {/* Service Image */}
+                  <div className="relative h-48 overflow-hidden">
+                    <img 
+                      src={service.image}
+                      alt={service.title}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/50 to-transparent"></div>
+                    <div className={`absolute top-4 left-4 w-12 h-12 rounded-lg ${service.color} flex items-center justify-center shadow-lg`}>
+                      <Icon className="w-6 h-6 text-white" />
                     </div>
-                    <h3 className="text-2xl font-bold mb-3 text-white group-hover:text-red-500 transition-colors">
+                  </div>
+                  
+                  {/* Content */}
+                  <div className="p-6">
+                    <h3 className="text-xl font-bold mb-3 text-white group-hover:text-red-500 transition-colors">
                       {service.title}
                     </h3>
-                    <p className="text-gray-400 leading-relaxed mb-4">{service.description}</p>
+                    <p className="text-gray-400 leading-relaxed mb-4 text-sm">{service.description}</p>
                     
-                    <div className="flex items-center text-red-500 font-semibold">
+                    <div className="flex items-center text-red-500 font-semibold text-sm">
                       Learn More
                       <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-2 transition-transform" />
                     </div>
@@ -361,6 +369,135 @@ const HomelandSecurity = () => {
                 </Link>
               );
             })}
+          </div>
+        </div>
+      </section>
+
+      {/* Why Choose Us Section */}
+      <section className="py-20 bg-black border-y border-gray-800">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <div className="inline-block px-4 py-2 bg-red-600/10 border border-red-600/30 rounded-full mb-4">
+              <span className="text-sm font-bold text-red-500 uppercase tracking-wider">Why Choose Us</span>
+            </div>
+            <h2 className="text-4xl md:text-5xl font-black text-white mb-4">
+              Industry-Leading Standards
+            </h2>
+            <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+              What sets us apart in the security industry
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {whyChooseUs.map((item, index) => {
+              const Icon = item.icon;
+              return (
+                <div key={index} className="bg-gray-900 border border-gray-800 rounded-xl p-6 text-center hover:border-red-600 transition-all">
+                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-600/10 border-2 border-red-600/30 mb-4">
+                    <Icon className="w-8 h-8 text-red-600" />
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-3">{item.title}</h3>
+                  <p className="text-gray-400 text-sm leading-relaxed">{item.description}</p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* How to Book Security - Process Flow */}
+      <section className="py-20 bg-gray-900">
+        <div className="container mx-auto px-4">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-16">
+              <div className="inline-block px-4 py-2 bg-red-600/10 border border-red-600/30 rounded-full mb-4">
+                <span className="text-sm font-bold text-red-500 uppercase tracking-wider">For Clients</span>
+              </div>
+              <h2 className="text-4xl md:text-5xl font-black text-white mb-4">
+                How to Book Security Services
+              </h2>
+              <p className="text-xl text-gray-400">
+                Simple 3-step process to secure your property
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+              {bookingProcess.map((process, index) => {
+                const Icon = process.icon;
+                return (
+                  <div key={index} className="relative">
+                    {/* Connector Line */}
+                    {index < bookingProcess.length - 1 && (
+                      <div className="hidden md:block absolute top-12 left-1/2 w-full h-0.5 bg-gradient-to-r from-red-600 to-red-800 z-0"></div>
+                    )}
+                    
+                    <div className="relative bg-gray-800 border-2 border-gray-700 rounded-xl p-6 text-center hover:border-red-600 transition-all z-10">
+                      <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-600 text-white text-2xl font-black mb-4 shadow-lg">
+                        {process.step}
+                      </div>
+                      <Icon className="w-10 h-10 text-red-500 mx-auto mb-4" />
+                      <h3 className="text-xl font-bold text-white mb-3">{process.title}</h3>
+                      <p className="text-gray-400 text-sm">{process.description}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="text-center">
+              <button
+                onClick={() => navigate('/security/services')}
+                className="bg-red-600 hover:bg-red-700 text-white px-10 py-5 rounded-xl font-bold text-xl transition-all shadow-2xl hover:shadow-red-600/50 inline-flex items-center"
+              >
+                Request Security Quote
+                <ArrowRight className="ml-3 w-6 h-6" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="py-20 bg-black border-y border-gray-800">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <div className="inline-block px-4 py-2 bg-red-600/10 border border-red-600/30 rounded-full mb-4">
+              <span className="text-sm font-bold text-red-500 uppercase tracking-wider">Testimonials</span>
+            </div>
+            <h2 className="text-4xl md:text-5xl font-black text-white mb-4">
+              Trusted by 1000+ Clients
+            </h2>
+            <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+              See what our clients say about our security services
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            {testimonials.map((testimonial, index) => (
+              <div key={index} className="bg-gray-900 border border-gray-800 rounded-xl p-6 hover:border-red-600 transition-all">
+                <div className="flex items-center mb-4">
+                  {[...Array(testimonial.rating)].map((_, i) => (
+                    <Star key={i} className="w-5 h-5 text-yellow-500 fill-yellow-500" />
+                  ))}
+                </div>
+                <p className="text-gray-300 mb-6 italic">"{testimonial.text}"</p>
+                <div className="flex items-center">
+                  <img 
+                    src={testimonial.image}
+                    alt={testimonial.name}
+                    className="w-12 h-12 rounded-full object-cover mr-4"
+                  />
+                  <div>
+                    <div className="font-bold text-white">{testimonial.name}</div>
+                    <div className="text-sm text-gray-400">{testimonial.role}</div>
+                    <div className="text-xs text-red-500 flex items-center">
+                      <MapPin className="w-3 h-3 mr-1" />
+                      {testimonial.location}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
