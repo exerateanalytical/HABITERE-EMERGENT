@@ -469,6 +469,7 @@ class CoreFlowsTester:
         try:
             booking_data = {
                 "property_id": self.test_property_id,
+                "booking_type": "property_viewing",  # Add required booking_type
                 "scheduled_date": (datetime.now(timezone.utc) + timedelta(days=7)).isoformat(),
                 "notes": "Test booking for core flow verification"
             }
