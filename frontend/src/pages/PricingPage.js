@@ -21,6 +21,8 @@ const PricingPage = () => {
   const fetchPlans = async () => {
     try {
       const response = await axios.get(`${BACKEND_URL}/api/subscriptions/plans`);
+      console.log('Fetched plans:', response.data.plans);
+      console.log('Total plans:', response.data.plans.length);
       setPlans(response.data.plans);
     } catch (error) {
       console.error('Error fetching plans:', error);
