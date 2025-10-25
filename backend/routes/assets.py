@@ -649,6 +649,115 @@ async def update_task_status(
     return serialize_doc(updated_task)
 
 
+
+@router.put("/maintenance/{task_id}")
+async def update_maintenance_task(
+    task_id: str,
+    task_update: MaintenanceTaskCreate,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Update complete maintenance task details.
+    
+    Args:
+        task_id: Task ID
+        task_update: Updated task data
+        current_user: Authenticated user
+        
+    Returns:
+        Updated task
+        
+    Raises:
+        HTTPException: 404 if task not found or 403 if unauthorized
+    """
+    db = get_database()
+    
+    task = await db.maintenance_tasks.find_one({"id": task_id})
+    
+    if not task:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Task not found"
+        )
+    
+    # Check authorization - only creator, estate managers, and admins can edit
+    if current_user.get("role") not in ["estate_manager", "admin"]:
+        if task.get("created_by") != current_user["id"]:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Not authorized to update this task"
+            )
+    
+    # Update task
+    update_data = task_update.dict()
+    update_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+    
+    await db.maintenance_tasks.update_one(
+        {"id": task_id},
+        {"$set": update_data}
+    )
+    
+    logger.info(f"Maintenance task updated: {task_id} by user {current_user['id']}")
+    
+    # Get updated task
+    updated_task = await db.maintenance_tasks.find_one({"id": task_id})
+    
+    return serialize_doc(updated_task)
+
+
+@router.delete("/maintenance/{task_id}")
+async def delete_maintenance_task(
+    task_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Delete maintenance task.
+    
+    Only creator, estate managers, and admins can delete tasks.
+    
+    Args:
+        task_id: Task ID
+        current_user: Authenticated user
+        
+    Returns:
+        Success message
+        
+    Raises:
+        HTTPException: 404 if task not found or 403 if unauthorized
+    """
+    db = get_database()
+    
+    task = await db.maintenance_tasks.find_one({"id": task_id})
+    
+    if not task:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Task not found"
+        )
+    
+    # Check authorization
+    if current_user.get("role") not in ["estate_manager", "admin"]:
+        if task.get("created_by") != current_user["id"]:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Not authorized to delete this task"
+            )
+    
+    # Delete task
+    result = await db.maintenance_tasks.delete_one({"id": task_id})
+    
+    if result.deleted_count == 0:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to delete task"
+        )
+    
+    logger.info(f"Maintenance task deleted: {task_id} by user {current_user['id']}")
+    
+    return {"message": "Maintenance task deleted successfully"}
+
+
+
 # ==================== EXPENSES ====================
 
 @router.post("/expenses", response_model=Dict[str, Any])
