@@ -458,39 +458,3 @@ async def update_user_location(
         "location": location
     }
 
-        update_data["updated_at"] = datetime.now(timezone.utc).isoformat()
-        
-        # Update user in database
-        user_id = current_user.get("id")
-        result = await db.users.update_one(
-            {"id": user_id},
-            {"$set": update_data}
-        )
-        
-        # Check if update was successful
-        if result.modified_count == 0 and result.matched_count == 0:
-            logger.error(f"User not found for update: {user_id}")
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="User not found"
-            )
-        
-        # Retrieve updated user document
-        updated_user = await db.users.find_one({"id": user_id})
-        
-        logger.info(f"Profile updated successfully for user {current_user.get('email')}")
-        
-        return {
-            "success": True,
-            "message": "Profile updated successfully",
-            "user": serialize_doc(updated_user)
-        }
-        
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Profile update error for user {current_user.get('email')}: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to update profile: {str(e)}"
-        )
