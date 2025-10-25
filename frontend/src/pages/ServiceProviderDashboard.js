@@ -129,9 +129,20 @@ const ServiceProviderDashboard = () => {
   const handleCreateService = async (e) => {
     e.preventDefault();
     try {
+      // Upload images first if any
+      let imageUrls = [];
+      if (selectedFiles.length > 0) {
+        imageUrls = await uploadImages();
+      }
+      
+      const serviceData = {
+        ...serviceForm,
+        images: imageUrls
+      };
+      
       const response = await axios.post(
         `${BACKEND_URL}/api/services`,
-        serviceForm,
+        serviceData,
         { withCredentials: true }
       );
       
