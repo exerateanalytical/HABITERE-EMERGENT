@@ -11,7 +11,7 @@ const Reviews = ({ propertyId, serviceId, type = 'property' }) => {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showReviewForm, setShowReviewForm] = useState(false);
-  const [rating, setRating] = useState(5);
+  const [rating, setRating] = useState(1);
   const [comment, setComment] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [editingReview, setEditingReview] = useState(null);
