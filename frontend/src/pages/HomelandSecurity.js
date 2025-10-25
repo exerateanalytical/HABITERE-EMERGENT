@@ -35,6 +35,7 @@ const HomelandSecurity = () => {
       icon: Shield,
       title: 'Armed Security Guards',
       description: '24/7 professional armed and unarmed security personnel with military-grade training',
+      image: 'https://images.unsplash.com/photo-1662595573446-3be7cfcb4b08?w=800&q=90',
       color: 'bg-red-600',
       hoverColor: 'hover:bg-red-700',
       href: '/security/services?type=Security Guards'
@@ -43,6 +44,7 @@ const HomelandSecurity = () => {
       icon: Camera,
       title: 'CCTV & Surveillance',
       description: 'High-definition surveillance systems with AI-powered monitoring and analytics',
+      image: 'https://images.unsplash.com/photo-1665848383782-1ea74efde68f?w=800&q=90',
       color: 'bg-blue-600',
       hoverColor: 'hover:bg-blue-700',
       href: '/security/services?type=CCTV Installation'
@@ -51,6 +53,7 @@ const HomelandSecurity = () => {
       icon: Eye,
       title: 'Control Room Monitoring',
       description: 'Advanced 24/7 control room operations with instant threat detection',
+      image: 'https://images.unsplash.com/photo-1738918937796-743064feefa1?w=800&q=90',
       color: 'bg-purple-600',
       hoverColor: 'hover:bg-purple-700',
       href: '/security/services?type=Remote Monitoring'
@@ -59,6 +62,7 @@ const HomelandSecurity = () => {
       icon: Car,
       title: 'Mobile Patrol Units',
       description: 'Rapid response mobile patrols covering wide security perimeters',
+      image: 'https://images.unsplash.com/photo-1759366035053-4b172d9b299d?w=800&q=90',
       color: 'bg-orange-600',
       hoverColor: 'hover:bg-orange-700',
       href: '/security/services?type=Patrol Units'
@@ -67,6 +71,7 @@ const HomelandSecurity = () => {
       icon: Dog,
       title: 'K9 Security Teams',
       description: 'Elite K9 units with specialized detection and patrol capabilities',
+      image: 'https://images.unsplash.com/photo-1727884032260-6bf73ba803b5?w=800&q=90',
       color: 'bg-yellow-600',
       hoverColor: 'hover:bg-yellow-700',
       href: '/security/services?type=K9 Units'
@@ -75,6 +80,7 @@ const HomelandSecurity = () => {
       icon: AlertTriangle,
       title: 'Emergency Response',
       description: 'Tactical emergency response teams with sub-10 minute arrival times',
+      image: 'https://images.unsplash.com/photo-1646063250897-9a5c99a8c390?w=800&q=90',
       color: 'bg-red-700',
       hoverColor: 'hover:bg-red-800',
       href: '/security/services?type=Emergency Response'
@@ -86,6 +92,98 @@ const HomelandSecurity = () => {
     { icon: Shield, title: 'Licensed & Insured', desc: 'Full Coverage' },
     { icon: Award, title: 'Industry Awards', desc: '5+ Recognition' },
     { icon: Star, title: 'Top Rated', desc: '4.9/5 Stars' }
+  ];
+
+  const whyChooseUs = [
+    {
+      icon: Target,
+      title: '99.9% Response Rate',
+      description: 'Industry-leading response time with 24/7 monitoring'
+    },
+    {
+      icon: BadgeCheck,
+      title: 'Certified Personnel',
+      description: 'All guards licensed, trained, and background-checked'
+    },
+    {
+      icon: Lock,
+      title: 'Full Insurance Coverage',
+      description: 'Comprehensive liability insurance for your protection'
+    },
+    {
+      icon: Headphones,
+      title: '24/7 Support',
+      description: 'Round-the-clock customer support and emergency response'
+    }
+  ];
+
+  const bookingProcess = [
+    {
+      icon: FileCheck,
+      step: '1',
+      title: 'Request Quote',
+      description: 'Fill out a simple form with your security needs'
+    },
+    {
+      icon: UserCheck,
+      step: '2',
+      title: 'Consultation',
+      description: 'Our team assesses and recommends the best solution'
+    },
+    {
+      icon: Calendar,
+      step: '3',
+      title: 'Deploy Security',
+      description: 'Professional guards deployed within 24-48 hours'
+    }
+  ];
+
+  const applicationProcess = [
+    {
+      icon: FileCheck,
+      step: '1',
+      title: 'Submit Application',
+      description: 'Complete online application with your credentials'
+    },
+    {
+      icon: UserCheck,
+      step: '2',
+      title: 'Background Check',
+      description: 'Thorough vetting and certification verification'
+    },
+    {
+      icon: Calendar,
+      step: '3',
+      title: 'Start Training',
+      description: 'Join our elite training program and get deployed'
+    }
+  ];
+
+  const testimonials = [
+    {
+      name: 'Jean-Paul Atangana',
+      role: 'Property Manager',
+      location: 'Douala',
+      rating: 5,
+      text: 'Homeland Security has been protecting our residential complex for 2 years. Their professionalism and response time are outstanding.',
+      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&q=90'
+    },
+    {
+      name: 'Marie Kouam',
+      role: 'Business Owner',
+      location: 'Yaoundé',
+      rating: 5,
+      text: 'The CCTV installation and 24/7 monitoring have given us complete peace of mind. Highly recommend their services.',
+      image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&q=90'
+    },
+    {
+      name: 'Emmanuel Fon',
+      role: 'Hotel Manager',
+      location: 'Limbe',
+      rating: 5,
+      text: 'Professional, reliable, and always on time. Their mobile patrol units are exactly what we needed for our hotel.',
+      image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&q=90'
+    }
   ];
 
   return (
