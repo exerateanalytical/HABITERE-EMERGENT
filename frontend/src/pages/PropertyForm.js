@@ -576,6 +576,67 @@ const PropertyForm = () => {
               </div>
             </div>
 
+            {/* Contact Information Section */}
+            <div className="border-t pt-6 mt-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Contact Information</h3>
+              <div className="space-y-4">
+                {/* Contact Name */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Contact Name
+                  </label>
+                  <input
+                    type="text"
+                    name="contact_name"
+                    value={formData.contact_name}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Your name or business name"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">This will be shown to interested buyers</p>
+                </div>
+
+                {/* Phone Number */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Phone Number *
+                  </label>
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <input
+                      type="tel"
+                      name="contact_phone"
+                      value={formData.contact_phone}
+                      onChange={handleChange}
+                      required
+                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="+237 6XX XXX XXX"
+                    />
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">Include country code (e.g., +237)</p>
+                </div>
+
+                {/* WhatsApp Number */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    WhatsApp Number
+                  </label>
+                  <div className="relative">
+                    <MessageSquare className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <input
+                      type="tel"
+                      name="contact_whatsapp"
+                      value={formData.contact_whatsapp}
+                      onChange={handleChange}
+                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="+237 6XX XXX XXX"
+                    />
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">Buyers can contact you directly on WhatsApp</p>
+                </div>
+              </div>
+            </div>
+
             {/* Submit Buttons */}
             <div className="flex flex-col-reverse sm:flex-row gap-3 sm:gap-4 pt-6">
               <button
