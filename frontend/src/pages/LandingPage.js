@@ -323,7 +323,7 @@ const LandingPage = () => {
                   name="propertyType"
                   value={searchForm.propertyType}
                   onChange={(e) => handleInputChange('propertyType', e.target.value)}
-                  className="w-full px-4 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl shadow-sm hover:border-blue-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white active:border-blue-400 transition-all duration-200 text-base appearance-none cursor-pointer touch-manipulation min-h-[56px] h-14 font-medium" 
+                  className="w-full px-4 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl shadow-sm hover:border-green-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:bg-white active:border-green-400 transition-all duration-200 text-base appearance-none cursor-pointer touch-manipulation min-h-[56px] h-14 font-medium" 
                   data-testid="search-type"
                   aria-describedby="property-type-hint"
                 >
@@ -348,7 +348,7 @@ const LandingPage = () => {
                   value={searchForm.location}
                   onChange={(e) => handleInputChange('location', e.target.value)}
                   autoComplete="address-level2"
-                  className="w-full px-4 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl shadow-sm hover:border-blue-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white active:border-blue-400 transition-all duration-200 text-base appearance-none cursor-pointer touch-manipulation min-h-[56px] h-14 font-medium" 
+                  className="w-full px-4 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl shadow-sm hover:border-green-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:bg-white active:border-green-400 transition-all duration-200 text-base appearance-none cursor-pointer touch-manipulation min-h-[56px] h-14 font-medium" 
                   data-testid="search-location"
                   aria-describedby="location-hint"
                 >
@@ -374,7 +374,7 @@ const LandingPage = () => {
                   name="priceRange"
                   value={searchForm.priceRange}
                   onChange={(e) => handleInputChange('priceRange', e.target.value)}
-                  className="w-full px-4 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl shadow-sm hover:border-blue-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white active:border-blue-400 transition-all duration-200 text-base appearance-none cursor-pointer touch-manipulation min-h-[56px] h-14 font-medium" 
+                  className="w-full px-4 py-4 bg-gray-50 border-2 border-gray-200 rounded-xl shadow-sm hover:border-green-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:bg-white active:border-green-400 transition-all duration-200 text-base appearance-none cursor-pointer touch-manipulation min-h-[56px] h-14 font-medium" 
                   data-testid="search-price"
                   aria-describedby="price-hint"
                 >
