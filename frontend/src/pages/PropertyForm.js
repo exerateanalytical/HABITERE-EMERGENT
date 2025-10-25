@@ -26,7 +26,10 @@ const PropertyForm = () => {
     listing_type: 'sale',
     bedrooms: '',
     bathrooms: '',
-    area_sqm: ''
+    area_sqm: '',
+    contact_phone: '',
+    contact_whatsapp: '',
+    contact_name: ''
   });
 
   const handleChange = (e) => {
