@@ -63,8 +63,23 @@ const FeaturedProperties = ({ title = "Featured Properties", showAll = true, lim
   const fetchProperties = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${API}/properties?limit=${limit}`);
+      
+      // Build query parameters based on view mode
+      let params = { limit };
+      
+      if (viewMode === 'my-location' && userLocation) {
+        // Show only properties in user's location
+        params.location = userLocation;
+      } else if (viewMode === 'nearby' && userLocation) {
+        // Show properties sorted by location (user's city first)
+        params.user_location = userLocation;
+        params.sort_by_location = true;
+      }
+      // viewMode === 'all' shows all properties without filtering
+      
+      const response = await axios.get(`${API}/properties`, { params });
       setProperties(response.data || []);
+      console.log(`[FeaturedProperties] Loaded ${response.data?.length || 0} properties for ${viewMode} mode`);
     } catch (error) {
       console.error('Error fetching properties:', error);
     } finally {
