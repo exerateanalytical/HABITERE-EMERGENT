@@ -15,7 +15,7 @@ const Footer = () => {
       { name: 'Properties', path: '/properties' },
       { name: 'Services', path: '/services' },
       { name: 'FAQ', path: '/faq' },
-      { name: 'Asset Management', path: '/asset-management' },
+      { name: 'Asset Management', path: '/assets' },
       { name: 'Homeland Security', path: '/security' }
     ],
     legal: [
