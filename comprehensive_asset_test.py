@@ -12,7 +12,7 @@ Tests all 25 asset management endpoints across:
 This version creates required dependencies (properties) first.
 
 Authentication: admin@habitere.com / admin123
-Backend URL: https://habitere-home.preview.emergentagent.com/api
+Backend URL: https://realestate-cam.preview.emergentagent.com/api
 """
 
 import requests
@@ -22,7 +22,7 @@ from datetime import datetime, timedelta
 import sys
 
 # Configuration
-BASE_URL = "https://habitere-home.preview.emergentagent.com/api"
+BASE_URL = "https://realestate-cam.preview.emergentagent.com/api"
 ADMIN_EMAIL = "admin@habitere.com"
 ADMIN_PASSWORD = "admin123"
 

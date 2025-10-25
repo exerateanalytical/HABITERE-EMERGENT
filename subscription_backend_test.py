@@ -25,7 +25,7 @@ from datetime import datetime, timezone
 from typing import Dict, Any, Optional
 
 # Configuration
-BACKEND_URL = "https://habitere-home.preview.emergentagent.com/api"
+BACKEND_URL = "https://realestate-cam.preview.emergentagent.com/api"
 ADMIN_EMAIL = "admin@habitere.com"
 ADMIN_PASSWORD = "admin123"
 

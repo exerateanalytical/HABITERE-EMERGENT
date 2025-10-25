@@ -358,7 +358,7 @@ app.include_router(api_router)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "https://habitere-home.preview.emergentagent.com",
+        "https://realestate-cam.preview.emergentagent.com",
         "http://localhost:3000",
         "http://localhost:8001"
     ],

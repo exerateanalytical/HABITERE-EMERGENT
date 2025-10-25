@@ -6,7 +6,7 @@ import io
 from PIL import Image
 
 class ErrorScenarioTester:
-    def __init__(self, base_url="https://habitere-home.preview.emergentagent.com"):
+    def __init__(self, base_url="https://realestate-cam.preview.emergentagent.com"):
         self.base_url = base_url
         self.api_url = f"{base_url}/api"
         self.session = requests.Session()

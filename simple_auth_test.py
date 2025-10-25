@@ -13,7 +13,7 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-BASE_URL = "https://habitere-home.preview.emergentagent.com/api"
+BASE_URL = "https://realestate-cam.preview.emergentagent.com/api"
 
 async def test_unauthenticated_access():
     """Test unauthenticated access to /auth/me"""

@@ -33,7 +33,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 # Test configuration
-BASE_URL = "https://habitere-home.preview.emergentagent.com/api"
+BASE_URL = "https://realestate-cam.preview.emergentagent.com/api"
 ADMIN_EMAIL = "admin@habitere.com"
 ADMIN_PASSWORD = "admin123"
 

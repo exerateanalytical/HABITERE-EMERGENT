@@ -24,7 +24,7 @@ import sys
 from typing import Dict, Any
 
 # Backend URL from environment
-BACKEND_URL = "https://habitere-home.preview.emergentagent.com/api"
+BACKEND_URL = "https://realestate-cam.preview.emergentagent.com/api"
 
 # Test credentials
 ADMIN_EMAIL = "admin@habitere.com"

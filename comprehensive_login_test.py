@@ -13,7 +13,7 @@ import uuid
 from datetime import datetime, timezone
 
 # Backend URL from environment
-BACKEND_URL = "https://habitere-home.preview.emergentagent.com/api"
+BACKEND_URL = "https://realestate-cam.preview.emergentagent.com/api"
 
 class ComprehensiveLoginTester:
     def __init__(self):
