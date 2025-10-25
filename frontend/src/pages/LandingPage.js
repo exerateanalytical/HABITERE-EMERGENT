@@ -553,7 +553,7 @@ const LandingPage = () => {
               <RippleButton
                 variant="primary"
                 onClick={handleExploreServices}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-bold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all"
+                className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-xl font-bold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all"
                 ariaLabel="Explore services"
               >
                 Explore Services
