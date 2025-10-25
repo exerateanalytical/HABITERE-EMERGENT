@@ -65,7 +65,7 @@ const ServiceDetails = () => {
       navigate('/auth/callback');
       return;
     }
-    navigate('/messages', { state: { recipientId: service.provider_id } });
+    navigate(`/messages?userId=${service.provider_id}`);
   };
 
   const images = service?.images?.length > 0 
