@@ -259,6 +259,11 @@ const Properties = () => {
               </div>
               
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-3">
+                {/* Location Toggle */}
+                <div className="w-full sm:w-auto">
+                  <LocationToggle className="w-full" />
+                </div>
+
                 {/* Mobile Filter Button */}
                 <button
                   onClick={() => setSidebarOpen(true)}
