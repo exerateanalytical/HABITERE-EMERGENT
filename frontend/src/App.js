@@ -471,7 +471,9 @@ function App() {
       <Router>
         <ScrollToTop />
         <AuthProvider>
-          <AppContent />
+          <LocationProvider>
+            <AppContent />
+          </LocationProvider>
         </AuthProvider>
       </Router>
     </HelmetProvider>
