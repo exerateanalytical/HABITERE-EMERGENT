@@ -36,6 +36,9 @@ const ServiceProviderDashboard = () => {
     location: '',
     images: []
   });
+  
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [uploadingImages, setUploadingImages] = useState(false);
 
   useEffect(() => {
     if (!user) {
