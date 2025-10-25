@@ -441,6 +441,11 @@ async def get_payment_history(current_user: dict = Depends(get_current_user)):
     
     payments = await db.payments.find({"user_id": current_user["id"]}).sort("created_at", -1).to_list(length=None)
     
+    # Remove MongoDB ObjectIds for JSON serialization
+    for payment in payments:
+        if '_id' in payment:
+            payment.pop('_id')
+    
     return {
         "payments": payments,
         "total": len(payments)
