@@ -49,30 +49,45 @@ const PropertyForm = () => {
         const img = new Image();
         img.onload = () => {
           const canvas = document.createElement('canvas');
-          let width = img.width;
-          let height = img.height;
           
-          // Max dimensions for optimization
-          const MAX_WIDTH = 1920;
-          const MAX_HEIGHT = 1080;
+          // Standard size for all images: 16:9 ratio
+          const TARGET_WIDTH = 1200;
+          const TARGET_HEIGHT = 675; // 16:9 ratio
           
-          if (width > height) {
-            if (width > MAX_WIDTH) {
-              height *= MAX_WIDTH / width;
-              width = MAX_WIDTH;
-            }
-          } else {
-            if (height > MAX_HEIGHT) {
-              width *= MAX_HEIGHT / height;
-              height = MAX_HEIGHT;
-            }
-          }
-          
-          canvas.width = width;
-          canvas.height = height;
+          canvas.width = TARGET_WIDTH;
+          canvas.height = TARGET_HEIGHT;
           
           const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, width, height);
+          
+          // Calculate crop dimensions to maintain aspect ratio
+          const imgRatio = img.width / img.height;
+          const targetRatio = TARGET_WIDTH / TARGET_HEIGHT;
+          
+          let drawWidth = img.width;
+          let drawHeight = img.height;
+          let offsetX = 0;
+          let offsetY = 0;
+          
+          if (imgRatio > targetRatio) {
+            // Image is wider, crop width
+            drawWidth = img.height * targetRatio;
+            offsetX = (img.width - drawWidth) / 2;
+          } else {
+            // Image is taller, crop height
+            drawHeight = img.width / targetRatio;
+            offsetY = (img.height - drawHeight) / 2;
+          }
+          
+          // Fill with white background
+          ctx.fillStyle = '#FFFFFF';
+          ctx.fillRect(0, 0, TARGET_WIDTH, TARGET_HEIGHT);
+          
+          // Draw cropped and scaled image
+          ctx.drawImage(
+            img,
+            offsetX, offsetY, drawWidth, drawHeight, // source
+            0, 0, TARGET_WIDTH, TARGET_HEIGHT // destination
+          );
           
           // Convert to blob with compression
           canvas.toBlob(
@@ -83,7 +98,7 @@ const PropertyForm = () => {
               }));
             },
             'image/jpeg',
-            0.85 // 85% quality
+            0.90 // 90% quality for better appearance
           );
         };
         img.onerror = () => resolve(file); // Return original if error
