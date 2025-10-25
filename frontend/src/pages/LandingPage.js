@@ -525,13 +525,13 @@ const LandingPage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="order-2 lg:order-1">
-              <div className="inline-block px-4 py-2 bg-blue-100 rounded-full mb-6">
-                <span className="text-sm font-bold text-blue-600">Professional Services</span>
+              <div className="inline-block px-4 py-2 bg-green-100 rounded-full mb-6">
+                <span className="text-sm font-bold text-green-600">Professional Services</span>
               </div>
               
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 mb-6 leading-tight">
                 Professional Home Services 
-                <span className="block text-blue-600">at Your Fingertips</span>
+                <span className="block text-green-600">at Your Fingertips</span>
               </h2>
               
               <p className="text-lg md:text-xl text-gray-600 mb-8 leading-relaxed">
