@@ -11,7 +11,6 @@ import {
 const AssetManagementLanding = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState('diy'); // 'diy' or 'managed'
 
   const handleGetStarted = (type) => {
     if (type === 'diy') {
