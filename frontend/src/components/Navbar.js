@@ -20,7 +20,7 @@ const Navbar = () => {
 
   const userNavItems = [
     { name: 'Dashboard', path: '/dashboard', icon: Grid3x3 },
-    { name: 'Assets', path: '/assets/dashboard', icon: Package },
+    { name: 'Subscription', path: '/subscription', icon: Package },
     { name: 'Messages', path: '/messages', icon: MessageSquare },
     { name: 'Profile', path: '/profile', icon: User },
   ];
