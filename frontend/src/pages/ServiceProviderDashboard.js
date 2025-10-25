@@ -121,17 +121,35 @@ const ServiceProviderDashboard = () => {
     }
   };
 
-  const handleFileSelect = (e) => {
+  const handleFileSelect = async (e) => {
     const files = Array.from(e.target.files);
     if (files.length + selectedFiles.length > 10) {
       alert('Maximum 10 images allowed');
       return;
     }
     
-    const newFiles = files.map(file => ({
-      file,
-      preview: URL.createObjectURL(file)
-    }));
+    const newFiles = await Promise.all(
+      files.map(async (file) => {
+        try {
+          const shouldCompress = file.size > 500000 && file.type.startsWith('image/');
+          const processedFile = shouldCompress ? await compressImage(file) : file;
+          
+          return {
+            file: processedFile,
+            preview: URL.createObjectURL(processedFile),
+            originalSize: file.size,
+            compressedSize: processedFile.size
+          };
+        } catch (err) {
+          return {
+            file,
+            preview: URL.createObjectURL(file),
+            originalSize: file.size,
+            compressedSize: file.size
+          };
+        }
+      })
+    );
     
     setSelectedFiles(prev => [...prev, ...newFiles]);
   };
