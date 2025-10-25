@@ -48,36 +48,47 @@ const ServiceProviderDashboard = () => {
         const img = new Image();
         img.onload = () => {
           const canvas = document.createElement('canvas');
-          let width = img.width;
-          let height = img.height;
           
-          const MAX_WIDTH = 1920;
-          const MAX_HEIGHT = 1080;
+          // Standard size: 16:9 ratio
+          const TARGET_WIDTH = 1200;
+          const TARGET_HEIGHT = 675;
           
-          if (width > height) {
-            if (width > MAX_WIDTH) {
-              height *= MAX_WIDTH / width;
-              width = MAX_WIDTH;
-            }
-          } else {
-            if (height > MAX_HEIGHT) {
-              width *= MAX_HEIGHT / height;
-              height = MAX_HEIGHT;
-            }
-          }
-          
-          canvas.width = width;
-          canvas.height = height;
+          canvas.width = TARGET_WIDTH;
+          canvas.height = TARGET_HEIGHT;
           
           const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, width, height);
+          
+          const imgRatio = img.width / img.height;
+          const targetRatio = TARGET_WIDTH / TARGET_HEIGHT;
+          
+          let drawWidth = img.width;
+          let drawHeight = img.height;
+          let offsetX = 0;
+          let offsetY = 0;
+          
+          if (imgRatio > targetRatio) {
+            drawWidth = img.height * targetRatio;
+            offsetX = (img.width - drawWidth) / 2;
+          } else {
+            drawHeight = img.width / targetRatio;
+            offsetY = (img.height - drawHeight) / 2;
+          }
+          
+          ctx.fillStyle = '#FFFFFF';
+          ctx.fillRect(0, 0, TARGET_WIDTH, TARGET_HEIGHT);
+          
+          ctx.drawImage(
+            img,
+            offsetX, offsetY, drawWidth, drawHeight,
+            0, 0, TARGET_WIDTH, TARGET_HEIGHT
+          );
           
           canvas.toBlob((blob) => {
             resolve(new File([blob], file.name, {
               type: 'image/jpeg',
               lastModified: Date.now()
             }));
-          }, 'image/jpeg', 0.85);
+          }, 'image/jpeg', 0.90);
         };
         img.onerror = () => resolve(file);
         img.src = e.target.result;
