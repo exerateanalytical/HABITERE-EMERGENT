@@ -84,7 +84,18 @@ const Reviews = ({ propertyId, serviceId, type = 'property' }) => {
       fetchReviews();
     } catch (err) {
       console.error('Error submitting review:', err);
-      alert(err.response?.data?.detail || 'Failed to submit review');
+      const errorMessage = err.response?.data?.detail || 'Failed to submit review';
+      
+      // More helpful error messages
+      if (errorMessage.includes('Service not found')) {
+        alert('This service is no longer available or has been removed. Please try reviewing a different service.');
+      } else if (errorMessage.includes('Property not found')) {
+        alert('This property is no longer available or has been removed. Please try reviewing a different property.');
+      } else if (errorMessage.includes('already reviewed')) {
+        alert('You have already submitted a review for this item. You can edit your existing review instead.');
+      } else {
+        alert(errorMessage);
+      }
     } finally {
       setSubmitting(false);
     }
