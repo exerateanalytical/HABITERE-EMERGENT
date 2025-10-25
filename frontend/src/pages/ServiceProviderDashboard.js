@@ -128,30 +128,48 @@ const ServiceProviderDashboard = () => {
       return;
     }
     
-    const newFiles = await Promise.all(
-      files.map(async (file) => {
-        try {
-          const shouldCompress = file.size > 500000 && file.type.startsWith('image/');
-          const processedFile = shouldCompress ? await compressImage(file) : file;
-          
-          return {
-            file: processedFile,
-            preview: URL.createObjectURL(processedFile),
-            originalSize: file.size,
-            compressedSize: processedFile.size
-          };
-        } catch (err) {
-          return {
-            file,
-            preview: URL.createObjectURL(file),
-            originalSize: file.size,
-            compressedSize: file.size
-          };
-        }
-      })
-    );
+    // Create previews immediately
+    const newFiles = files.map((file) => {
+      return {
+        file: file,
+        preview: URL.createObjectURL(file),
+        originalSize: file.size,
+        compressedSize: file.size
+      };
+    });
     
     setSelectedFiles(prev => [...prev, ...newFiles]);
+    
+    // Compress in background
+    setTimeout(async () => {
+      try {
+        const compressed = await Promise.all(
+          newFiles.map(async (fileObj) => {
+            if (fileObj.file.size > 500000 && fileObj.file.type.startsWith('image/')) {
+              const compressedFile = await compressImage(fileObj.file);
+              return {
+                ...fileObj,
+                file: compressedFile,
+                compressedSize: compressedFile.size
+              };
+            }
+            return fileObj;
+          })
+        );
+        setSelectedFiles(prev => {
+          const newList = [...prev];
+          compressed.forEach((comp) => {
+            const index = newList.findIndex(f => f.preview === comp.preview);
+            if (index !== -1) {
+              newList[index] = comp;
+            }
+          });
+          return newList;
+        });
+      } catch (err) {
+        console.error('Background compression failed:', err);
+      }
+    }, 100);
   };
 
   const removeFile = (index) => {
