@@ -146,6 +146,8 @@ const PropertyForm = () => {
     
     try {
       setUploadingImages(true);
+      setUploadProgress(0);
+      
       const formData = new FormData();
       
       selectedFiles.forEach(({ file }) => {
@@ -157,14 +159,19 @@ const PropertyForm = () => {
         headers: {
           'Content-Type': 'multipart/form-data'
         },
-        withCredentials: true
+        withCredentials: true,
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          setUploadProgress(percentCompleted);
+        }
       });
       
       setUploadedImages(response.data.images);
       return response.data.images.map(img => img.url);
     } catch (err) {
       console.error('Error uploading images:', err);
-      throw new Error('Failed to upload images');
+      setUploadProgress(0);
+      throw new Error(err.response?.data?.detail || 'Failed to upload images');
     } finally {
       setUploadingImages(false);
     }
