@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { getPropertyImageUrl } from '../utils/imageUtils';
 import { PropertyCardSkeleton } from './SkeletonLoader';
+import { useLocation } from '../context/LocationContext';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
