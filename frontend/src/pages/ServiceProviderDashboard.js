@@ -159,9 +159,21 @@ const ServiceProviderDashboard = () => {
   const handleUpdateService = async (e) => {
     e.preventDefault();
     try {
+      // Upload new images if any
+      let imageUrls = [...(serviceForm.images || [])];
+      if (selectedFiles.length > 0) {
+        const newUrls = await uploadImages();
+        imageUrls = [...imageUrls, ...newUrls];
+      }
+      
+      const serviceData = {
+        ...serviceForm,
+        images: imageUrls
+      };
+      
       await axios.put(
         `${BACKEND_URL}/api/services/${editingService.id}`,
-        serviceForm,
+        serviceData,
         { withCredentials: true }
       );
       
