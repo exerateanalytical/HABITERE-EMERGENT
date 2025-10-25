@@ -90,32 +90,38 @@ async def get_properties(
     location: Optional[str] = None,
     min_price: Optional[float] = None,
     max_price: Optional[float] = None,
+    user_location: Optional[str] = None,
+    sort_by_location: bool = False,
     skip: int = 0,
-    limit: int = 20
+    limit: int = 100
 ):
     """
-    Get properties with optional filtering.
+    Get properties with optional filtering and location-based sorting.
     
     This endpoint provides flexible property search with multiple filter parameters:
     - Filter by property type (house, apartment, land, etc.)
     - Filter by listing type (sale, rent, lease, etc.)
     - Filter by location (case-insensitive partial match)
     - Filter by price range (min and/or max)
+    - Sort by user location (show user's city properties first)
     - Pagination with skip and limit
     
     Args:
         property_type: Filter by property type (e.g., "apartment", "house")
         listing_type: Filter by listing type (e.g., "sale", "rent")
-        location: Filter by location (case-insensitive regex search)
+        location: Filter by specific location (case-insensitive regex search)
         min_price: Minimum price filter
         max_price: Maximum price filter
+        user_location: User's current location for sorting (e.g., "Douala", "Yaounde")
+        sort_by_location: If True, sort properties with user_location first
         skip: Number of items to skip (pagination)
-        limit: Maximum number of items to return (default: 20, max: 100)
+        limit: Maximum number of items to return (default: 100)
     
     Returns:
-        List of property documents matching the filters
+        List of property documents matching the filters, sorted by location if requested
         
     Example:
+        GET /api/properties?user_location=Douala&sort_by_location=true&limit=20
         GET /api/properties?location=Douala&listing_type=rent&min_price=100000&limit=10
     """
     db = get_database()
@@ -151,8 +157,24 @@ async def get_properties(
     
     logger.info(f"Found {len(properties)} properties matching filters")
     
-    # Serialize documents (remove MongoDB _id, convert dates to ISO strings)
-    return [serialize_doc(prop) for prop in properties]
+    # Serialize documents
+    serialized_properties = [serialize_doc(prop) for prop in properties]
+    
+    # Sort by location if requested and user_location is provided
+    if sort_by_location and user_location:
+        # Normalize location for comparison
+        user_loc_lower = user_location.lower().strip()
+        
+        # Sort: properties in user's location first, then others
+        def location_sort_key(prop):
+            prop_location = prop.get("location", "").lower().strip()
+            # Return 0 if location matches (comes first), 1 if not (comes later)
+            return 0 if user_loc_lower in prop_location else 1
+        
+        serialized_properties.sort(key=location_sort_key)
+        logger.info(f"Properties sorted by location priority: {user_location}")
+    
+    return serialized_properties
 
 
 @router.get("/properties/{property_id}", response_model=Dict[str, Any])
