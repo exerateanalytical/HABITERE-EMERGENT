@@ -7,6 +7,8 @@ import ServicesCarousel from '../components/ServicesCarousel';
 import FilterSidebar from '../components/FilterSidebar';
 import RippleButton from '../components/RippleButton';
 import { PropertyCardSkeleton } from '../components/SkeletonLoader';
+import LocationToggle from '../components/LocationToggle';
+import { useLocation as useLocationContext } from '../context/LocationContext';
 import { 
   Search, 
   Filter, 
