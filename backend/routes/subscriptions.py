@@ -217,6 +217,11 @@ async def get_subscription_plans():
     
     plans = await db.subscription_plans.find({"is_active": True}).to_list(length=None)
     
+    # Remove MongoDB ObjectId for JSON serialization
+    for plan in plans:
+        if '_id' in plan:
+            plan.pop('_id')
+    
     return {
         "plans": plans,
         "total": len(plans)
