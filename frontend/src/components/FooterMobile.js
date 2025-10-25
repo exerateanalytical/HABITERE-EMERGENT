@@ -129,15 +129,15 @@ const FooterMobile = () => {
         {/* Contact Info */}
         <div className="mb-8 space-y-3">
           <div className="flex items-center text-sm">
-            <Mail className="w-4 h-4 mr-3 text-blue-500" />
+            <Mail className="w-4 h-4 mr-3 text-green-500" />
             <span>support@habitere.com</span>
           </div>
           <div className="flex items-center text-sm">
-            <Phone className="w-4 h-4 mr-3 text-blue-500" />
+            <Phone className="w-4 h-4 mr-3 text-green-500" />
             <span>+237 6XX XXX XXX</span>
           </div>
           <div className="flex items-center text-sm">
-            <MapPin className="w-4 h-4 mr-3 text-blue-500" />
+            <MapPin className="w-4 h-4 mr-3 text-green-500" />
             <span>Douala, Cameroon</span>
           </div>
         </div>
@@ -150,7 +150,7 @@ const FooterMobile = () => {
               <a
                 key={social.name}
                 href={social.url}
-                className="w-10 h-10 bg-gray-800 hover:bg-blue-600 active:bg-blue-700 rounded-full flex items-center justify-center transition-all duration-200 touch-manipulation transform active:scale-95"
+                className="w-10 h-10 bg-gray-800 hover:bg-green-600 active:bg-green-700 rounded-full flex items-center justify-center transition-all duration-200 touch-manipulation transform active:scale-95"
                 aria-label={social.name}
               >
                 <Icon className="w-5 h-5" />
