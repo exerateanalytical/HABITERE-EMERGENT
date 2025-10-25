@@ -555,6 +555,10 @@ async def check_subscription_access(current_user: dict = Depends(get_current_use
                 "expired_date": subscription["end_date"]
             }
     
+    # Remove MongoDB ObjectId for JSON serialization
+    if subscription and '_id' in subscription:
+        subscription.pop('_id')
+    
     return {
         "has_access": True,
         "subscription": subscription,
