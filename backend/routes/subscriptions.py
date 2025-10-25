@@ -396,6 +396,12 @@ async def renew_subscription(
     # Get plan
     plan = await db.subscription_plans.find_one({"id": subscription["plan_id"]})
     
+    # Remove MongoDB ObjectIds for JSON serialization
+    if subscription and '_id' in subscription:
+        subscription.pop('_id')
+    if plan and '_id' in plan:
+        plan.pop('_id')
+    
     # Create payment
     payment_id = str(uuid.uuid4())
     payment_data = {
