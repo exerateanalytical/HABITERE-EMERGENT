@@ -24,7 +24,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 # Test configuration
-BASE_URL = "https://habitere-inventory.preview.emergentagent.com/api"
+BASE_URL = "https://habitere-home.preview.emergentagent.com/api"
 
 class ComprehensiveAuthTester:
     """Additional comprehensive authentication tests."""

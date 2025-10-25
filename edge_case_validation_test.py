@@ -10,7 +10,7 @@ import requests
 import json
 
 # Backend URL from environment
-BACKEND_URL = "https://habitere-inventory.preview.emergentagent.com/api"
+BACKEND_URL = "https://habitere-home.preview.emergentagent.com/api"
 
 # Test credentials
 ADMIN_EMAIL = "admin@habitere.com"

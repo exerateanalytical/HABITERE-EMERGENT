@@ -41,7 +41,7 @@ class PropertyBackendTester:
     
     def __init__(self):
         # Get backend URL from environment
-        self.base_url = os.environ.get('REACT_APP_BACKEND_URL', 'https://habitere-inventory.preview.emergentagent.com')
+        self.base_url = os.environ.get('REACT_APP_BACKEND_URL', 'https://habitere-home.preview.emergentagent.com')
         if not self.base_url.endswith('/api'):
             self.base_url = f"{self.base_url}/api"
         
