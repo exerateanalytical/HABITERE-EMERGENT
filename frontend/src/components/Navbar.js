@@ -40,7 +40,7 @@ const Navbar = () => {
           {/* Logo and brand */}
           <div className="flex items-center">
             <Link to="/" className="flex-shrink-0 flex items-center">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
                 <Building className="w-5 h-5 text-white" />
               </div>
               <span className="ml-2 text-xl font-bold text-gray-900">Habitere</span>
