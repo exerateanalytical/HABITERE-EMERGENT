@@ -302,6 +302,9 @@ async def subscribe_to_plan(
         payment_data["payment_date"] = datetime.now(timezone.utc).isoformat()
         payment_data["transaction_id"] = f"TXN-{str(uuid.uuid4())[:8]}"
     
+    # Create copies for response before inserting (to avoid ObjectId contamination)
+    payment_response = payment_data.copy()
+    
     await db.payments.insert_one(payment_data)
     
     # Create subscription
@@ -317,14 +320,16 @@ async def subscribe_to_plan(
         "created_at": datetime.now(timezone.utc).isoformat()
     }
     
+    subscription_response = subscription_data.copy()
+    
     await db.user_subscriptions.insert_one(subscription_data)
     
     logger.info(f"User {current_user['email']} subscribed to {plan['name']}")
     
     return {
         "message": "Subscription created successfully",
-        "subscription": subscription_data,
-        "payment": payment_data
+        "subscription": subscription_response,
+        "payment": payment_response
     }
 
 
