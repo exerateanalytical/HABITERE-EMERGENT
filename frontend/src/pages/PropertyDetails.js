@@ -83,8 +83,8 @@ const PropertyDetails = () => {
       navigate('/auth/callback');
       return;
     }
-    // Navigate to messages with pre-filled recipient
-    navigate('/messages', { state: { recipientId: property.owner_id } });
+    // Navigate to messages with userId query parameter
+    navigate(`/messages?userId=${property.owner_id}`);
   };
 
   const handleCall = () => {
