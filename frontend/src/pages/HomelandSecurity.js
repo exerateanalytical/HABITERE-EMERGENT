@@ -271,8 +271,8 @@ const HomelandSecurity = () => {
             <div className="relative">
               <div className="relative rounded-2xl overflow-hidden shadow-2xl border-4 border-red-600/30">
                 <img 
-                  src="https://images.unsplash.com/photo-1552622594-9a37efeec618?w=800&q=90"
-                  alt="Professional Security Guard"
+                  src="https://images.unsplash.com/photo-1485230405346-71acb9518d9c?w=800&q=90"
+                  alt="Professional Young Security Guard"
                   className="w-full h-auto object-cover"
                 />
                 {/* Overlay Badge */}
