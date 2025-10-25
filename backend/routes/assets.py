@@ -270,6 +270,170 @@ async def get_assets(
 
 
 
+@router.get("/{asset_id}", response_model=Dict[str, Any])
+async def get_asset(
+    asset_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Get single asset by ID.
+    
+    Args:
+        asset_id: Asset ID
+        current_user: Authenticated user
+        
+    Returns:
+        Asset details
+        
+    Raises:
+        HTTPException: 404 if asset not found or 403 if unauthorized
+    """
+    db = get_database()
+    
+    asset = await db.assets.find_one({"id": asset_id})
+    
+    if not asset:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Asset not found"
+        )
+    
+    # Check authorization
+    if current_user.get("role") not in ["estate_manager", "admin"]:
+        if asset.get("owner_id") != current_user["id"] and asset.get("assigned_to") != current_user["id"]:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Not authorized to view this asset"
+            )
+    
+    return serialize_doc(asset)
+
+
+@router.put("/{asset_id}", response_model=Dict[str, Any])
+async def update_asset(
+    asset_id: str,
+    asset_update: AssetCreate,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Update asset.
+    
+    Only owner, estate managers, and admins can update assets.
+    
+    Args:
+        asset_id: Asset ID
+        asset_update: Updated asset data
+        current_user: Authenticated user
+        
+    Returns:
+        Updated asset
+        
+    Raises:
+        HTTPException: 404 if asset not found or 403 if unauthorized
+    """
+    db = get_database()
+    
+    # Check if asset exists
+    asset = await db.assets.find_one({"id": asset_id})
+    
+    if not asset:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Asset not found"
+        )
+    
+    # Check authorization
+    if current_user.get("role") not in ["estate_manager", "admin"]:
+        if asset.get("owner_id") != current_user["id"]:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Not authorized to update this asset"
+            )
+    
+    # Update asset
+    update_data = asset_update.dict()
+    update_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+    
+    result = await db.assets.update_one(
+        {"id": asset_id},
+        {"$set": update_data}
+    )
+    
+    if result.modified_count == 0:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to update asset"
+        )
+    
+    # Get updated asset
+    updated_asset = await db.assets.find_one({"id": asset_id})
+    
+    logger.info(f"Asset updated: {asset_id} by user {current_user['id']}")
+    
+    return serialize_doc(updated_asset)
+
+
+@router.delete("/{asset_id}")
+async def delete_asset(
+    asset_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Delete asset.
+    
+    Only owner, estate managers, and admins can delete assets.
+    Also deletes all associated maintenance tasks and expenses.
+    
+    Args:
+        asset_id: Asset ID
+        current_user: Authenticated user
+        
+    Returns:
+        Success message
+        
+    Raises:
+        HTTPException: 404 if asset not found or 403 if unauthorized
+    """
+    db = get_database()
+    
+    # Check if asset exists
+    asset = await db.assets.find_one({"id": asset_id})
+    
+    if not asset:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Asset not found"
+        )
+    
+    # Check authorization
+    if current_user.get("role") not in ["estate_manager", "admin"]:
+        if asset.get("owner_id") != current_user["id"]:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Not authorized to delete this asset"
+            )
+    
+    # Delete associated maintenance tasks
+    await db.maintenance_tasks.delete_many({"asset_id": asset_id})
+    
+    # Delete associated expenses
+    await db.expenses.delete_many({"asset_id": asset_id})
+    
+    # Delete asset
+    result = await db.assets.delete_one({"id": asset_id})
+    
+    if result.deleted_count == 0:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to delete asset"
+        )
+    
+    logger.info(f"Asset deleted: {asset_id} by user {current_user['id']}")
+    
+    return {"message": "Asset and associated data deleted successfully"}
+
+
+
 # ==================== MAINTENANCE TASKS ====================
 
 @router.post("/maintenance", response_model=Dict[str, Any])
