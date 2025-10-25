@@ -116,199 +116,187 @@ const AssetManagementLanding = () => {
         </div>
       </div>
 
-      {/* Service Options Toggle */}
-      <div className="bg-gray-50 py-16 border-b border-gray-200">
+      {/* Managed Service Section */}
+      <div className="py-20 bg-gradient-to-br from-green-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-black text-gray-900 mb-4">
-              Choose Your Management Style
+              Full-Service Asset Management
             </h2>
             <p className="text-xl text-gray-600">
-              Whether you prefer hands-on control or professional management, we've got you covered
+              Let our expert team handle everything for you - from tracking to maintenance coordination
             </p>
           </div>
 
-          {/* Tab Switcher */}
-          <div className="flex justify-center mb-12">
-            <div className="inline-flex bg-white rounded-2xl shadow-lg p-2 border-2 border-gray-200">
-              <button
-                onClick={() => setActiveTab('diy')}
-                className={`px-8 py-4 rounded-xl font-bold text-lg transition-all ${
-                  activeTab === 'diy'
-                    ? 'bg-green-600 text-white shadow-lg'
-                    : 'text-gray-600 hover:text-gray-900'
-                }`}
-              >
-                <Settings className="w-5 h-5 inline mr-2" />
-                DIY Management
-              </button>
-              <button
-                onClick={() => setActiveTab('managed')}
-                className={`px-8 py-4 rounded-xl font-bold text-lg transition-all ${
-                  activeTab === 'managed'
-                    ? 'bg-green-600 text-white shadow-lg'
-                    : 'text-gray-600 hover:text-gray-900'
-                }`}
-              >
-                <Users className="w-5 h-5 inline mr-2" />
-                Managed Service
-              </button>
+          <div className="bg-gradient-to-br from-green-600 to-green-700 rounded-3xl shadow-2xl p-12 text-white mb-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+              <div>
+                <h3 className="text-3xl font-black mb-4">
+                  Professional Management Service
+                </h3>
+                <p className="text-green-50 text-lg mb-6">
+                  Let our expert team handle everything - from tracking to maintenance coordination, expense management to compliance.
+                </p>
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="flex -space-x-2">
+                    <div className="w-10 h-10 bg-white rounded-full border-2 border-green-600"></div>
+                    <div className="w-10 h-10 bg-white rounded-full border-2 border-green-600"></div>
+                    <div className="w-10 h-10 bg-white rounded-full border-2 border-green-600"></div>
+                  </div>
+                  <span className="text-sm font-semibold">Dedicated Team of 15+ Professionals</span>
+                </div>
+                <button
+                  onClick={() => handleGetStarted('managed')}
+                  className="bg-white text-green-600 hover:bg-green-50 px-8 py-4 rounded-xl font-bold text-lg transition-all"
+                >
+                  Request Consultation
+                </button>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                  <HeadphonesIcon className="w-8 h-8 mb-3" />
+                  <div className="text-2xl font-black mb-1">24/7</div>
+                  <div className="text-sm text-green-100">Support Available</div>
+                </div>
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                  <Target className="w-8 h-8 mb-3" />
+                  <div className="text-2xl font-black mb-1">99.5%</div>
+                  <div className="text-sm text-green-100">Task Completion</div>
+                </div>
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                  <Clock className="w-8 h-8 mb-3" />
+                  <div className="text-2xl font-black mb-1">2hrs</div>
+                  <div className="text-sm text-green-100">Avg Response Time</div>
+                </div>
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                  <Star className="w-8 h-8 mb-3" />
+                  <div className="text-2xl font-black mb-1">4.9/5</div>
+                  <div className="text-sm text-green-100">Client Rating</div>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* DIY Management Content */}
-          {activeTab === 'diy' && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all">
-                <div className="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mb-6">
-                  <Package className="w-8 h-8 text-green-600" />
+          {/* What's Included */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              { icon: ClipboardCheck, title: 'Asset Registration', desc: 'We handle complete inventory setup' },
+              { icon: Calendar, title: 'Maintenance Coordination', desc: 'Schedule and manage all tasks' },
+              { icon: DollarSign, title: 'Expense Management', desc: 'Track and optimize all costs' },
+              { icon: FileText, title: 'Compliance Reports', desc: 'Monthly detailed reporting' },
+              { icon: PhoneCall, title: 'Vendor Management', desc: 'Coordinate with contractors' },
+              { icon: Bell, title: 'Proactive Alerts', desc: 'We notify you of critical issues' },
+              { icon: LineChart, title: 'Performance Analysis', desc: 'Quarterly strategy reviews' },
+              { icon: Shield, title: 'Insurance Liaison', desc: 'Handle claims and documentation' }
+            ].map((service, idx) => {
+              const Icon = service.icon;
+              return (
+                <div key={idx} className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-all">
+                  <Icon className="w-8 h-8 text-green-600 mb-3" />
+                  <h4 className="font-bold text-gray-900 mb-2">{service.title}</h4>
+                  <p className="text-sm text-gray-600">{service.desc}</p>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">Asset Tracking</h3>
-                <p className="text-gray-600 mb-6">
-                  Complete inventory management with QR codes, photos, documents, and warranty tracking. Know exactly what you own and where it is.
-                </p>
-                <ul className="space-y-3">
-                  <li className="flex items-start">
-                    <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5" />
-                    <span className="text-gray-700">Unlimited asset records</span>
-                  </li>
-                  <li className="flex items-start">
-                    <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5" />
-                    <span className="text-gray-700">Custom categories & tags</span>
-                  </li>
-                  <li className="flex items-start">
-                    <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5" />
-                    <span className="text-gray-700">Document storage</span>
-                  </li>
-                </ul>
-              </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
 
-              <div className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all">
-                <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mb-6">
-                  <Wrench className="w-8 h-8 text-blue-600" />
-                </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">Maintenance Scheduling</h3>
-                <p className="text-gray-600 mb-6">
-                  Automated maintenance schedules with priority management, technician assignments, and progress tracking.
-                </p>
-                <ul className="space-y-3">
-                  <li className="flex items-start">
-                    <CheckCircle className="w-5 h-5 text-blue-600 mr-2 mt-0.5" />
-                    <span className="text-gray-700">Recurring schedules</span>
-                  </li>
-                  <li className="flex items-start">
-                    <CheckCircle className="w-5 h-5 text-blue-600 mr-2 mt-0.5" />
-                    <span className="text-gray-700">Priority management</span>
-                  </li>
-                  <li className="flex items-start">
-                    <CheckCircle className="w-5 h-5 text-blue-600 mr-2 mt-0.5" />
-                    <span className="text-gray-700">Automated reminders</span>
-                  </li>
-                </ul>
-              </div>
+      {/* DIY Management Section */}
+      <div className="bg-gray-50 py-20 border-t border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-black text-gray-900 mb-4">
+              DIY Management Tools
+            </h2>
+            <p className="text-xl text-gray-600">
+              Take control with our comprehensive self-service platform
+            </p>
+          </div>
 
-              <div className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all">
-                <div className="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center mb-6">
-                  <BarChart3 className="w-8 h-8 text-purple-600" />
-                </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">Analytics & Reports</h3>
-                <p className="text-gray-600 mb-6">
-                  Comprehensive dashboards with expense tracking, asset performance, and cost optimization insights.
-                </p>
-                <ul className="space-y-3">
-                  <li className="flex items-start">
-                    <CheckCircle className="w-5 h-5 text-purple-600 mr-2 mt-0.5" />
-                    <span className="text-gray-700">Real-time analytics</span>
-                  </li>
-                  <li className="flex items-start">
-                    <CheckCircle className="w-5 h-5 text-purple-600 mr-2 mt-0.5" />
-                    <span className="text-gray-700">Expense tracking</span>
-                  </li>
-                  <li className="flex items-start">
-                    <CheckCircle className="w-5 h-5 text-purple-600 mr-2 mt-0.5" />
-                    <span className="text-gray-700">Custom reports</span>
-                  </li>
-                </ul>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all">
+              <div className="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mb-6">
+                <Package className="w-8 h-8 text-green-600" />
               </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">Asset Tracking</h3>
+              <p className="text-gray-600 mb-6">
+                Complete inventory management with QR codes, photos, documents, and warranty tracking. Know exactly what you own and where it is.
+              </p>
+              <ul className="space-y-3">
+                <li className="flex items-start">
+                  <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5" />
+                  <span className="text-gray-700">Unlimited asset records</span>
+                </li>
+                <li className="flex items-start">
+                  <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5" />
+                  <span className="text-gray-700">Custom categories & tags</span>
+                </li>
+                <li className="flex items-start">
+                  <CheckCircle className="w-5 h-5 text-green-600 mr-2 mt-0.5" />
+                  <span className="text-gray-700">Document storage</span>
+                </li>
+              </ul>
             </div>
-          )}
 
-          {/* Managed Service Content */}
-          {activeTab === 'managed' && (
-            <div>
-              <div className="bg-gradient-to-br from-green-600 to-green-700 rounded-3xl shadow-2xl p-12 text-white mb-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                  <div>
-                    <h3 className="text-3xl font-black mb-4">
-                      Full-Service Asset Management
-                    </h3>
-                    <p className="text-green-50 text-lg mb-6">
-                      Let our expert team handle everything - from tracking to maintenance coordination, expense management to compliance.
-                    </p>
-                    <div className="flex items-center gap-3 mb-6">
-                      <div className="flex -space-x-2">
-                        <div className="w-10 h-10 bg-white rounded-full border-2 border-green-600"></div>
-                        <div className="w-10 h-10 bg-white rounded-full border-2 border-green-600"></div>
-                        <div className="w-10 h-10 bg-white rounded-full border-2 border-green-600"></div>
-                      </div>
-                      <span className="text-sm font-semibold">Dedicated Team of 15+ Professionals</span>
-                    </div>
-                    <button
-                      onClick={() => handleGetStarted('managed')}
-                      className="bg-white text-green-600 hover:bg-green-50 px-8 py-4 rounded-xl font-bold text-lg transition-all"
-                    >
-                      Request Consultation
-                    </button>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
-                      <HeadphonesIcon className="w-8 h-8 mb-3" />
-                      <div className="text-2xl font-black mb-1">24/7</div>
-                      <div className="text-sm text-green-100">Support Available</div>
-                    </div>
-                    <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
-                      <Target className="w-8 h-8 mb-3" />
-                      <div className="text-2xl font-black mb-1">99.5%</div>
-                      <div className="text-sm text-green-100">Task Completion</div>
-                    </div>
-                    <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
-                      <Clock className="w-8 h-8 mb-3" />
-                      <div className="text-2xl font-black mb-1">2hrs</div>
-                      <div className="text-sm text-green-100">Avg Response Time</div>
-                    </div>
-                    <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
-                      <Star className="w-8 h-8 mb-3" />
-                      <div className="text-2xl font-black mb-1">4.9/5</div>
-                      <div className="text-sm text-green-100">Client Rating</div>
-                    </div>
-                  </div>
-                </div>
+            <div className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all">
+              <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mb-6">
+                <Wrench className="w-8 h-8 text-blue-600" />
               </div>
-
-              {/* What's Included */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {[
-                  { icon: ClipboardCheck, title: 'Asset Registration', desc: 'We handle complete inventory setup' },
-                  { icon: Calendar, title: 'Maintenance Coordination', desc: 'Schedule and manage all tasks' },
-                  { icon: DollarSign, title: 'Expense Management', desc: 'Track and optimize all costs' },
-                  { icon: FileText, title: 'Compliance Reports', desc: 'Monthly detailed reporting' },
-                  { icon: PhoneCall, title: 'Vendor Management', desc: 'Coordinate with contractors' },
-                  { icon: Bell, title: 'Proactive Alerts', desc: 'We notify you of critical issues' },
-                  { icon: LineChart, title: 'Performance Analysis', desc: 'Quarterly strategy reviews' },
-                  { icon: Shield, title: 'Insurance Liaison', desc: 'Handle claims and documentation' }
-                ].map((service, idx) => {
-                  const Icon = service.icon;
-                  return (
-                    <div key={idx} className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-all">
-                      <Icon className="w-8 h-8 text-green-600 mb-3" />
-                      <h4 className="font-bold text-gray-900 mb-2">{service.title}</h4>
-                      <p className="text-sm text-gray-600">{service.desc}</p>
-                    </div>
-                  );
-                })}
-              </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">Maintenance Scheduling</h3>
+              <p className="text-gray-600 mb-6">
+                Automated maintenance schedules with priority management, technician assignments, and progress tracking.
+              </p>
+              <ul className="space-y-3">
+                <li className="flex items-start">
+                  <CheckCircle className="w-5 h-5 text-blue-600 mr-2 mt-0.5" />
+                  <span className="text-gray-700">Recurring schedules</span>
+                </li>
+                <li className="flex items-start">
+                  <CheckCircle className="w-5 h-5 text-blue-600 mr-2 mt-0.5" />
+                  <span className="text-gray-700">Priority management</span>
+                </li>
+                <li className="flex items-start">
+                  <CheckCircle className="w-5 h-5 text-blue-600 mr-2 mt-0.5" />
+                  <span className="text-gray-700">Automated reminders</span>
+                </li>
+              </ul>
             </div>
-          )}
+
+            <div className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all">
+              <div className="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center mb-6">
+                <BarChart3 className="w-8 h-8 text-purple-600" />
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">Analytics & Reports</h3>
+              <p className="text-gray-600 mb-6">
+                Comprehensive dashboards with expense tracking, asset performance, and cost optimization insights.
+              </p>
+              <ul className="space-y-3">
+                <li className="flex items-start">
+                  <CheckCircle className="w-5 h-5 text-purple-600 mr-2 mt-0.5" />
+                  <span className="text-gray-700">Real-time analytics</span>
+                </li>
+                <li className="flex items-start">
+                  <CheckCircle className="w-5 h-5 text-purple-600 mr-2 mt-0.5" />
+                  <span className="text-gray-700">Expense tracking</span>
+                </li>
+                <li className="flex items-start">
+                  <CheckCircle className="w-5 h-5 text-purple-600 mr-2 mt-0.5" />
+                  <span className="text-gray-700">Custom reports</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="text-center mt-12">
+            <button
+              onClick={() => handleGetStarted('diy')}
+              className="bg-green-600 hover:bg-green-700 text-white px-10 py-5 rounded-xl font-bold text-xl transition-all shadow-2xl inline-flex items-center"
+            >
+              Start DIY Management
+              <ArrowRight className="ml-2 w-6 h-6" />
+            </button>
+          </div>
         </div>
       </div>
 
