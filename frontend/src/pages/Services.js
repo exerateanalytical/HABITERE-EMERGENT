@@ -276,6 +276,42 @@ const Services = () => {
         </div>
       </div>
 
+      {/* Service Categories Carousel */}
+      <div className="bg-white border-b border-gray-200 py-6 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Browse by Category</h2>
+          <div className="relative">
+            <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide animate-scroll-left">
+              {/* Duplicate categories for seamless loop */}
+              {[...serviceCategories, ...serviceCategories].map((category, index) => {
+                const Icon = category.icon;
+                return (
+                  <button
+                    key={`${category.value}-${index}`}
+                    onClick={() => {
+                      setSelectedCategory(category.value);
+                      window.scrollTo({ top: 400, behavior: 'smooth' });
+                    }}
+                    className={`flex-shrink-0 w-32 h-32 flex flex-col items-center justify-center rounded-2xl border-2 transition-all duration-300 ${
+                      selectedCategory === category.value
+                        ? 'bg-green-600 border-green-600 text-white shadow-lg scale-105'
+                        : 'bg-white border-gray-200 text-gray-700 hover:border-green-500 hover:shadow-md'
+                    }`}
+                  >
+                    <Icon className={`w-10 h-10 mb-2 ${
+                      selectedCategory === category.value ? 'text-white' : 'text-green-600'
+                    }`} />
+                    <span className="text-sm font-semibold text-center px-2">
+                      {category.label}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Main Content with Sidebar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex gap-8">
