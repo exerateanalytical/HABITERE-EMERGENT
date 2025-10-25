@@ -78,7 +78,8 @@ const PropertyForm = () => {
       const response = await axios.post(`${API}/upload/images`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
-        }
+        },
+        withCredentials: true
       });
       
       setUploadedImages(response.data.images);
