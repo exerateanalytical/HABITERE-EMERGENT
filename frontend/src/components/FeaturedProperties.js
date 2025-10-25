@@ -28,6 +28,7 @@ const FeaturedProperties = ({ title = "Featured Properties", showAll = true, lim
   const [favorites, setFavorites] = useState(new Set());
   const carouselRef = useRef(null);
   const intervalRef = useRef(null);
+  const { userLocation, viewMode } = useLocation();
 
   useEffect(() => {
     fetchProperties();
@@ -36,7 +37,7 @@ const FeaturedProperties = ({ title = "Featured Properties", showAll = true, lim
         clearInterval(intervalRef.current);
       }
     };
-  }, []);
+  }, [userLocation, viewMode]);
 
   useEffect(() => {
     if (isAutoPlaying && properties.length > 0) {
