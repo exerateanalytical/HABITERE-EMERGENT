@@ -70,6 +70,9 @@ const Reviews = ({ propertyId, serviceId, type = 'property' }) => {
           ...(type === 'property' ? { property_id: propertyId } : { service_id: serviceId })
         };
         
+        console.log('Submitting review:', reviewData);
+        console.log('Type:', type, 'PropertyId:', propertyId, 'ServiceId:', serviceId);
+        
         await axios.post(`${BACKEND_URL}/api/reviews`, reviewData, {
           withCredentials: true
         });
