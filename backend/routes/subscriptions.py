@@ -417,6 +417,9 @@ async def renew_subscription(
         "created_at": datetime.now(timezone.utc).isoformat()
     }
     
+    # Create a copy for response before inserting (to avoid ObjectId contamination)
+    payment_response = payment_data.copy()
+    
     await db.payments.insert_one(payment_data)
     
     # Extend subscription
@@ -438,7 +441,7 @@ async def renew_subscription(
     return {
         "message": "Subscription renewed successfully",
         "new_end_date": new_end_date.isoformat(),
-        "payment": payment_data
+        "payment": payment_response
     }
 
 
