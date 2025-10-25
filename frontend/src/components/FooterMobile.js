@@ -93,7 +93,7 @@ const FooterMobile = () => {
                     <li key={link.path}>
                       <Link
                         to={link.path}
-                        className="block text-gray-400 hover:text-white active:text-blue-400 transition-colors py-2 min-h-[48px] flex items-center touch-manipulation"
+                        className="block text-gray-400 hover:text-white active:text-green-400 transition-colors py-2 min-h-[48px] flex items-center touch-manipulation"
                       >
                         {link.name}
                       </Link>
