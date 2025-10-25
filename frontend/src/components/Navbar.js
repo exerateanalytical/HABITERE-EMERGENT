@@ -58,8 +58,8 @@ const Navbar = () => {
                   to={item.path}
                   className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
                     isActivePath(item.path)
-                      ? 'text-blue-600 bg-blue-50'
-                      : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
+                      ? 'text-green-600 bg-green-50'
+                      : 'text-gray-700 hover:text-green-600 hover:bg-green-50'
                   }`}
                 >
                   <Icon className="w-4 h-4 mr-2" />
@@ -77,8 +77,8 @@ const Navbar = () => {
                   to={item.path}
                   className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
                     isActivePath(item.path)
-                      ? 'text-blue-600 bg-blue-50'
-                      : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
+                      ? 'text-green-600 bg-green-50'
+                      : 'text-gray-700 hover:text-green-600 hover:bg-green-50'
                   }`}
                 >
                   <Icon className="w-4 h-4 mr-2" />
