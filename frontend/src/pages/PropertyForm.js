@@ -95,44 +95,69 @@ const PropertyForm = () => {
   };
 
   const handleFileSelect = async (e) => {
+    console.log('File select triggered');
     const files = Array.from(e.target.files);
-    if (files.length + selectedFiles.length > 10) {
-      setError('Maximum 10 images allowed');
+    console.log('Selected files:', files.length);
+    
+    if (files.length === 0) {
+      console.log('No files selected');
       return;
     }
     
-    setError('Optimizing images...');
+    if (files.length + selectedFiles.length > 10) {
+      setError('Maximum 10 images allowed');
+      alert('Maximum 10 images allowed');
+      return;
+    }
     
-    // Compress and create preview URLs
-    const newFiles = await Promise.all(
-      files.map(async (file) => {
-        try {
-          // Only compress images larger than 500KB
-          const shouldCompress = file.size > 500000 && file.type.startsWith('image/');
-          const processedFile = shouldCompress ? await compressImage(file) : file;
-          
-          return {
-            file: processedFile,
-            preview: URL.createObjectURL(processedFile),
-            originalSize: file.size,
-            compressedSize: processedFile.size,
-            name: file.name
-          };
-        } catch (err) {
-          console.error('Error processing file:', err);
-          return {
-            file,
-            preview: URL.createObjectURL(file),
-            originalSize: file.size,
-            compressedSize: file.size,
-            name: file.name
-          };
-        }
-      })
-    );
-    
-    setSelectedFiles(prev => [...prev, ...newFiles]);
-    setError('');
+    try {
+      setError('Optimizing images...');
+      
+      // Compress and create preview URLs
+      const newFiles = await Promise.all(
+        files.map(async (file) => {
+          try {
+            console.log('Processing file:', file.name, 'Size:', file.size);
+            
+            // Only compress images larger than 500KB
+            const shouldCompress = file.size > 500000 && file.type.startsWith('image/');
+            const processedFile = shouldCompress ? await compressImage(file) : file;
+            
+            console.log('File processed:', processedFile.name, 'New size:', processedFile.size);
+            
+            return {
+              file: processedFile,
+              preview: URL.createObjectURL(processedFile),
+              originalSize: file.size,
+              compressedSize: processedFile.size,
+              name: file.name
+            };
+          } catch (err) {
+            console.error('Error processing file:', file.name, err);
+            return {
+              file,
+              preview: URL.createObjectURL(file),
+              originalSize: file.size,
+              compressedSize: file.size,
+              name: file.name
+            };
+          }
+        })
+      );
+      
+      console.log('All files processed:', newFiles.length);
+      setSelectedFiles(prev => {
+        const updated = [...prev, ...newFiles];
+        console.log('Updated selectedFiles:', updated.length);
+        return updated;
+      });
+      setError('');
+      
+    } catch (err) {
+      console.error('Error in handleFileSelect:', err);
+      setError('Failed to process images. Please try again.');
+      alert('Failed to process images: ' + err.message);
+    }
   };
 
   const removeFile = (index) => {
