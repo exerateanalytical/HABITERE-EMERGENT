@@ -34,7 +34,19 @@ const API = `${BACKEND_URL}/api`;
 // Helper function to get proper image URL
 const getImageUrl = (url) => {
   if (!url) return 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80';
-  return url.startsWith('/uploads/') ? `${BACKEND_URL}${url}` : url;
+  
+  // If it's an uploads path, use the API serve endpoint
+  if (url.startsWith('/uploads/')) {
+    // Extract folder and filename from path like /uploads/property/abc123.png
+    const parts = url.split('/');
+    if (parts.length >= 4) {
+      const folder = parts[2];  // 'property', 'service', etc.
+      const filename = parts[3]; // filename
+      return `${API}/serve/${folder}/${filename}`;
+    }
+  }
+  
+  return url.startsWith('http') ? url : `${BACKEND_URL}${url}`;
 };
 
 const Properties = () => {
