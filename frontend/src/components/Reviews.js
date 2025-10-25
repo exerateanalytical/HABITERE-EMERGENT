@@ -77,7 +77,7 @@ const Reviews = ({ propertyId, serviceId, type = 'property' }) => {
       }
       
       // Reset form
-      setRating(5);
+      setRating(1);
       setComment('');
       setShowReviewForm(false);
       setEditingReview(null);
