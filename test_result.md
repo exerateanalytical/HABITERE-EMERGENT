@@ -689,10 +689,11 @@
 
 ## test_plan:
   current_focus:
-    - "Core User Flows Verification - Production Readiness Check - COMPLETED ✅"
-    - "Service Provider Dashboard & Service Creation - Complete Flow Testing - COMPLETED ✅"
+    - "Subscription System Frontend - PricingPage Enhancement COMPLETED ✅"
+    - "Subscription System - End-to-End Flow Testing (Pricing → Checkout → Dashboard)"
   stuck_tasks: []
   test_all: false
+  test_priority: "high_first"
   test_priority: "high_first"
 
 ## agent_communication:
