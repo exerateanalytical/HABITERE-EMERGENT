@@ -258,6 +258,18 @@ function AppContent() {
         <Route path="/terms" element={<Terms />} />
         <Route path="/help-center" element={<HelpCenter />} />
         
+        {/* Subscription & Pricing */}
+        <Route path="/pricing" element={<PricingPage />} />
+        <Route path="/checkout" element={<CheckoutPage />} />
+        <Route 
+          path="/subscription" 
+          element={
+            <ProtectedRoute>
+              <SubscriptionDashboard />
+            </ProtectedRoute>
+          } 
+        />
+        
         {/* Homeland Security Routes */}
         <Route path="/security" element={<HomelandSecurity />} />
         <Route path="/security/services" element={<SecurityServices />} />
