@@ -68,6 +68,11 @@ import VerifyEmailPage from './pages/auth/VerifyEmailPage';
 import ForgotPasswordPage from './pages/auth/ForgotPasswordPage';
 import ResetPasswordPage from './pages/auth/ResetPasswordPage';
 
+// Subscription Pages
+import PricingPage from './pages/PricingPage';
+import CheckoutPage from './pages/CheckoutPage';
+import SubscriptionDashboard from './pages/SubscriptionDashboard';
+
 // Context
 import { AuthProvider, useAuth } from './context/AuthContext';
 
