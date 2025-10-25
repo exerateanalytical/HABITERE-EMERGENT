@@ -74,6 +74,58 @@ const ServiceProviderDashboard = () => {
     }
   };
 
+  const handleFileSelect = (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length + selectedFiles.length > 10) {
+      alert('Maximum 10 images allowed');
+      return;
+    }
+    
+    const newFiles = files.map(file => ({
+      file,
+      preview: URL.createObjectURL(file)
+    }));
+    
+    setSelectedFiles(prev => [...prev, ...newFiles]);
+  };
+
+  const removeFile = (index) => {
+    setSelectedFiles(prev => {
+      const newFiles = [...prev];
+      URL.revokeObjectURL(newFiles[index].preview);
+      newFiles.splice(index, 1);
+      return newFiles;
+    });
+  };
+
+  const uploadImages = async () => {
+    if (selectedFiles.length === 0) return [];
+    
+    try {
+      setUploadingImages(true);
+      const formData = new FormData();
+      
+      selectedFiles.forEach(({ file }) => {
+        formData.append('files', file);
+      });
+      formData.append('entity_type', 'service');
+      
+      const response = await axios.post(`${BACKEND_URL}/api/upload/images`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        },
+        withCredentials: true
+      });
+      
+      return response.data.images.map(img => img.url);
+    } catch (err) {
+      console.error('Error uploading images:', err);
+      throw new Error('Failed to upload images');
+    } finally {
+      setUploadingImages(false);
+    }
+  };
+
   const handleCreateService = async (e) => {
     e.preventDefault();
     try {
