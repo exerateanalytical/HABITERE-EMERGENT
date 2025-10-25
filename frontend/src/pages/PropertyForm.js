@@ -337,34 +337,70 @@ const PropertyForm = () => {
 
               {/* Image Previews */}
               {selectedFiles.length > 0 && (
-                <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {selectedFiles.map((fileObj, index) => (
-                    <div key={index} className="relative group">
-                      <img
-                        src={fileObj.preview}
-                        alt={`Preview ${index + 1}`}
-                        className="w-full h-32 object-cover rounded-lg border-2 border-gray-200"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => removeFile(index)}
-                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
-                      {index === 0 && (
-                        <div className="absolute bottom-2 left-2 bg-blue-600 text-white text-xs px-2 py-1 rounded">
-                          Primary
+                <div className="mt-4">
+                  <div className="text-sm text-gray-600 mb-2">
+                    {selectedFiles.length} image{selectedFiles.length > 1 ? 's' : ''} selected
+                    {selectedFiles.length > 0 && selectedFiles[0].compressedSize && (
+                      <span className="ml-2 text-green-600">
+                        (Optimized: {Math.round((selectedFiles.reduce((acc, f) => acc + f.originalSize, 0) - selectedFiles.reduce((acc, f) => acc + f.compressedSize, 0)) / selectedFiles.reduce((acc, f) => acc + f.originalSize, 0) * 100)}% smaller)
+                      </span>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {selectedFiles.map((fileObj, index) => (
+                      <div key={index} className="relative group">
+                        <div className="relative w-full h-32 bg-gray-100 rounded-lg border-2 border-gray-200 overflow-hidden">
+                          <img
+                            src={fileObj.preview}
+                            alt={`Preview ${index + 1}`}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              e.target.style.display = 'none';
+                              e.target.parentElement.innerHTML = '<div class="flex items-center justify-center h-full text-gray-400"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg></div>';
+                            }}
+                          />
                         </div>
-                      )}
-                    </div>
-                  ))}
+                        <button
+                          type="button"
+                          onClick={() => removeFile(index)}
+                          className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                        {index === 0 && (
+                          <div className="absolute bottom-2 left-2 bg-green-600 text-white text-xs px-2 py-1 rounded font-semibold">
+                            Cover Photo
+                          </div>
+                        )}
+                        <div className="absolute bottom-2 right-2 bg-black bg-opacity-60 text-white text-xs px-2 py-1 rounded">
+                          {(fileObj.compressedSize / 1024).toFixed(0)} KB
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
 
+              {/* Upload Progress */}
               {uploadingImages && (
-                <div className="mt-4 text-center text-sm text-blue-600">
-                  Uploading images...
+                <div className="mt-4 bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-semibold text-blue-700">
+                      Uploading images...
+                    </span>
+                    <span className="text-sm font-bold text-blue-700">
+                      {uploadProgress}%
+                    </span>
+                  </div>
+                  <div className="w-full bg-blue-200 rounded-full h-2.5 overflow-hidden">
+                    <div
+                      className="bg-blue-600 h-2.5 rounded-full transition-all duration-300"
+                      style={{ width: `${uploadProgress}%` }}
+                    ></div>
+                  </div>
+                  <p className="text-xs text-blue-600 mt-2">
+                    Please wait, do not close this page...
+                  </p>
                 </div>
               )}
             </div>
