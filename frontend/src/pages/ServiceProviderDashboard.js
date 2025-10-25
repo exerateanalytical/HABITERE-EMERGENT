@@ -226,6 +226,7 @@ const ServiceProviderDashboard = () => {
       location: '',
       images: []
     });
+    setSelectedFiles([]);
     setEditingService(null);
   };
 
