@@ -368,6 +368,56 @@ async def update_user_profile(
             logger.warning(f"Profile update called with no data by user {current_user.get('email')}")
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
+
+
+@router.put("/users/location")
+async def update_user_location(
+    location: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Update user's preferred location for personalized property filtering.
+    
+    This endpoint updates the user's location preference which is used
+    to show location-based property recommendations.
+    
+    Args:
+        location: City/location name (e.g., "Douala", "Yaounde", "Bamenda")
+        current_user: Authenticated user
+        
+    Returns:
+        Success message with updated location
+        
+    Raises:
+        HTTPException: 404 if user not found
+        HTTPException: 500 if update fails
+    """
+    db = get_database()
+    
+    # Update user location
+    result = await db.users.update_one(
+        {"id": current_user["id"]},
+        {
+            "$set": {
+                "location": location,
+                "updated_at": datetime.now(timezone.utc).isoformat()
+            }
+        }
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+    
+    logger.info(f"User {current_user['id']} location updated to: {location}")
+    
+    return {
+        "message": "Location updated successfully",
+        "location": location
+    }
+
                 detail="No data provided for update"
             )
         
