@@ -54,10 +54,11 @@ const Properties = () => {
   const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'list'
   const [favorites, setFavorites] = useState(new Set());
   const [sortBy, setSortBy] = useState('newest');
+  const { userLocation, viewMode: locationViewMode } = useLocationContext();
 
   useEffect(() => {
     fetchProperties();
-  }, [filters]);
+  }, [filters, userLocation, locationViewMode]);
 
   const fetchProperties = async () => {
     try {
