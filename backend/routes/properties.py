@@ -65,6 +65,7 @@ class PropertyCreate(BaseModel):
     - bedrooms: 0-50 (non-negative)
     - bathrooms: 0-50 (non-negative)
     - area_sqm: must be positive if provided
+    - contact_phone: required for property posting
     """
     title: str = Field(..., min_length=5, max_length=200, description="Property title (5-200 characters)")
     description: str = Field(..., min_length=50, max_length=2000, description="Property description (50-2000 characters)")
@@ -79,6 +80,9 @@ class PropertyCreate(BaseModel):
     area_sqm: Optional[float] = Field(default=None, gt=0, description="Area in square meters (must be positive)")
     images: List[str] = []
     amenities: List[str] = []
+    contact_phone: Optional[str] = Field(default="", description="Contact phone number")
+    contact_whatsapp: Optional[str] = Field(default="", description="WhatsApp number")
+    contact_name: Optional[str] = Field(default="", description="Contact person name")
 
 
 # ==================== PROPERTY LISTING & DETAILS ====================
