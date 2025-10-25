@@ -266,6 +266,9 @@ class CoreFlowsTester:
     async def test_property_appears_in_list(self):
         """Test that created property appears in properties list."""
         try:
+            # Add a small delay to ensure property is indexed
+            await asyncio.sleep(1)
+            
             async with self.session.get(f"{BASE_URL}/properties") as response:
                 if response.status == 200:
                     data = await response.json()
@@ -276,7 +279,12 @@ class CoreFlowsTester:
                             self.record_test("Property Appears in List", True, flow="property_posting")
                             return True
                         else:
-                            self.record_test("Property Appears in List", False, "Property not found in list", flow="property_posting")
+                            # Log some debug info
+                            logger.info(f"Looking for property ID: {self.test_property_id}")
+                            logger.info(f"Found {len(data)} properties in list")
+                            if len(data) > 0:
+                                logger.info(f"First property ID: {data[0].get('id')}")
+                            self.record_test("Property Appears in List", False, f"Property {self.test_property_id} not found in {len(data)} properties", flow="property_posting")
                             return False
                     else:
                         self.record_test("Property Appears in List", False, "Invalid response format", flow="property_posting")
