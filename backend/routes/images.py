@@ -508,3 +508,63 @@ async def delete_image(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to delete image"
         )
+
+
+# ==================== SERVE IMAGE FILE ====================
+
+from fastapi.responses import FileResponse
+
+@router.get("/serve/{folder}/{filename}")
+async def serve_image(folder: str, filename: str):
+    """
+    Serve image files with proper CORS headers.
+    
+    This endpoint serves images from the uploads directory
+    with proper Content-Type and CORS headers to ensure
+    cross-origin requests work correctly.
+    
+    Public endpoint - no authentication required.
+    
+    Args:
+        folder: Subfolder name (property, service, profile, etc.)
+        filename: Image filename
+        
+    Returns:
+        FileResponse with image content
+        
+    Example:
+        GET /api/serve/property/abc123.png
+    """
+    try:
+        file_path = UPLOAD_DIR / folder / filename
+        
+        if not file_path.exists():
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Image not found"
+            )
+        
+        # Get proper MIME type
+        mime_type, _ = mimetypes.guess_type(str(file_path))
+        if not mime_type:
+            mime_type = "image/jpeg"  # Default
+        
+        logger.info(f"Serving image: {file_path} with type {mime_type}")
+        
+        return FileResponse(
+            path=str(file_path),
+            media_type=mime_type,
+            headers={
+                "Access-Control-Allow-Origin": "*",
+                "Cache-Control": "public, max-age=31536000"
+            }
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error serving image: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to serve image"
+        )
