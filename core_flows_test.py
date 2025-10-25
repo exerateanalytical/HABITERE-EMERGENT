@@ -383,7 +383,9 @@ class CoreFlowsTester:
             async with self.session.get(f"{BASE_URL}/subscriptions/plans") as response:
                 if response.status == 200:
                     data = await response.json()
-                    if isinstance(data, list) and len(data) > 0:
+                    # Check if it's an object with plans array or direct array
+                    plans = data.get("plans", data) if isinstance(data, dict) else data
+                    if isinstance(plans, list) and len(plans) > 0:
                         self.record_test("Subscription Plans Access", True, flow="subscription_check")
                         return True
                     else:
