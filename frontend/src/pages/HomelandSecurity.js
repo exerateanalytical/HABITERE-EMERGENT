@@ -503,7 +503,7 @@ const HomelandSecurity = () => {
       </section>
 
       {/* Certifications - Trust Badges */}
-      <section className="py-16 bg-black border-y border-gray-800">
+      <section className="py-16 bg-gray-900">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {certifications.map((cert, index) => {
@@ -522,44 +522,75 @@ const HomelandSecurity = () => {
         </div>
       </section>
 
-      {/* Join Team CTA - Bold Red */}
-      <section className="py-20 bg-gradient-to-br from-gray-900 via-red-900/20 to-gray-900">
+      {/* Join Team CTA - Application Process */}
+      <section className="py-20 bg-gradient-to-br from-gray-900 via-red-900/20 to-gray-900 border-y border-gray-800">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-red-600/20 border-4 border-red-600 mb-6">
-              <Users className="w-10 h-10 text-red-500" />
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-16">
+              <div className="inline-block px-4 py-2 bg-red-600/10 border border-red-600/30 rounded-full mb-4">
+                <span className="text-sm font-bold text-red-500 uppercase tracking-wider">For Security Professionals</span>
+              </div>
+              <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-red-600/20 border-4 border-red-600 mb-6">
+                <Users className="w-10 h-10 text-red-500" />
+              </div>
+              <h2 className="text-4xl md:text-5xl font-black text-white mb-6">
+                Join The Elite Security Force
+              </h2>
+              <p className="text-xl text-gray-300 mb-8 leading-relaxed">
+                Are you a trained security professional? Apply now to join Cameroon's most trusted security team. 
+                <span className="text-white font-semibold"> Competitive pay, professional training, and career growth.</span>
+              </p>
             </div>
-            <h2 className="text-4xl md:text-5xl font-black text-white mb-6">
-              Join The Elite Security Force
-            </h2>
-            <p className="text-xl text-gray-300 mb-8 leading-relaxed">
-              Are you a trained security professional? Apply now to join Cameroon's most trusted security team. 
-              <span className="text-white font-semibold"> Competitive pay, professional training, and career growth.</span>
-            </p>
+
+            {/* Application Process */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+              {applicationProcess.map((process, index) => {
+                const Icon = process.icon;
+                return (
+                  <div key={index} className="relative">
+                    {/* Connector Line */}
+                    {index < applicationProcess.length - 1 && (
+                      <div className="hidden md:block absolute top-12 left-1/2 w-full h-0.5 bg-gradient-to-r from-red-600 to-red-800 z-0"></div>
+                    )}
+                    
+                    <div className="relative bg-gray-800 border-2 border-gray-700 rounded-xl p-6 text-center hover:border-red-600 transition-all z-10">
+                      <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-600 text-white text-2xl font-black mb-4 shadow-lg">
+                        {process.step}
+                      </div>
+                      <Icon className="w-10 h-10 text-red-500 mx-auto mb-4" />
+                      <h3 className="text-xl font-bold text-white mb-3">{process.title}</h3>
+                      <p className="text-gray-400 text-sm">{process.description}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
             
             {/* Benefits Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
-              <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
-                <div className="text-2xl font-bold text-red-500 mb-1">₣500K+</div>
+              <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-6 text-center">
+                <div className="text-3xl font-bold text-red-500 mb-2">₣500K+</div>
                 <div className="text-sm text-gray-400">Monthly Salary</div>
               </div>
-              <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
-                <div className="text-2xl font-bold text-red-500 mb-1">Full</div>
+              <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-6 text-center">
+                <div className="text-3xl font-bold text-red-500 mb-2">Full</div>
                 <div className="text-sm text-gray-400">Health Insurance</div>
               </div>
-              <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
-                <div className="text-2xl font-bold text-red-500 mb-1">24/7</div>
+              <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-6 text-center">
+                <div className="text-3xl font-bold text-red-500 mb-2">24/7</div>
                 <div className="text-sm text-gray-400">Support System</div>
               </div>
             </div>
 
-            <button
-              onClick={() => navigate('/security/apply')}
-              className="bg-red-600 hover:bg-red-700 text-white px-10 py-5 rounded-xl font-bold text-xl transition-all shadow-2xl hover:shadow-red-600/50 inline-flex items-center"
-            >
-              Apply Now
-              <ArrowRight className="ml-3 w-6 h-6" />
-            </button>
+            <div className="text-center">
+              <button
+                onClick={() => navigate('/security/apply')}
+                className="bg-red-600 hover:bg-red-700 text-white px-10 py-5 rounded-xl font-bold text-xl transition-all shadow-2xl hover:shadow-red-600/50 inline-flex items-center"
+              >
+                Apply Now
+                <ArrowRight className="ml-3 w-6 h-6" />
+              </button>
+            </div>
           </div>
         </div>
       </section>
