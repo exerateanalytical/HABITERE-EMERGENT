@@ -243,6 +243,10 @@ async def get_plan_by_role(role: str):
             detail=f"No subscription plan found for role: {role}"
         )
     
+    # Remove MongoDB ObjectId for JSON serialization
+    if '_id' in plan:
+        plan.pop('_id')
+    
     return plan
 
 
