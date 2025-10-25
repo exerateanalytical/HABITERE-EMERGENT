@@ -54,7 +54,7 @@ const FooterMobile = () => {
         {/* Brand Section */}
         <div className="mb-8">
           <Link to="/" className="flex items-center mb-4">
-            <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+            <div className="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center">
               <Building className="w-6 h-6 text-white" />
             </div>
             <span className="ml-3 text-2xl font-bold text-white">Habitere</span>
