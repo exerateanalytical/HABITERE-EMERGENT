@@ -352,6 +352,12 @@ async def get_my_subscription(current_user: dict = Depends(get_current_user)):
                 {"$set": {"status": "expired"}}
             )
     
+    # Remove MongoDB ObjectIds for JSON serialization
+    if subscription and '_id' in subscription:
+        subscription.pop('_id')
+    if plan and '_id' in plan:
+        plan.pop('_id')
+    
     return {
         "has_subscription": True,
         "subscription": subscription,
