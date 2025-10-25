@@ -37,18 +37,96 @@ const PropertyForm = () => {
     }));
   };
 
-  const handleFileSelect = (e) => {
+  const [uploadProgress, setUploadProgress] = useState(0);
+
+  const compressImage = async (file) => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          
+          // Max dimensions for optimization
+          const MAX_WIDTH = 1920;
+          const MAX_HEIGHT = 1080;
+          
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height *= MAX_WIDTH / width;
+              width = MAX_WIDTH;
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width *= MAX_HEIGHT / height;
+              height = MAX_HEIGHT;
+            }
+          }
+          
+          canvas.width = width;
+          canvas.height = height;
+          
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          // Convert to blob with compression
+          canvas.toBlob(
+            (blob) => {
+              resolve(new File([blob], file.name, {
+                type: 'image/jpeg',
+                lastModified: Date.now()
+              }));
+            },
+            'image/jpeg',
+            0.85 // 85% quality
+          );
+        };
+        img.onerror = () => resolve(file); // Return original if error
+        img.src = e.target.result;
+      };
+      reader.onerror = () => resolve(file); // Return original if error
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleFileSelect = async (e) => {
     const files = Array.from(e.target.files);
     if (files.length + selectedFiles.length > 10) {
       setError('Maximum 10 images allowed');
       return;
     }
     
-    // Create preview URLs
-    const newFiles = files.map(file => ({
-      file,
-      preview: URL.createObjectURL(file)
-    }));
+    setError('Optimizing images...');
+    
+    // Compress and create preview URLs
+    const newFiles = await Promise.all(
+      files.map(async (file) => {
+        try {
+          // Only compress images larger than 500KB
+          const shouldCompress = file.size > 500000 && file.type.startsWith('image/');
+          const processedFile = shouldCompress ? await compressImage(file) : file;
+          
+          return {
+            file: processedFile,
+            preview: URL.createObjectURL(processedFile),
+            originalSize: file.size,
+            compressedSize: processedFile.size,
+            name: file.name
+          };
+        } catch (err) {
+          console.error('Error processing file:', err);
+          return {
+            file,
+            preview: URL.createObjectURL(file),
+            originalSize: file.size,
+            compressedSize: file.size,
+            name: file.name
+          };
+        }
+      })
+    );
     
     setSelectedFiles(prev => [...prev, ...newFiles]);
     setError('');
