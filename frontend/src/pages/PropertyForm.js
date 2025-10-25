@@ -131,7 +131,9 @@ const PropertyForm = () => {
       };
 
       console.log('Creating property with data:', propertyData);
-      const response = await axios.post(`${API}/properties`, propertyData);
+      const response = await axios.post(`${API}/properties`, propertyData, {
+        withCredentials: true
+      });
       console.log('Property created successfully:', response.data);
       
       if (response.data) {
