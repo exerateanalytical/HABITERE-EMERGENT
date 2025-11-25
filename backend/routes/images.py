@@ -295,6 +295,9 @@ async def upload_images(
             
             logger.info(f"Saved image: {file_path}")
             
+            # Add watermark to the image
+            add_watermark(file_path)
+            
             # Create thumbnail
             await create_thumbnail(file_path, thumbnail_path)
             
