@@ -6,28 +6,67 @@ import {
   User, 
   Clock,
   CheckCircle,
-  Wrench,
-  Building,
-  Palette,
-  Zap,
-  Droplets
+  // Unique Service Icons
+  HardHat,          // Construction
+  Droplets,         // Plumbing
+  Zap,              // Electrical
+  Paintbrush,       // Painting
+  Hammer,           // Carpentry
+  Sofa,             // Interior Design
+  Sparkles,         // Cleaning
+  PenTool,          // Architecture
+  Boxes,            // Bricklaying
+  Drill,            // Borehole Drilling
+  ClipboardCheck,   // Evaluation
+  Package,          // Building Materials
+  Lamp,             // Furnishing
+  Trees,            // Landscaping
+  Wind,             // HVAC
+  Home,             // Roofing
+  Layers,           // Flooring
+  Shield            // Default
 } from 'lucide-react';
 
 const serviceIcons = {
-  'construction': Building,
+  'construction': HardHat,
   'plumbing': Droplets,
   'electrical': Zap,
-  'painting': Palette,
-  'carpentry': Wrench,
-  'interior_design': Palette,
-  'cleaning': Wrench,
-  'architecture': Building,
-  'bricklaying': Building,
-  'borehole_drilling': Droplets,
-  'evaluation': Building,
-  'materials': Building,
-  'furnishing': Wrench,
-  'default': User
+  'painting': Paintbrush,
+  'carpentry': Hammer,
+  'interior_design': Sofa,
+  'cleaning': Sparkles,
+  'architecture': PenTool,
+  'bricklaying': Boxes,
+  'borehole_drilling': Drill,
+  'evaluation': ClipboardCheck,
+  'materials': Package,
+  'furnishing': Lamp,
+  'landscaping': Trees,
+  'hvac': Wind,
+  'roofing': Home,
+  'flooring': Layers,
+  'default': Shield
+};
+
+const serviceColors = {
+  'construction': 'bg-orange-500',
+  'plumbing': 'bg-blue-500',
+  'electrical': 'bg-yellow-500',
+  'painting': 'bg-purple-500',
+  'carpentry': 'bg-amber-600',
+  'interior_design': 'bg-pink-500',
+  'cleaning': 'bg-cyan-500',
+  'architecture': 'bg-indigo-500',
+  'bricklaying': 'bg-red-600',
+  'borehole_drilling': 'bg-teal-600',
+  'evaluation': 'bg-emerald-500',
+  'materials': 'bg-stone-600',
+  'furnishing': 'bg-rose-500',
+  'landscaping': 'bg-green-600',
+  'hvac': 'bg-sky-500',
+  'roofing': 'bg-slate-600',
+  'flooring': 'bg-amber-700',
+  'default': 'bg-gray-500'
 };
 
 const ServiceCard = ({ service, isCarousel = false }) => {
