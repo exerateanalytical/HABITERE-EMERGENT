@@ -223,9 +223,16 @@ const ServiceDetails = () => {
             {/* Header */}
             <div>
               <div className="flex items-center space-x-3 mb-4">
-                <span className="badge badge-primary capitalize">
-                  {service.category.replace('_', ' ')}
-                </span>
+                {(() => {
+                  const categoryInfo = getCategoryInfo(service.category);
+                  const CategoryIcon = categoryInfo.icon;
+                  return (
+                    <span className={`${categoryInfo.color} text-white px-3 py-1.5 rounded-lg text-sm font-medium capitalize flex items-center shadow-sm`}>
+                      <CategoryIcon className="w-4 h-4 mr-1.5" />
+                      {service.category.replace('_', ' ')}
+                    </span>
+                  );
+                })()}
                 {service.verified && (
                   <span className="badge badge-success flex items-center">
                     <Shield className="w-3 h-3 mr-1" />
