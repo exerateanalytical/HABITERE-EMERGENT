@@ -636,3 +636,4 @@ const ServiceListItem = ({ service }) => {
 };
 
 export default Services;
+export { serviceCategories, getCategoryInfo };
