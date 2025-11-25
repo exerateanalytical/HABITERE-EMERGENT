@@ -68,9 +68,88 @@ UPLOAD_DIR = ROOT_DIR / "uploads"
 MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB
 ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/jpg", "image/png", "image/webp"}
 THUMBNAIL_SIZE = (300, 300)
+WATERMARK_TEXT = "Habitere.com"
 
 
 # ==================== HELPER FUNCTIONS ====================
+
+def add_watermark(image_path: Path) -> bool:
+    """
+    Add Habitere.com watermark to an image.
+    
+    Adds a semi-transparent watermark in the bottom-right corner
+    of the image with white text and shadow for visibility.
+    
+    Args:
+        image_path: Path to the image file
+        
+    Returns:
+        bool: True if successful, False otherwise
+    """
+    try:
+        with Image.open(image_path) as img:
+            # Convert to RGBA if not already (for transparency support)
+            if img.mode != 'RGBA':
+                img = img.convert('RGBA')
+            
+            # Create a transparent layer for watermark
+            watermark_layer = Image.new('RGBA', img.size, (0, 0, 0, 0))
+            draw = ImageDraw.Draw(watermark_layer)
+            
+            # Calculate font size based on image dimensions
+            img_width, img_height = img.size
+            font_size = max(int(min(img_width, img_height) * 0.04), 20)  # 4% of smallest dimension, min 20px
+            
+            try:
+                # Try to use a nice font if available
+                font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", font_size)
+            except:
+                # Fallback to default font
+                font = ImageFont.load_default()
+            
+            # Get text bounding box
+            bbox = draw.textbbox((0, 0), WATERMARK_TEXT, font=font)
+            text_width = bbox[2] - bbox[0]
+            text_height = bbox[3] - bbox[1]
+            
+            # Position watermark in bottom-right corner with margin
+            margin = int(img_width * 0.02)  # 2% margin
+            x = img_width - text_width - margin
+            y = img_height - text_height - margin
+            
+            # Draw shadow for better visibility (slightly offset)
+            shadow_offset = 2
+            draw.text(
+                (x + shadow_offset, y + shadow_offset),
+                WATERMARK_TEXT,
+                font=font,
+                fill=(0, 0, 0, 160)  # Black shadow with 160/255 opacity
+            )
+            
+            # Draw main watermark text (white with transparency)
+            draw.text(
+                (x, y),
+                WATERMARK_TEXT,
+                font=font,
+                fill=(255, 255, 255, 200)  # White text with 200/255 opacity
+            )
+            
+            # Composite the watermark onto the original image
+            watermarked = Image.alpha_composite(img, watermark_layer)
+            
+            # Convert back to RGB if original was RGB/JPEG
+            if image_path.suffix.lower() in ['.jpg', '.jpeg']:
+                watermarked = watermarked.convert('RGB')
+            
+            # Save the watermarked image
+            watermarked.save(image_path, quality=95, optimize=True)
+            
+        logger.info(f"Watermark added to: {image_path.name}")
+        return True
+        
+    except Exception as e:
+        logger.error(f"Error adding watermark: {e}")
+        return False
 
 def validate_image_file(file: UploadFile) -> tuple[bool, str]:
     """
