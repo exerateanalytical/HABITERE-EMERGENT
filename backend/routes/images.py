@@ -41,7 +41,7 @@ import uuid
 import logging
 import mimetypes
 import aiofiles
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 
 # Import from parent modules
 import sys
