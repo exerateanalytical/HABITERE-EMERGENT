@@ -556,8 +556,7 @@ const EnhancedServiceCard = ({ service }) => {
 };
 
 const ServiceListItem = ({ service }) => {
-  const categoryInfo = serviceCategories.find(cat => cat.value === service.category) || 
-                      { label: service.category, icon: Wrench };
+  const categoryInfo = getCategoryInfo(service.category);
   const Icon = categoryInfo.icon;
 
   return (
