@@ -39,6 +39,7 @@ from datetime import datetime, timezone
 from pydantic import BaseModel, Field
 import uuid
 import logging
+from PIL import Image, ImageDraw, ImageFont
 
 # Import from parent modules
 import sys
