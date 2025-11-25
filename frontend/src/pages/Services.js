@@ -378,7 +378,7 @@ const Services = () => {
             {filteredServices.length === 0 && !loading && (
               <div className="text-center py-12 bg-white rounded-2xl shadow-sm border border-gray-100" data-testid="no-services">
                 <div className="w-24 h-24 bg-gradient-to-br from-purple-100 to-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Wrench className="w-12 h-12 text-purple-500" />
+                  <Shield className="w-12 h-12 text-purple-500" />
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-3">No Services Found</h3>
                 <p className="text-gray-600 mb-6 max-w-md mx-auto">
