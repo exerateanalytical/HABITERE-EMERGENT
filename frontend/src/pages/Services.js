@@ -18,16 +18,29 @@ import {
   List,
   ChevronDown,
   X,
-  Wrench,
-  Building,
-  Palette,
-  Zap,
-  Droplets,
   SlidersHorizontal,
   Shield,
   Phone,
   Mail,
-  Award
+  Award,
+  // Unique Service Icons
+  HardHat,          // Construction
+  Droplets,         // Plumbing
+  Zap,              // Electrical
+  Paintbrush,       // Painting
+  Hammer,           // Carpentry
+  Sofa,             // Interior Design
+  Sparkles,         // Cleaning
+  PenTool,          // Architecture
+  Boxes,            // Bricklaying
+  Drill,            // Borehole Drilling
+  ClipboardCheck,   // Evaluation
+  Package,          // Building Materials
+  Lamp,             // Furnishing
+  Trees,            // Landscaping
+  Wind,             // HVAC
+  Home,             // Roofing
+  Layers            // Flooring
 } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
