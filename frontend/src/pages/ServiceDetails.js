@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 import Reviews from '../components/Reviews';
 import StarRating from '../components/StarRating';
+import { getCategoryInfo } from './Services';
 import { 
   MapPin, 
   Star, 
