@@ -930,6 +930,9 @@ async def upload_security_image(
     with open(file_path, 'wb') as f:
         f.write(file_content)
     
+    # Add watermark
+    add_watermark_to_image(file_path)
+    
     # Return URL (in production, this would be a CDN URL)
     image_url = f"/uploads/security/{unique_filename}"
     
