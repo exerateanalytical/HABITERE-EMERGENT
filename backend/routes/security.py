@@ -63,6 +63,63 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/security", tags=["Homeland Security"])
 
 
+# ==================== WATERMARK HELPER ====================
+
+def add_watermark_to_image(image_path: FilePath) -> bool:
+    """
+    Add Habitere.com watermark to an image.
+    
+    Args:
+        image_path: Path to the image file
+        
+    Returns:
+        bool: True if successful, False otherwise
+    """
+    try:
+        with Image.open(image_path) as img:
+            if img.mode != 'RGBA':
+                img = img.convert('RGBA')
+            
+            watermark_layer = Image.new('RGBA', img.size, (0, 0, 0, 0))
+            draw = ImageDraw.Draw(watermark_layer)
+            
+            img_width, img_height = img.size
+            font_size = max(int(min(img_width, img_height) * 0.04), 20)
+            
+            try:
+                font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", font_size)
+            except:
+                font = ImageFont.load_default()
+            
+            watermark_text = "Habitere.com"
+            bbox = draw.textbbox((0, 0), watermark_text, font=font)
+            text_width = bbox[2] - bbox[0]
+            text_height = bbox[3] - bbox[1]
+            
+            margin = int(img_width * 0.02)
+            x = img_width - text_width - margin
+            y = img_height - text_height - margin
+            
+            # Shadow
+            draw.text((x + 2, y + 2), watermark_text, font=font, fill=(0, 0, 0, 160))
+            # Main text
+            draw.text((x, y), watermark_text, font=font, fill=(255, 255, 255, 200))
+            
+            watermarked = Image.alpha_composite(img, watermark_layer)
+            
+            if str(image_path).lower().endswith(('.jpg', '.jpeg')):
+                watermarked = watermarked.convert('RGB')
+            
+            watermarked.save(image_path, quality=95, optimize=True)
+            
+        logger.info(f"Watermark added to: {image_path.name}")
+        return True
+        
+    except Exception as e:
+        logger.error(f"Error adding watermark: {e}")
+        return False
+
+
 # ==================== PYDANTIC MODELS ====================
 
 class SecurityServiceCreate(BaseModel):
