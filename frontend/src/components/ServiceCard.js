@@ -153,13 +153,13 @@ const ServiceCard = ({ service, isCarousel = false }) => {
           
           {/* Status Overlays */}
           <div className="absolute top-3 left-3 flex flex-col gap-2">
-            <div className="bg-blue-600 bg-opacity-90 text-white px-2 py-1 rounded-lg text-xs font-medium flex items-center">
+            <div className={`${iconColor} bg-opacity-90 text-white px-2 py-1 rounded-lg text-xs font-medium flex items-center shadow-lg`}>
               <IconComponent className="w-3 h-3 mr-1" />
               {service.category?.replace('_', ' ') || 'Service'}
             </div>
             
             {enhancedService.isVerified && (
-              <div className="bg-green-600 bg-opacity-90 text-white px-2 py-1 rounded-lg text-xs font-medium flex items-center">
+              <div className="bg-green-600 bg-opacity-90 text-white px-2 py-1 rounded-lg text-xs font-medium flex items-center shadow-lg">
                 <CheckCircle className="w-3 h-3 mr-1" />
                 Verified
               </div>
