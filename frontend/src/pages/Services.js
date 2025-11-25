@@ -66,6 +66,12 @@ const serviceCategories = [
   { value: 'flooring', label: 'Flooring', icon: Layers, color: 'bg-brown-500' }
 ];
 
+// Helper function to get category info
+const getCategoryInfo = (categoryValue) => {
+  return serviceCategories.find(cat => cat.value === categoryValue) || 
+         { value: categoryValue, label: categoryValue, icon: Shield, color: 'bg-gray-500' };
+};
+
 const Services = () => {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
