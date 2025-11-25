@@ -71,6 +71,7 @@ const serviceColors = {
 
 const ServiceCard = ({ service, isCarousel = false }) => {
   const IconComponent = serviceIcons[service.category] || serviceIcons.default;
+  const iconColor = serviceColors[service.category] || serviceColors.default;
   
   // Enhanced service data with defaults
   const enhancedService = {
