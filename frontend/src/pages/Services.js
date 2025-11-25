@@ -47,19 +47,23 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
 const serviceCategories = [
-  { value: 'construction', label: 'Construction', icon: Building },
-  { value: 'plumbing', label: 'Plumbing', icon: Droplets },
-  { value: 'electrical', label: 'Electrical', icon: Zap },
-  { value: 'painting', label: 'Painting', icon: Palette },
-  { value: 'carpentry', label: 'Carpentry', icon: Wrench },
-  { value: 'interior_design', label: 'Interior Design', icon: Palette },
-  { value: 'cleaning', label: 'Cleaning', icon: Wrench },
-  { value: 'architecture', label: 'Architecture', icon: Building },
-  { value: 'bricklaying', label: 'Bricklaying', icon: Building },
-  { value: 'borehole_drilling', label: 'Borehole Drilling', icon: Droplets },
-  { value: 'evaluation', label: 'Property Evaluation', icon: Building },
-  { value: 'materials', label: 'Building Materials', icon: Building },
-  { value: 'furnishing', label: 'Furnishing', icon: Wrench }
+  { value: 'construction', label: 'Construction', icon: HardHat, color: 'bg-orange-500' },
+  { value: 'plumbing', label: 'Plumbing', icon: Droplets, color: 'bg-blue-500' },
+  { value: 'electrical', label: 'Electrical', icon: Zap, color: 'bg-yellow-500' },
+  { value: 'painting', label: 'Painting', icon: Paintbrush, color: 'bg-purple-500' },
+  { value: 'carpentry', label: 'Carpentry', icon: Hammer, color: 'bg-amber-600' },
+  { value: 'interior_design', label: 'Interior Design', icon: Sofa, color: 'bg-pink-500' },
+  { value: 'cleaning', label: 'Cleaning', icon: Sparkles, color: 'bg-cyan-500' },
+  { value: 'architecture', label: 'Architecture', icon: PenTool, color: 'bg-indigo-500' },
+  { value: 'bricklaying', label: 'Bricklaying', icon: Boxes, color: 'bg-red-600' },
+  { value: 'borehole_drilling', label: 'Borehole Drilling', icon: Drill, color: 'bg-teal-600' },
+  { value: 'evaluation', label: 'Property Evaluation', icon: ClipboardCheck, color: 'bg-emerald-500' },
+  { value: 'materials', label: 'Building Materials', icon: Package, color: 'bg-stone-600' },
+  { value: 'furnishing', label: 'Furnishing', icon: Lamp, color: 'bg-rose-500' },
+  { value: 'landscaping', label: 'Landscaping', icon: Trees, color: 'bg-green-600' },
+  { value: 'hvac', label: 'HVAC & AC', icon: Wind, color: 'bg-sky-500' },
+  { value: 'roofing', label: 'Roofing', icon: Home, color: 'bg-slate-600' },
+  { value: 'flooring', label: 'Flooring', icon: Layers, color: 'bg-brown-500' }
 ];
 
 const Services = () => {
