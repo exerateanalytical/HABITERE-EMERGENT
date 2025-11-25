@@ -97,7 +97,7 @@ const ServiceCard = ({ service, isCarousel = false }) => {
             
             {/* Status Indicators */}
             <div className="absolute top-2 left-2 flex flex-col gap-1">
-              <div className="bg-blue-600 bg-opacity-90 text-white px-2 py-1 rounded text-xs font-medium flex items-center">
+              <div className={`${iconColor} bg-opacity-90 text-white px-2 py-1 rounded text-xs font-medium flex items-center`}>
                 <IconComponent className="w-3 h-3 mr-1" />
                 {service.category?.replace('_', ' ') || 'Service'}
               </div>
