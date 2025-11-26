@@ -1731,8 +1731,8 @@ class FloorPlanGenerator:
             draw.polygon([(arrow_x, arrow_y - 25), (arrow_x - 12, arrow_y), (arrow_x + 12, arrow_y)], 
                         fill='#000000')
             draw.text((arrow_x, arrow_y + 15), "N", fill='#000000', font=font_room, anchor='mm')
-            draw.circle([(arrow_x - 20, arrow_y - 30), (arrow_x + 20, arrow_y + 10)], 
-                       outline='#000000', width=2)
+            draw.ellipse([(arrow_x - 20, arrow_y - 30), (arrow_x + 20, arrow_y + 10)], 
+                        outline='#000000', width=2)
             
             # Save image
             output_dir = "/app/backend/uploads/floor_plans"
