@@ -20,7 +20,9 @@ import {
   Users,
   CheckCircle,
   Clock,
-  AlertCircle
+  AlertCircle,
+  FileText,
+  Home as HomeIcon
 } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
