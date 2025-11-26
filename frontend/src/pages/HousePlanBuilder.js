@@ -615,6 +615,37 @@ const HousePlanBuilder = () => {
           </div>
         </div>
         
+        {/* Floor Plan Preview */}
+        <div className="bg-white rounded-xl shadow-lg p-6 mt-6">
+          <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
+            <Building className="w-6 h-6 mr-2 text-green-600" />
+            Floor Plan Layouts
+          </h3>
+          <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-4 mb-4">
+            <p className="text-sm text-blue-800">
+              <CheckCircle className="w-5 h-5 inline mr-2" />
+              2D floor plans have been generated and are included in your PDF download. 
+              View the complete floor layouts in "View My Plans" or download the PDF.
+            </p>
+          </div>
+          
+          {calculatedPlan.floors.map((floor, idx) => (
+            <div key={idx} className="mb-4 last:mb-0">
+              <h4 className="font-bold text-gray-900 mb-2">{floor.floor_name}</h4>
+              <div className="bg-gray-50 rounded-lg p-4">
+                <img 
+                  src={`${BACKEND_URL}/api/house-plans/${calculatedPlan.id}/floor-plan/${idx}`}
+                  alt={`${floor.floor_name} Layout`}
+                  className="w-full h-auto rounded-lg border-2 border-green-300"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                  }}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+        
         {/* Actions */}
         <div className="flex flex-wrap gap-4">
           <button
