@@ -400,7 +400,7 @@ const HousePlanDetail = () => {
                 </div>
               </div>
               <p className="text-gray-700 mb-6">
-                Are you sure you want to delete "{plan.name}"? All floor plans, calculations, and materials will be permanently removed.
+                Are you sure you want to delete &quot;{plan.name}&quot;? All floor plans, calculations, and materials will be permanently removed.
               </p>
               <div className="flex gap-3">
                 <button
