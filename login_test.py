@@ -27,7 +27,7 @@ import sys
 import os
 
 # Backend URL from environment
-BACKEND_URL = "https://realestate-cam.preview.emergentagent.com/api"
+BACKEND_URL = "https://plan-builder-8.preview.emergentagent.com/api"
 
 class LoginTester:
     def __init__(self):

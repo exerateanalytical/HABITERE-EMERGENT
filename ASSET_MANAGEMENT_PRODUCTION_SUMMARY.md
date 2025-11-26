@@ -209,7 +209,7 @@ The Asset Management module for Habitere platform has been comprehensively audit
 
 ### Frontend
 - **Backend URL:** `REACT_APP_BACKEND_URL` (HTTPS)
-- **Value:** `https://realestate-cam.preview.emergentagent.com`
+- **Value:** `https://plan-builder-8.preview.emergentagent.com`
 - **Configuration:** Proper HTTPS, no Mixed Content issues
 - **Pages:** 12 React components in `/app/frontend/src/pages/`
 

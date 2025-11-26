@@ -19,7 +19,7 @@ import uuid
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = "https://realestate-cam.preview.emergentagent.com/api"
+BACKEND_URL = "https://plan-builder-8.preview.emergentagent.com/api"
 ADMIN_EMAIL = "admin@habitere.com"
 ADMIN_PASSWORD = "admin123"
 

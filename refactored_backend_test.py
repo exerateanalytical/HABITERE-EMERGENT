@@ -10,7 +10,7 @@ from typing import Dict, Any, Optional
 class RefactoredBackendTester:
     def __init__(self):
         # Use the REACT_APP_BACKEND_URL from frontend/.env as specified in the review request
-        self.base_url = "https://realestate-cam.preview.emergentagent.com"
+        self.base_url = "https://plan-builder-8.preview.emergentagent.com"
         self.api_url = f"{self.base_url}/api"
         self.session = requests.Session()
         self.session.headers.update({

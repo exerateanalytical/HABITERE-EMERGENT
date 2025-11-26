@@ -8,7 +8,7 @@
    - NEW: `https://habitere.com/api/auth/google/callback`
 
 2. ✅ Updated `REACT_APP_BACKEND_URL` in `/app/frontend/.env`:
-   - OLD: `https://realestate-cam.preview.emergentagent.com`
+   - OLD: `https://plan-builder-8.preview.emergentagent.com`
    - NEW: `https://habitere.com`
 
 3. ✅ Services restarted - All running successfully

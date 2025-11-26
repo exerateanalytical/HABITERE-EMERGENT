@@ -11,7 +11,7 @@ import json
 
 async def test_auth_behavior():
     """Test authentication behavior in detail."""
-    base_url = "https://realestate-cam.preview.emergentagent.com/api"
+    base_url = "https://plan-builder-8.preview.emergentagent.com/api"
     
     async with aiohttp.ClientSession() as session:
         print("🔍 Testing Authentication Behavior")

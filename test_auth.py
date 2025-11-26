@@ -7,7 +7,7 @@ import asyncio
 import aiohttp
 import json
 
-BACKEND_URL = "https://realestate-cam.preview.emergentagent.com"
+BACKEND_URL = "https://plan-builder-8.preview.emergentagent.com"
 
 async def test_auth():
     connector = aiohttp.TCPConnector(ssl=False)
