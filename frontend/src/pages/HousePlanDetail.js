@@ -21,26 +21,26 @@ const HousePlanDetail = () => {
   const [deleteModal, setDeleteModal] = useState(false);
 
   useEffect(() => {
+    const fetchPlanDetails = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get(
+          `${BACKEND_URL}/api/house-plans/${planId}`,
+          { withCredentials: true }
+        );
+        setPlan(response.data.plan);
+      } catch (error) {
+        console.error('Error fetching plan:', error);
+        setError(error.response?.data?.detail || 'Failed to load plan details');
+      } finally {
+        setLoading(false);
+      }
+    };
+
     if (user && planId) {
       fetchPlanDetails();
     }
   }, [user, planId]);
-
-  const fetchPlanDetails = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get(
-        `${BACKEND_URL}/api/house-plans/${planId}`,
-        { withCredentials: true }
-      );
-      setPlan(response.data.plan);
-    } catch (error) {
-      console.error('Error fetching plan:', error);
-      setError(error.response?.data?.detail || 'Failed to load plan details');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleDelete = async () => {
     try {
