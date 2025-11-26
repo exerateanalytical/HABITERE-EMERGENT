@@ -17,12 +17,25 @@ Author: Habitere Development Team
 """
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.responses import FileResponse
 from typing import List, Dict, Any, Optional
 from datetime import datetime, timezone
 from pydantic import BaseModel, Field
 import uuid
 import logging
 import math
+import os
+from io import BytesIO
+
+# PDF Generation imports
+from reportlab.lib.pagesizes import A4, letter
+from reportlab.lib.units import inch, cm
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, PageBreak, Image as RLImage
+from reportlab.pdfgen import canvas
+from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT
+from PIL import Image, ImageDraw, ImageFont
 
 # Import from parent modules
 import sys
