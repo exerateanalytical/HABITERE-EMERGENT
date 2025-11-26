@@ -1878,7 +1878,7 @@ class HousePlanPDFGenerator:
                 elements.append(Paragraph(f"<b>{floor['floor_name']}</b>", styles['Heading3']))
                 
                 # Generate floor plan image
-                floor_image_path = FloorPlanGenerator.generate_floor_plan_image(floor, idx)
+                floor_image_path = FloorPlanGenerator.generate_proper_floor_plan(floor, idx)
                 
                 if floor_image_path and os.path.exists(floor_image_path):
                     # Add image to PDF
