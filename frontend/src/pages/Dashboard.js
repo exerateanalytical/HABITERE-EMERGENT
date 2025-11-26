@@ -34,11 +34,13 @@ const Dashboard = () => {
     properties: 0,
     services: 0,
     bookings: 0,
-    messages: 0
+    messages: 0,
+    housePlans: 0
   });
   const [recentProperties, setRecentProperties] = useState([]);
   const [recentServices, setRecentServices] = useState([]);
   const [recentBookings, setRecentBookings] = useState([]);
+  const [housePlans, setHousePlans] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
