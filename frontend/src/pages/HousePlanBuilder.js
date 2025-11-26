@@ -727,13 +727,36 @@ const HousePlanBuilder = () => {
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-6xl mx-auto px-4">
+        {/* Loading Template Overlay */}
+        {loadingTemplate && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-8 text-center">
+              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-green-600 mx-auto mb-4"></div>
+              <p className="text-gray-700 font-medium">Loading template...</p>
+            </div>
+          </div>
+        )}
+        
         {/* Header */}
         <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
-          <h1 className="text-3xl font-black text-gray-900 flex items-center">
-            <Home className="w-8 h-8 mr-3 text-green-600" />
-            House Plan Builder
-          </h1>
-          <p className="text-gray-600 mt-2">Create detailed house plans with accurate material and cost estimates</p>
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h1 className="text-3xl font-black text-gray-900 flex items-center">
+                <Home className="w-8 h-8 mr-3 text-green-600" />
+                House Plan Builder
+              </h1>
+              <p className="text-gray-600 mt-2">Create detailed house plans with accurate material and cost estimates</p>
+            </div>
+            {!selectedTemplate && step === 1 && (
+              <button
+                onClick={() => navigate('/house-plans/templates')}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium flex items-center"
+              >
+                <FileText className="w-5 h-5 mr-2" />
+                Browse Templates
+              </button>
+            )}
+          </div>
           
           {/* Progress Steps */}
           <div className="flex items-center justify-between mt-6">
