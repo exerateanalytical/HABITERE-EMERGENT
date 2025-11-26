@@ -250,11 +250,16 @@ const HousePlanDetail = () => {
           </div>
         </div>
 
+        {/* 3D Interactive Viewer */}
+        <div className="mb-8">
+          <FloorPlan3DViewer floors={plan.floors} />
+        </div>
+
         {/* Floor Plans */}
         <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
           <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
             <Layers className="w-6 h-6 mr-2 text-green-600" />
-            Floor Plans - Visual Layouts
+            Floor Plans - Detailed 2D Layouts
           </h2>
           
           {plan.floors.map((floor, floorIndex) => (
