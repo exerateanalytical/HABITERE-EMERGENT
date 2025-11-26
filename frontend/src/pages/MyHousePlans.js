@@ -301,7 +301,9 @@ const MyHousePlans = () => {
                       View
                     </Link>
                     <button
-                      onClick={() => alert('PDF download coming soon!')}
+                      onClick={() => {
+                        window.open(`${BACKEND_URL}/api/house-plans/${plan.id}/download-pdf`, '_blank');
+                      }}
                       className="flex items-center justify-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium text-sm"
                     >
                       <Download className="w-4 h-4 mr-1" />
