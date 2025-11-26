@@ -1589,37 +1589,52 @@ class FloorPlanGenerator:
                     })
                     current_y_right += room_h
             
-            # Room type colors (more professional palette)
+            # Draw central hallway
+            hallway_x = building_x + left_zone_w
+            hallway_color = '#F5F5F5'
+            draw.rectangle(
+                [(hallway_x, building_y), (hallway_x + hallway_width_px, building_y + building_h)],
+                fill=hallway_color,
+                outline='#555555',
+                width=2
+            )
+            draw.text(
+                (hallway_x + hallway_width_px//2, building_y + building_h//2),
+                'HALLWAY',
+                fill='#666666',
+                font=font_room,
+                anchor='mm'
+            )
+            
+            # Room type colors (professional architectural palette)
             room_colors = {
-                'living_room': '#E8F5E9',
-                'bedroom': '#E3F2FD',
-                'kitchen': '#FFF3E0',
-                'bathroom': '#F3E5F5',
-                'dining_room': '#E0F2F1',
-                'office': '#FFF9C4',
-                'store': '#FFE0B2',
-                'balcony': '#F8BBD0',
-                'garage': '#CFD8DC',
-                'hallway': '#F5F5F5'
+                'living_room': '#FFFFFF',
+                'bedroom': '#FFFFFF',
+                'kitchen': '#FFF8F0',
+                'bathroom': '#F0F8FF',
+                'dining_room': '#FFFFFF',
+                'office': '#FFFFFF',
+                'store': '#F5F5F5'
             }
             
-            # Draw rooms with walls, doors, and windows
-            for idx, room_data in enumerate(placed_rooms):
-                room = room_data['room']
-                x = room_data['x'] + padding
-                y = room_data['y'] + padding + 70
-                width = room_data['width']
-                height = room_data['height']
+            # Step 4: Draw rooms with proper architectural detail
+            for placement in room_placements:
+                room = placement['room']
+                x = placement['x']
+                y = placement['y']
+                w = placement['w']
+                h = placement['h']
                 
                 room_type = room.get('type', 'bedroom')
-                room_color = room_colors.get(room_type, '#E8EAF6')
+                room_name = room.get('name', 'Room')
+                room_color = room_colors.get(room_type, '#FFFFFF')
                 
-                # Draw room floor
+                # Draw room with internal walls (thinner than external)
                 draw.rectangle(
-                    [(x, y), (x + width, y + height)],
+                    [(x, y), (x + w, y + h)],
                     fill=room_color,
-                    outline='#2c3e50',
-                    width=6
+                    outline='#333333',
+                    width=3
                 )
                 
                 # Add texture/pattern for different room types
