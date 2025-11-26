@@ -1481,20 +1481,24 @@ class FloorPlanGenerator:
             
             # Load fonts
             try:
-                font_title = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 32)
-                font_label = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 18)
-                font_info = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 14)
-                font_small = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 12)
+                font_title = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 24)
+                font_room = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 14)
+                font_dim = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 11)
             except:
                 font_title = ImageFont.load_default()
-                font_label = ImageFont.load_default()
-                font_info = ImageFont.load_default()
-                font_small = ImageFont.load_default()
+                font_room = ImageFont.load_default()
+                font_dim = ImageFont.load_default()
             
-            # Title and header
+            # Step 2: Layout rooms using proper architectural algorithm
+            # Create building perimeter
+            building_x = margin
+            building_y = margin + 60  # Space for title
+            building_w = int(building_length * scale)
+            building_h = int(building_width * scale)
+            
+            # Draw title
             floor_name = floor.get('floor_name', f'Floor {floor_number}')
-            draw.rectangle([(0, 0), (img_width, 70)], fill='#10b981')
-            draw.text((padding, 20), f"FLOOR PLAN - {floor_name.upper()}", fill='white', font=font_title)
+            draw.text((margin, 20), f"{floor_name.upper()} - FLOOR PLAN", fill='#1a1a1a', font=font_title)
             
             # Draw grid for reference
             grid_color = '#f0f0f0'
