@@ -173,6 +173,21 @@ const HousePlanBuilder = () => {
   // Step 1: Basic Information
   const renderStep1 = () => (
     <div className="space-y-6">
+      {selectedTemplate && (
+        <div className="bg-green-50 border-2 border-green-200 rounded-lg p-4 mb-4">
+          <div className="flex items-start">
+            <CheckCircle className="w-6 h-6 text-green-600 mr-3 mt-1 flex-shrink-0" />
+            <div>
+              <h4 className="font-bold text-gray-900 mb-1">Template Loaded: {selectedTemplate.name}</h4>
+              <p className="text-sm text-gray-700">{selectedTemplate.description}</p>
+              <p className="text-xs text-gray-600 mt-2">
+                You can customize all fields below. Changes won't affect the original template.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+      
       <h2 className="text-2xl font-bold text-gray-900 flex items-center">
         <FileText className="w-6 h-6 mr-2 text-green-600" />
         Basic Information
