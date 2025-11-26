@@ -145,7 +145,8 @@ const HousePlanBuilder = () => {
           foundation_type: foundationType,
           wall_type: wallType,
           roofing_type: roofingType,
-          finishing_level: finishingLevel
+          finishing_level: finishingLevel,
+          template_id: selectedTemplate?.id || null
         },
         { withCredentials: true }
       );
