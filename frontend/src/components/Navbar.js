@@ -14,6 +14,7 @@ const Navbar = () => {
     { name: 'Home', path: '/', icon: Home, public: true },
     { name: 'Properties', path: '/properties', icon: Building, public: true },
     { name: 'Services', path: '/services', icon: Wrench, public: true },
+    { name: 'House Plans', path: '/house-plans/my-plans', icon: FileText, public: false },
     { name: 'Pricing', path: '/pricing', icon: Grid3x3, public: true },
     { name: 'Security', path: '/security', icon: Shield, public: true },
     { name: 'Asset Management', path: '/assets', icon: Package, public: true },
