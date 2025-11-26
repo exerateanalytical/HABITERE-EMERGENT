@@ -1687,45 +1687,51 @@ class FloorPlanGenerator:
                 area_text = f"{room_length * room_width:.1f} m²"
                 draw.text((center_x, center_y + 20), area_text, 
                          fill='#999999', font=font_dim, anchor='mm')
-                
-                # Area badge
-                area_bbox = draw.textbbox((center_x, center_y + 40), area, font=font_info, anchor='mm')
-                draw.rectangle(
-                    [(area_bbox[0]-5, area_bbox[1]-3), (area_bbox[2]+5, area_bbox[3]+3)],
-                    fill='#10b981',
-                    outline='#059669',
-                    width=2
-                )
-                draw.text((center_x, center_y + 40), area, 
-                         fill='white', font=font_info, anchor='mm')
             
-            # Legend and info box
-            legend_y = img_height - 60
-            draw.rectangle([(padding, legend_y), (img_width - padding, img_height - 20)], 
-                          fill='#f8f9fa', outline='#dee2e6', width=2)
+            # Add scale and legend
+            legend_y = img_height - 80
+            legend_bg = [(margin, legend_y), (img_width - margin, img_height - margin + 20)]
+            draw.rectangle(legend_bg, fill='#F8F8F8', outline='#CCCCCC', width=2)
             
-            # Total area
+            # Total area and stats
             total_area = sum(r.get('length', 4) * r.get('width', 3) for r in rooms)
-            draw.text((padding + 20, legend_y + 15), 
-                     f"Total Floor Area: {total_area:.2f} m²  |  Rooms: {len(rooms)}  |  Scale: ~1:{int(100/scale)}",
-                     fill='#2c3e50', font=font_info)
+            stats_text = f"TOTAL AREA: {total_area:.1f} m²  |  ROOMS: {len(rooms)}  |  SCALE: 1:{int(1000/scale)}"
+            draw.text((margin + 20, legend_y + 20), stats_text, fill='#333333', font=font_room)
             
-            # Draw symbols legend
-            legend_x = img_width - padding - 300
-            draw.text((legend_x, legend_y + 5), "Symbols:", fill='#2c3e50', font=font_small)
-            # Door symbol
-            FloorPlanGenerator.draw_door(draw, legend_x + 70, legend_y + 12, 20, 'horizontal')
-            draw.text((legend_x + 100, legend_y + 12), "Door", fill='#555', font=font_small)
-            # Window symbol
-            FloorPlanGenerator.draw_window(draw, legend_x + 160, legend_y + 12, 20, 'horizontal')
-            draw.text((legend_x + 190, legend_y + 12), "Window", fill='#555', font=font_small)
+            # Legend symbols
+            legend_text_y = legend_y + 45
+            draw.text((margin + 20, legend_text_y), "LEGEND:", fill='#333333', font=font_room)
+            
+            # Door symbol example
+            door_ex_x = margin + 120
+            draw.line([(door_ex_x, legend_text_y), (door_ex_x + 25, legend_text_y)], fill='#666666', width=2)
+            draw.arc([(door_ex_x, legend_text_y - 25), (door_ex_x + 25, legend_text_y)], 
+                    start=0, end=90, fill='#666666', width=2)
+            draw.text((door_ex_x + 35, legend_text_y), "Door", fill='#666666', font=font_dim)
+            
+            # Window symbol example
+            win_ex_x = margin + 220
+            draw.rectangle([(win_ex_x, legend_text_y - 3), (win_ex_x + 30, legend_text_y + 3)], 
+                         fill='#87CEEB', outline='#4682B4', width=2)
+            draw.text((win_ex_x + 40, legend_text_y), "Window", fill='#666666', font=font_dim)
+            
+            # Wall types
+            wall_ex_x = margin + 340
+            draw.line([(wall_ex_x, legend_text_y - 4), (wall_ex_x + 30, legend_text_y - 4)], 
+                     fill='#000000', width=6)
+            draw.text((wall_ex_x + 40, legend_text_y - 5), "Exterior Wall", fill='#666666', font=font_dim)
+            draw.line([(wall_ex_x, legend_text_y + 8), (wall_ex_x + 30, legend_text_y + 8)], 
+                     fill='#333333', width=3)
+            draw.text((wall_ex_x + 40, legend_text_y + 7), "Interior Wall", fill='#666666', font=font_dim)
             
             # North arrow
-            arrow_x = img_width - 100
-            arrow_y = padding + 120
-            draw.text((arrow_x, arrow_y), "N", fill='#2c3e50', font=font_title)
-            draw.polygon([(arrow_x, arrow_y-30), (arrow_x-15, arrow_y-10), (arrow_x+15, arrow_y-10)], 
-                        fill='#10b981', outline='#059669')
+            arrow_x = img_width - margin - 60
+            arrow_y = building_y + 40
+            draw.polygon([(arrow_x, arrow_y - 25), (arrow_x - 12, arrow_y), (arrow_x + 12, arrow_y)], 
+                        fill='#000000')
+            draw.text((arrow_x, arrow_y + 15), "N", fill='#000000', font=font_room, anchor='mm')
+            draw.circle([(arrow_x - 20, arrow_y - 30), (arrow_x + 20, arrow_y + 10)], 
+                       outline='#000000', width=2)
             
             # Save image
             output_dir = "/app/backend/uploads/floor_plans"
