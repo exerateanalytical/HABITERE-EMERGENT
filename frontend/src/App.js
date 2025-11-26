@@ -413,6 +413,14 @@ function AppContent() {
             </ProtectedRoute>
           } 
         />
+        <Route 
+          path="/house-plans/:planId" 
+          element={
+            <ProtectedRoute>
+              <HousePlanDetail />
+            </ProtectedRoute>
+          } 
+        />
         
         {/* Protected Routes */}
         <Route 
