@@ -5,7 +5,7 @@ import axios from 'axios';
 import {
   Home, Plus, Minus, Save, Calculator, FileText, Download,
   Building, Layers, Drill, Zap, Droplet, Paintbrush, DollarSign,
-  Clock, CheckCircle, AlertCircle, ArrowRight, ArrowLeft, Trash2
+  Clock, CheckCircle, AlertCircle, ArrowRight, ArrowLeft, Trash2, Users
 } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
