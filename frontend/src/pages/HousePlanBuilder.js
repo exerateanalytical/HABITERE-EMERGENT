@@ -665,17 +665,21 @@ const HousePlanBuilder = () => {
           </div>
         </div>
         
+        {/* 3D Interactive Viewer */}
+        <div className="mt-6">
+          <FloorPlan3DViewer floors={calculatedPlan.floors} />
+        </div>
+        
         {/* Floor Plan Preview */}
         <div className="bg-white rounded-xl shadow-lg p-6 mt-6">
           <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
             <Building className="w-6 h-6 mr-2 text-green-600" />
-            Floor Plan Layouts
+            Detailed 2D Floor Plans
           </h3>
           <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-4 mb-4">
             <p className="text-sm text-blue-800">
               <CheckCircle className="w-5 h-5 inline mr-2" />
-              2D floor plans have been generated and are included in your PDF download. 
-              View the complete floor layouts in "View My Plans" or download the PDF.
+              High-resolution 2D floor plans with furniture placement are included in your PDF download.
             </p>
           </div>
           
