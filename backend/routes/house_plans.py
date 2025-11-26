@@ -1688,10 +1688,11 @@ class FloorPlanGenerator:
                 draw.text((center_x, center_y + 20), area_text, 
                          fill='#999999', font=font_dim, anchor='mm')
             
-            # Add scale and legend
-            legend_y = img_height - 80
-            legend_bg = [(margin, legend_y), (img_width - margin, img_height - margin + 20)]
-            draw.rectangle(legend_bg, fill='#F8F8F8', outline='#CCCCCC', width=2)
+            # Add scale and legend at bottom
+            legend_y = img_height - 100
+            legend_h = 80
+            draw.rectangle([(margin, legend_y), (img_width - margin, legend_y + legend_h)], 
+                          fill='#F8F8F8', outline='#CCCCCC', width=2)
             
             # Total area and stats
             total_area = sum(r.get('length', 4) * r.get('width', 3) for r in rooms)
