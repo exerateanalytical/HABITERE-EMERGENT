@@ -83,6 +83,18 @@ const Dashboard = () => {
       setRecentBookings(bookingsResponse.data.slice(0, 5));
       setStats(prev => ({ ...prev, bookings: bookingsResponse.data.length }));
 
+      // Fetch user's house plans
+      try {
+        const plansResponse = await axios.get(`${API}/house-plans/my-plans`, {
+          withCredentials: true
+        });
+        const plans = plansResponse.data.plans || [];
+        setHousePlans(plans.slice(0, 3));
+        setStats(prev => ({ ...prev, housePlans: plans.length }));
+      } catch (error) {
+        console.log('House plans not available:', error);
+      }
+
       // Fetch messages count
       const messagesResponse = await axios.get(`${API}/messages`);
       const unreadCount = messagesResponse.data.filter(m => 
