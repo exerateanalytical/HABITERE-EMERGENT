@@ -253,7 +253,7 @@ const HousePlanDetail = () => {
         <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
           <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
             <Layers className="w-6 h-6 mr-2 text-green-600" />
-            Floor Plans
+            Floor Plans - Visual Layouts
           </h2>
           
           {plan.floors.map((floor, floorIndex) => (
@@ -261,6 +261,28 @@ const HousePlanDetail = () => {
               <h3 className="text-lg font-bold text-gray-900 mb-4 pb-2 border-b-2 border-green-500">
                 {floor.floor_name}
               </h3>
+              
+              {/* Floor Plan Image */}
+              <div className="bg-gray-50 rounded-lg p-4 mb-6">
+                <div className="bg-white rounded-lg border-2 border-green-300 overflow-hidden">
+                  <img 
+                    src={`${BACKEND_URL}/api/house-plans/${plan.id}/floor-plan/${floorIndex}`}
+                    alt={`${floor.floor_name} Layout`}
+                    className="w-full h-auto"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      e.target.nextSibling.style.display = 'block';
+                    }}
+                  />
+                  <div style={{display: 'none'}} className="p-8 text-center text-gray-500">
+                    <Building className="w-16 h-16 mx-auto mb-4 text-gray-400" />
+                    <p>Floor plan visualization</p>
+                  </div>
+                </div>
+                <p className="text-sm text-gray-600 text-center mt-2">
+                  2D Floor Plan - {floor.floor_name}
+                </p>
+              </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {floor.rooms.map((room, roomIndex) => (
