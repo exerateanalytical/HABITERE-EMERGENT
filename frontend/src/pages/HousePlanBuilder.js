@@ -632,6 +632,9 @@ const HousePlanBuilder = () => {
             Create New Plan
           </button>
           <button
+            onClick={() => {
+              window.open(`${BACKEND_URL}/api/house-plans/${calculatedPlan.id}/download-pdf`, '_blank');
+            }}
             className="flex-1 bg-purple-600 hover:bg-purple-700 text-white px-6 py-4 rounded-lg font-bold flex items-center justify-center"
           >
             <Download className="w-5 h-5 mr-2" />
