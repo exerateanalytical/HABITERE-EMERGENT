@@ -2077,7 +2077,7 @@ async def get_floor_plan_image(
         floor = plan['floors'][floor_number]
         
         # Generate floor plan image
-        floor_image_path = FloorPlanGenerator.generate_floor_plan_image(floor, floor_number)
+        floor_image_path = FloorPlanGenerator.generate_proper_floor_plan(floor, floor_number)
         
         if not floor_image_path or not os.path.exists(floor_image_path):
             raise HTTPException(
