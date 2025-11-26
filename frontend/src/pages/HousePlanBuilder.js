@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
+import FloorPlan3DViewer from '../components/FloorPlan3DViewer';
 import {
   Home, Plus, Minus, Save, Calculator, FileText, Download,
   Building, Layers, Drill, Zap, Droplet, Paintbrush, DollarSign,
