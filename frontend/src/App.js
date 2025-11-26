@@ -64,6 +64,7 @@ import InventoryDetail from './pages/InventoryDetail';
 import HousePlanBuilder from './pages/HousePlanBuilder';
 import MyHousePlans from './pages/MyHousePlans';
 import HousePlanDetail from './pages/HousePlanDetail';
+import HousePlanTemplates from './pages/HousePlanTemplates';
 
 // New Auth Pages
 import LoginPage from './pages/auth/LoginPage';
