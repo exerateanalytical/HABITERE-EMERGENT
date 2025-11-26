@@ -1372,3 +1372,68 @@ async def download_house_plan_pdf(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to download PDF"
         )
+
+
+@router.get("/{plan_id}/floor-plan/{floor_number}")
+async def get_floor_plan_image(
+    plan_id: str,
+    floor_number: int,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Get floor plan image for a specific floor.
+    Generates the image if it doesn't exist.
+    """
+    db = get_database()
+    
+    try:
+        plan = await db.house_plans.find_one({"id": plan_id})
+        
+        if not plan:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="House plan not found"
+            )
+        
+        # Check ownership
+        if plan["user_id"] != current_user.get("id"):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="You don't have access to this plan"
+            )
+        
+        # Get the specific floor
+        if floor_number >= len(plan['floors']):
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Floor not found"
+            )
+        
+        floor = plan['floors'][floor_number]
+        
+        # Generate floor plan image
+        floor_image_path = FloorPlanGenerator.generate_floor_plan_image(floor, floor_number)
+        
+        if not floor_image_path or not os.path.exists(floor_image_path):
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Failed to generate floor plan image"
+            )
+        
+        # Return image file
+        return FileResponse(
+            path=floor_image_path,
+            media_type="image/png",
+            headers={
+                "Cache-Control": "public, max-age=3600"
+            }
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting floor plan image: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to get floor plan image"
+        )
