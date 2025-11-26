@@ -17,7 +17,9 @@ const HousePlanBuilder = () => {
   
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [loadingTemplate, setLoadingTemplate] = useState(false);
   const [calculatedPlan, setCalculatedPlan] = useState(null);
+  const [selectedTemplate, setSelectedTemplate] = useState(null);
   
   // Plan basic info
   const [planName, setPlanName] = useState('');
@@ -43,6 +45,36 @@ const HousePlanBuilder = () => {
       ]
     }
   ]);
+
+  // Load template if template ID is in URL
+  useEffect(() => {
+    const templateId = searchParams.get('template');
+    if (templateId) {
+      loadTemplate(templateId);
+    }
+  }, [searchParams]);
+
+  const loadTemplate = async (templateId) => {
+    setLoadingTemplate(true);
+    try {
+      const response = await axios.get(`${BACKEND_URL}/api/house-plans/templates/${templateId}`);
+      const template = response.data.template;
+      
+      // Pre-populate form with template data
+      setPlanName(template.name);
+      setDescription(template.description);
+      setHouseType(template.house_type);
+      setFloors(template.floors);
+      setSelectedTemplate(template);
+      
+      alert(`Template "${template.name}" loaded successfully! You can customize it as needed.`);
+    } catch (error) {
+      console.error('Error loading template:', error);
+      alert('Failed to load template. Starting with blank plan.');
+    } finally {
+      setLoadingTemplate(false);
+    }
+  };
 
   const addFloor = () => {
     const newFloorNumber = floors.length;
