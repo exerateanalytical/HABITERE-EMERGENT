@@ -60,6 +60,9 @@ import InventoryList from './pages/InventoryList';
 import InventoryForm from './pages/InventoryForm';
 import InventoryDetail from './pages/InventoryDetail';
 
+// House Plans Module
+import HousePlanBuilder from './pages/HousePlanBuilder';
+
 // New Auth Pages
 import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
