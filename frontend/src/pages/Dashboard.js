@@ -313,6 +313,15 @@ const Dashboard = () => {
               <Wrench className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
               Find Services
             </Link>
+
+            <Link
+              to="/house-plans/builder"
+              className="btn-primary w-full sm:w-auto justify-center"
+              style={{ background: 'linear-gradient(135deg, #10b981 0%, #3b82f6 100%)' }}
+            >
+              <HomeIcon className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+              Create House Plan
+            </Link>
           </div>
         </div>
 
