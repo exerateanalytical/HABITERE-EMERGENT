@@ -508,7 +508,7 @@ const Dashboard = () => {
                     </div>
                     <div className="flex gap-2">
                       <Link
-                        to={`/house-plans/my-plans`}
+                        to={`/house-plans/${plan.id}`}
                         className="flex-1 btn-primary text-xs py-2"
                       >
                         View Details
