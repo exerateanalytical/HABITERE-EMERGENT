@@ -1550,6 +1550,21 @@ class FloorPlanGenerator:
                             y + height, window_size, 'horizontal'
                         )
                 
+                # Draw dimension labels on walls
+                room_length = room.get('length', 4)
+                room_width = room.get('width', 3)
+                try:
+                    # Top wall dimension (length)
+                    dim_text = f"{room_length}m"
+                    draw.text((x + width/2, y - 15), dim_text, fill='#059669', 
+                             font=font_small, anchor='mm')
+                    # Side wall dimension (width)
+                    dim_text = f"{room_width}m"
+                    draw.text((x - 20, y + height/2), dim_text, fill='#059669',
+                             font=font_small, anchor='mm')
+                except:
+                    pass  # Skip if font not available
+                
                 # Room label (centered)
                 room_name = room.get('name', f'Room {idx+1}')
                 room_type_label = room_type.replace('_', ' ').title()
