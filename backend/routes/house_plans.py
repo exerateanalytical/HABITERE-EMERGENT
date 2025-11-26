@@ -960,115 +960,253 @@ async def delete_house_plan(
 # ==================== FLOOR PLAN GENERATION ====================
 
 class FloorPlanGenerator:
-    """Generate 2D floor plan images"""
+    """Generate professional 2D floor plan images with realistic layouts"""
+    
+    @staticmethod
+    def arrange_rooms_smart(rooms, total_width=1000, total_height=700):
+        """
+        Intelligently arrange rooms in a realistic floor plan layout.
+        Uses a grid-based approach to place rooms side-by-side.
+        """
+        if not rooms:
+            return []
+        
+        # Sort rooms by area (largest first)
+        sorted_rooms = sorted(rooms, key=lambda r: r.get('length', 4) * r.get('width', 3), reverse=True)
+        
+        # Calculate scale factor
+        max_dim = max(max(r.get('length', 4), r.get('width', 3)) for r in rooms)
+        scale = min(total_width / (max_dim * 3), total_height / (max_dim * 2.5))
+        
+        placed_rooms = []
+        current_x = 50
+        current_y = 50
+        row_height = 0
+        
+        for room in sorted_rooms:
+            room_length = room.get('length', 4)
+            room_width = room.get('width', 3)
+            
+            # Convert to pixels
+            room_px_width = int(room_length * scale)
+            room_px_height = int(room_width * scale)
+            
+            # Check if room fits in current row
+            if current_x + room_px_width > total_width - 50:
+                # Move to next row
+                current_x = 50
+                current_y += row_height + 20
+                row_height = 0
+            
+            # Place room
+            placed_rooms.append({
+                'room': room,
+                'x': current_x,
+                'y': current_y,
+                'width': room_px_width,
+                'height': room_px_height
+            })
+            
+            current_x += room_px_width + 20
+            row_height = max(row_height, room_px_height)
+        
+        return placed_rooms, scale
+    
+    @staticmethod
+    def draw_wall(draw, x1, y1, x2, y2, thickness=6):
+        """Draw a wall line with proper thickness"""
+        draw.rectangle(
+            [(x1 - thickness//2, y1 - thickness//2), 
+             (x2 + thickness//2, y2 + thickness//2)],
+            fill='#2c3e50'
+        )
+    
+    @staticmethod
+    def draw_door(draw, x, y, width, orientation='horizontal'):
+        """Draw a door symbol"""
+        door_color = '#8B4513'
+        if orientation == 'horizontal':
+            draw.rectangle([(x, y-2), (x+width, y+2)], fill=door_color)
+            draw.arc([(x, y-width), (x+width, y+width)], 0, 90, fill='#D2691E', width=2)
+        else:
+            draw.rectangle([(x-2, y), (x+2, y+width)], fill=door_color)
+            draw.arc([(x-width, y), (x+width, y+width)], 0, 90, fill='#D2691E', width=2)
+    
+    @staticmethod
+    def draw_window(draw, x, y, size, orientation='horizontal'):
+        """Draw a window symbol"""
+        window_color = '#4A90E2'
+        if orientation == 'horizontal':
+            draw.rectangle([(x, y-3), (x+size, y+3)], fill='white', outline=window_color, width=2)
+            draw.line([(x, y), (x+size, y)], fill=window_color, width=1)
+        else:
+            draw.rectangle([(x-3, y), (x+3, y+size)], fill='white', outline=window_color, width=2)
+            draw.line([(x, y), (x, y+size)], fill=window_color, width=1)
     
     @staticmethod
     def generate_floor_plan_image(floor: Dict, floor_number: int) -> str:
         """
-        Generate a 2D floor plan image for a single floor.
+        Generate a professional 2D floor plan image with realistic architectural layout.
         Returns the file path of the generated image.
         """
         try:
             # Image dimensions
-            img_width = 1200
-            img_height = 900
-            padding = 100
+            img_width = 1600
+            img_height = 1200
+            padding = 80
             
-            # Create image
+            # Create image with white background
             img = Image.new('RGB', (img_width, img_height), 'white')
             draw = ImageDraw.Draw(img)
             
-            # Try to load a font
+            # Load fonts
             try:
-                font_title = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 24)
-                font_label = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 16)
+                font_title = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 32)
+                font_label = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 18)
+                font_info = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 14)
                 font_small = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 12)
             except:
                 font_title = ImageFont.load_default()
                 font_label = ImageFont.load_default()
+                font_info = ImageFont.load_default()
                 font_small = ImageFont.load_default()
             
-            # Draw title
-            title = f"{floor.get('floor_name', f'Floor {floor_number}')}"
-            draw.text((padding, 30), title, fill='black', font=font_title)
+            # Title and header
+            floor_name = floor.get('floor_name', f'Floor {floor_number}')
+            draw.rectangle([(0, 0), (img_width, 70)], fill='#10b981')
+            draw.text((padding, 20), f"FLOOR PLAN - {floor_name.upper()}", fill='white', font=font_title)
             
-            # Draw grid
-            grid_start_x = padding
-            grid_start_y = padding + 50
-            grid_width = img_width - 2 * padding
-            grid_height = img_height - 2 * padding - 50
+            # Draw grid for reference
+            grid_color = '#f0f0f0'
+            for i in range(padding, img_width - padding, 50):
+                draw.line([(i, padding + 70), (i, img_height - padding)], fill=grid_color, width=1)
+            for i in range(padding + 70, img_height - padding, 50):
+                draw.line([(padding, i), (img_width - padding, i)], fill=grid_color, width=1)
             
-            # Draw outer border
-            draw.rectangle(
-                [(grid_start_x, grid_start_y), (grid_start_x + grid_width, grid_start_y + grid_height)],
-                outline='black',
-                width=3
-            )
-            
-            # Calculate scale (pixels per meter)
             rooms = floor.get('rooms', [])
             if not rooms:
+                draw.text((img_width//2, img_height//2), "No rooms defined", 
+                         fill='#999', font=font_label, anchor='mm')
                 return None
             
-            # Find max dimensions
-            max_length = max(room.get('length', 4) for room in rooms)
-            max_width = max(room.get('width', 3) for room in rooms)
-            total_area = sum(room.get('length', 4) * room.get('width', 3) for room in rooms)
+            # Smart room arrangement
+            available_width = img_width - 2 * padding
+            available_height = img_height - 3 * padding - 70
+            placed_rooms, scale = FloorPlanGenerator.arrange_rooms_smart(
+                rooms, available_width, available_height
+            )
             
-            # Simple layout: arrange rooms in a grid
-            scale = min(grid_width / (max_length * 2), grid_height / (max_width * len(rooms)))
-            scale = scale * 0.8  # Add some padding
+            # Room type colors (more professional palette)
+            room_colors = {
+                'living_room': '#E8F5E9',
+                'bedroom': '#E3F2FD',
+                'kitchen': '#FFF3E0',
+                'bathroom': '#F3E5F5',
+                'dining_room': '#E0F2F1',
+                'office': '#FFF9C4',
+                'store': '#FFE0B2',
+                'balcony': '#F8BBD0',
+                'garage': '#CFD8DC',
+                'hallway': '#F5F5F5'
+            }
             
-            # Draw rooms
-            current_y = grid_start_y + 50
-            colors_palette = [
-                '#E8F5E9', '#E3F2FD', '#FFF3E0', '#F3E5F5', '#E0F2F1',
-                '#FFF9C4', '#FFE0B2', '#F8BBD0', '#C5E1A5', '#B2DFDB'
-            ]
-            
-            for idx, room in enumerate(rooms):
-                room_length = room.get('length', 4)
-                room_width = room.get('width', 3)
+            # Draw rooms with walls, doors, and windows
+            for idx, room_data in enumerate(placed_rooms):
+                room = room_data['room']
+                x = room_data['x'] + padding
+                y = room_data['y'] + padding + 70
+                width = room_data['width']
+                height = room_data['height']
                 
-                # Convert to pixels
-                room_px_width = room_length * scale
-                room_px_height = room_width * scale
+                room_type = room.get('type', 'bedroom')
+                room_color = room_colors.get(room_type, '#E8EAF6')
                 
-                # Position
-                room_x = grid_start_x + 50
-                room_y = current_y
-                
-                # Draw room rectangle
-                room_color = colors_palette[idx % len(colors_palette)]
+                # Draw room floor
                 draw.rectangle(
-                    [(room_x, room_y), (room_x + room_px_width, room_y + room_px_height)],
+                    [(x, y), (x + width, y + height)],
                     fill=room_color,
-                    outline='black',
-                    width=2
+                    outline='#2c3e50',
+                    width=6
                 )
                 
-                # Draw room label
+                # Add texture/pattern for different room types
+                if room_type == 'bathroom':
+                    # Tiles pattern
+                    for i in range(x + 10, x + width - 10, 20):
+                        for j in range(y + 10, y + height - 10, 20):
+                            draw.rectangle([(i, j), (i+15, j+15)], outline='#9E9E9E', width=1)
+                
+                # Draw door (on one side)
+                door_width = min(40, width // 3)
+                door_x = x + width // 2 - door_width // 2
+                FloorPlanGenerator.draw_door(draw, door_x, y, door_width, 'horizontal')
+                
+                # Draw windows (if room is not bathroom/store)
+                if room_type not in ['bathroom', 'store']:
+                    window_size = min(50, width // 4)
+                    # Top wall window
+                    if height > 80:
+                        FloorPlanGenerator.draw_window(
+                            draw, x + width // 2 - window_size // 2, 
+                            y + height, window_size, 'horizontal'
+                        )
+                
+                # Room label (centered)
                 room_name = room.get('name', f'Room {idx+1}')
-                room_type = room.get('type', '').replace('_', ' ').title()
-                dimensions = f"{room_length}m × {room_width}m"
-                area = f"{room_length * room_width:.1f} m²"
+                room_type_label = room_type.replace('_', ' ').title()
+                dimensions = f"{room.get('length', 4)}m × {room.get('width', 3)}m"
+                area = f"{room.get('length', 4) * room.get('width', 3):.1f} m²"
                 
-                # Center text in room
-                text_x = room_x + room_px_width / 2
-                text_y = room_y + room_px_height / 2 - 30
+                # Center of room
+                center_x = x + width // 2
+                center_y = y + height // 2
                 
-                draw.text((text_x, text_y), room_name, fill='black', font=font_label, anchor='mm')
-                draw.text((text_x, text_y + 20), room_type, fill='#555', font=font_small, anchor='mm')
-                draw.text((text_x, text_y + 35), dimensions, fill='#555', font=font_small, anchor='mm')
-                draw.text((text_x, text_y + 50), area, fill='#333', font=font_label, anchor='mm')
+                # Draw text with background
+                draw.text((center_x, center_y - 25), room_name, 
+                         fill='#2c3e50', font=font_label, anchor='mm')
+                draw.text((center_x, center_y), room_type_label, 
+                         fill='#555', font=font_info, anchor='mm')
+                draw.text((center_x, center_y + 20), dimensions, 
+                         fill='#777', font=font_small, anchor='mm')
                 
-                current_y += room_px_height + 20
+                # Area badge
+                area_bbox = draw.textbbox((center_x, center_y + 40), area, font=font_info, anchor='mm')
+                draw.rectangle(
+                    [(area_bbox[0]-5, area_bbox[1]-3), (area_bbox[2]+5, area_bbox[3]+3)],
+                    fill='#10b981',
+                    outline='#059669',
+                    width=2
+                )
+                draw.text((center_x, center_y + 40), area, 
+                         fill='white', font=font_info, anchor='mm')
             
-            # Draw legend
-            legend_y = img_height - 80
-            draw.text((padding, legend_y), "Scale: Approximate layout", fill='#666', font=font_small)
-            draw.text((padding, legend_y + 20), f"Total Floor Area: {sum(r.get('length',4)*r.get('width',3) for r in rooms):.1f} m²", 
-                     fill='#333', font=font_label)
+            # Legend and info box
+            legend_y = img_height - 60
+            draw.rectangle([(padding, legend_y), (img_width - padding, img_height - 20)], 
+                          fill='#f8f9fa', outline='#dee2e6', width=2)
+            
+            # Total area
+            total_area = sum(r.get('length', 4) * r.get('width', 3) for r in rooms)
+            draw.text((padding + 20, legend_y + 15), 
+                     f"Total Floor Area: {total_area:.2f} m²  |  Rooms: {len(rooms)}  |  Scale: ~1:{int(100/scale)}",
+                     fill='#2c3e50', font=font_info)
+            
+            # Draw symbols legend
+            legend_x = img_width - padding - 300
+            draw.text((legend_x, legend_y + 5), "Symbols:", fill='#2c3e50', font=font_small)
+            # Door symbol
+            FloorPlanGenerator.draw_door(draw, legend_x + 70, legend_y + 12, 20, 'horizontal')
+            draw.text((legend_x + 100, legend_y + 12), "Door", fill='#555', font=font_small)
+            # Window symbol
+            FloorPlanGenerator.draw_window(draw, legend_x + 160, legend_y + 12, 20, 'horizontal')
+            draw.text((legend_x + 190, legend_y + 12), "Window", fill='#555', font=font_small)
+            
+            # North arrow
+            arrow_x = img_width - 100
+            arrow_y = padding + 120
+            draw.text((arrow_x, arrow_y), "N", fill='#2c3e50', font=font_title)
+            draw.polygon([(arrow_x, arrow_y-30), (arrow_x-15, arrow_y-10), (arrow_x+15, arrow_y-10)], 
+                        fill='#10b981', outline='#059669')
             
             # Save image
             output_dir = "/app/backend/uploads/floor_plans"
@@ -1076,13 +1214,15 @@ class FloorPlanGenerator:
             
             filename = f"floor_{floor_number}_{uuid.uuid4().hex[:8]}.png"
             filepath = os.path.join(output_dir, filename)
-            img.save(filepath)
+            img.save(filepath, quality=95)
             
-            logger.info(f"Floor plan image generated: {filepath}")
+            logger.info(f"Advanced floor plan generated: {filepath}")
             return filepath
             
         except Exception as e:
-            logger.error(f"Error generating floor plan image: {e}")
+            logger.error(f"Error generating floor plan: {e}")
+            import traceback
+            traceback.print_exc()
             return None
 
 
