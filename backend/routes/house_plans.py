@@ -1637,63 +1637,56 @@ class FloorPlanGenerator:
                     width=3
                 )
                 
-                # Add texture/pattern for different room types
-                if room_type == 'bathroom':
-                    # Tiles pattern
-                    for i in range(x + 10, x + width - 10, 20):
-                        for j in range(y + 10, y + height - 10, 20):
-                            draw.rectangle([(i, j), (i+15, j+15)], outline='#9E9E9E', width=1)
+                # Draw door to hallway (architectural symbol with swing arc)
+                door_size = 30
+                # Door on hallway side
+                if x < hallway_x:  # Left zone - door on right wall
+                    door_x = x + w
+                    door_y = y + h//2 - door_size//2
+                    # Door opening (gap in wall)
+                    draw.rectangle([(door_x-3, door_y), (door_x+3, door_y + door_size)], fill=room_color)
+                    # Door swing arc
+                    draw.arc([(door_x-door_size, door_y), (door_x, door_y + door_size)], 
+                            start=0, end=90, fill='#666666', width=2)
+                else:  # Right zone - door on left wall
+                    door_x = x
+                    door_y = y + h//2 - door_size//2
+                    # Door opening
+                    draw.rectangle([(door_x-3, door_y), (door_x+3, door_y + door_size)], fill=room_color)
+                    # Door swing arc
+                    draw.arc([(door_x, door_y), (door_x+door_size, door_y + door_size)], 
+                            start=90, end=180, fill='#666666', width=2)
                 
-                # Draw furniture and fixtures for this room
-                FloorPlanGenerator.draw_room_furniture(draw, room_type, x, y, width, height)
-                
-                # Draw door (on one side)
-                door_width = min(40, width // 3)
-                door_x = x + width // 2 - door_width // 2
-                FloorPlanGenerator.draw_door(draw, door_x, y, door_width, 'horizontal')
-                
-                # Draw windows (if room is not bathroom/store)
+                # Draw windows on external walls (architectural symbol)
                 if room_type not in ['bathroom', 'store']:
-                    window_size = min(50, width // 4)
-                    # Top wall window
-                    if height > 80:
-                        FloorPlanGenerator.draw_window(
-                            draw, x + width // 2 - window_size // 2, 
-                            y + height, window_size, 'horizontal'
-                        )
+                    window_size = 40
+                    # Check if room touches external wall
+                    # Top wall
+                    if y == building_y + wall_thickness:
+                        win_x = x + w//2 - window_size//2
+                        draw.rectangle([(win_x, y-4), (win_x + window_size, y+4)], 
+                                     fill='#87CEEB', outline='#4682B4', width=2)
+                    # Bottom wall
+                    if y + h >= building_y + building_h - wall_thickness - 10:
+                        win_x = x + w//2 - window_size//2
+                        draw.rectangle([(win_x, y+h-4), (win_x + window_size, y+h+4)], 
+                                     fill='#87CEEB', outline='#4682B4', width=2)
                 
-                # Draw dimension labels on walls
+                # Room label (center)
                 room_length = room.get('length', 4)
                 room_width = room.get('width', 3)
-                try:
-                    # Top wall dimension (length)
-                    dim_text = f"{room_length}m"
-                    draw.text((x + width/2, y - 15), dim_text, fill='#059669', 
-                             font=font_small, anchor='mm')
-                    # Side wall dimension (width)
-                    dim_text = f"{room_width}m"
-                    draw.text((x - 20, y + height/2), dim_text, fill='#059669',
-                             font=font_small, anchor='mm')
-                except:
-                    pass  # Skip if font not available
+                center_x = x + w // 2
+                center_y = y + h // 2
                 
-                # Room label (centered)
-                room_name = room.get('name', f'Room {idx+1}')
-                room_type_label = room_type.replace('_', ' ').title()
-                dimensions = f"{room.get('length', 4)}m × {room.get('width', 3)}m"
-                area = f"{room.get('length', 4) * room.get('width', 3):.1f} m²"
-                
-                # Center of room
-                center_x = x + width // 2
-                center_y = y + height // 2
-                
-                # Draw text with background
-                draw.text((center_x, center_y - 25), room_name, 
-                         fill='#2c3e50', font=font_label, anchor='mm')
-                draw.text((center_x, center_y), room_type_label, 
-                         fill='#555', font=font_info, anchor='mm')
-                draw.text((center_x, center_y + 20), dimensions, 
-                         fill='#777', font=font_small, anchor='mm')
+                # Draw room name and dimensions
+                draw.text((center_x, center_y - 15), room_name, 
+                         fill='#000000', font=font_room, anchor='mm')
+                dim_text = f"{room_length}m × {room_width}m"
+                draw.text((center_x, center_y + 5), dim_text, 
+                         fill='#666666', font=font_dim, anchor='mm')
+                area_text = f"{room_length * room_width:.1f} m²"
+                draw.text((center_x, center_y + 20), area_text, 
+                         fill='#999999', font=font_dim, anchor='mm')
                 
                 # Area badge
                 area_bbox = draw.textbbox((center_x, center_y + 40), area, font=font_info, anchor='mm')
