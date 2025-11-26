@@ -1500,12 +1500,13 @@ class FloorPlanGenerator:
             floor_name = floor.get('floor_name', f'Floor {floor_number}')
             draw.text((margin, 20), f"{floor_name.upper()} - FLOOR PLAN", fill='#1a1a1a', font=font_title)
             
-            # Draw grid for reference
-            grid_color = '#f0f0f0'
-            for i in range(padding, img_width - padding, 50):
-                draw.line([(i, padding + 70), (i, img_height - padding)], fill=grid_color, width=1)
-            for i in range(padding + 70, img_height - padding, 50):
-                draw.line([(padding, i), (img_width - padding, i)], fill=grid_color, width=1)
+            # Draw building perimeter (external walls) - THICK BLACK LINES
+            wall_thickness = 8
+            draw.rectangle(
+                [(building_x, building_y), (building_x + building_w, building_y + building_h)],
+                outline='#000000',
+                width=wall_thickness
+            )
             
             rooms = floor.get('rooms', [])
             if not rooms:
