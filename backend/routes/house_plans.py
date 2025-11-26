@@ -1239,6 +1239,207 @@ class FloorPlanGenerator:
             draw.line([(x, y), (x, y+size)], fill=window_color, width=1)
     
     @staticmethod
+    def draw_furniture_bedroom(draw, x, y, width, height):
+        """Draw bedroom furniture (bed, nightstands)"""
+        # Bed (centered)
+        bed_width = min(width * 0.4, 80)
+        bed_height = min(height * 0.5, 100)
+        bed_x = x + (width - bed_width) / 2
+        bed_y = y + height * 0.3
+        
+        # Bed frame
+        draw.rectangle([(bed_x, bed_y), (bed_x + bed_width, bed_y + bed_height)], 
+                      fill='#8B7355', outline='#654321', width=2)
+        # Pillow
+        pillow_height = bed_height * 0.2
+        draw.rectangle([(bed_x + 5, bed_y + 5), (bed_x + bed_width - 5, bed_y + pillow_height)],
+                      fill='#FFF8DC', outline='#DEB887', width=1)
+        
+        # Nightstands
+        nightstand_size = min(width * 0.12, 25)
+        if width > 150:  # Only draw if room is large enough
+            # Left nightstand
+            draw.rectangle([(bed_x - nightstand_size - 10, bed_y + bed_height/2 - nightstand_size/2),
+                          (bed_x - 10, bed_y + bed_height/2 + nightstand_size/2)],
+                         fill='#A0826D', outline='#654321', width=1)
+            # Right nightstand
+            draw.rectangle([(bed_x + bed_width + 10, bed_y + bed_height/2 - nightstand_size/2),
+                          (bed_x + bed_width + 10 + nightstand_size, bed_y + bed_height/2 + nightstand_size/2)],
+                         fill='#A0826D', outline='#654321', width=1)
+    
+    @staticmethod
+    def draw_furniture_living_room(draw, x, y, width, height):
+        """Draw living room furniture (sofa, coffee table, TV)"""
+        # Sofa (L-shaped or straight)
+        sofa_width = min(width * 0.6, 120)
+        sofa_depth = min(height * 0.25, 50)
+        sofa_x = x + (width - sofa_width) / 2
+        sofa_y = y + height * 0.6
+        
+        draw.rectangle([(sofa_x, sofa_y), (sofa_x + sofa_width, sofa_y + sofa_depth)],
+                      fill='#4A90E2', outline='#2E5C8A', width=2)
+        # Sofa cushions
+        cushion_width = sofa_width / 3
+        for i in range(3):
+            draw.rectangle([(sofa_x + i * cushion_width + 5, sofa_y + 5),
+                          (sofa_x + (i + 1) * cushion_width - 5, sofa_y + sofa_depth - 5)],
+                         outline='#1E3A5F', width=1)
+        
+        # Coffee table
+        table_width = min(sofa_width * 0.6, 70)
+        table_height = min(sofa_depth * 0.8, 35)
+        table_x = x + (width - table_width) / 2
+        table_y = sofa_y - table_height - 20
+        
+        draw.rectangle([(table_x, table_y), (table_x + table_width, table_y + table_height)],
+                      fill='#8B4513', outline='#654321', width=2)
+        
+        # TV stand (on opposite wall)
+        if height > 100:
+            tv_width = min(width * 0.4, 80)
+            tv_height = 10
+            tv_x = x + (width - tv_width) / 2
+            tv_y = y + 20
+            draw.rectangle([(tv_x, tv_y), (tv_x + tv_width, tv_y + tv_height)],
+                          fill='#2c3e50', outline='#1a1a1a', width=2)
+    
+    @staticmethod
+    def draw_furniture_kitchen(draw, x, y, width, height):
+        """Draw kitchen fixtures (counters, sink, stove)"""
+        # Counter along one wall
+        counter_width = min(width * 0.8, width - 30)
+        counter_depth = 25
+        counter_x = x + 15
+        counter_y = y + 15
+        
+        # Main counter
+        draw.rectangle([(counter_x, counter_y), (counter_x + counter_width, counter_y + counter_depth)],
+                      fill='#D2B48C', outline='#8B7355', width=2)
+        
+        # Sink (in counter)
+        sink_width = 30
+        sink_x = counter_x + counter_width * 0.3
+        draw.ellipse([(sink_x, counter_y + 5), (sink_x + sink_width, counter_y + counter_depth - 5)],
+                    fill='#C0C0C0', outline='#808080', width=2)
+        
+        # Stove/Cooktop
+        stove_width = 35
+        stove_x = counter_x + counter_width * 0.65
+        draw.rectangle([(stove_x, counter_y + 5), (stove_x + stove_width, counter_y + counter_depth - 5)],
+                      fill='#2c3e50', outline='#1a1a1a', width=2)
+        # Burners
+        for i in range(2):
+            for j in range(2):
+                draw.ellipse([(stove_x + 5 + i * 15, counter_y + 8 + j * 10),
+                            (stove_x + 15 + i * 15, counter_y + 18 + j * 10)],
+                           outline='#555', width=1)
+        
+        # Refrigerator (corner)
+        if width > 100 and height > 100:
+            fridge_width = 30
+            fridge_height = 35
+            fridge_x = x + width - fridge_width - 15
+            fridge_y = y + 15
+            draw.rectangle([(fridge_x, fridge_y), (fridge_x + fridge_width, fridge_y + fridge_height)],
+                          fill='#E8E8E8', outline='#A9A9A9', width=2)
+            # Fridge handles
+            draw.line([(fridge_x + 5, fridge_y + 10), (fridge_x + 5, fridge_y + 25)],
+                     fill='#696969', width=2)
+    
+    @staticmethod
+    def draw_furniture_bathroom(draw, x, y, width, height):
+        """Draw bathroom fixtures (toilet, sink, shower/tub)"""
+        # Toilet
+        toilet_size = min(width * 0.25, 30)
+        toilet_x = x + width - toilet_size - 15
+        toilet_y = y + 15
+        
+        # Toilet bowl
+        draw.ellipse([(toilet_x, toilet_y), (toilet_x + toilet_size, toilet_y + toilet_size)],
+                    fill='white', outline='#D3D3D3', width=2)
+        # Toilet tank
+        draw.rectangle([(toilet_x + 5, toilet_y - 10), (toilet_x + toilet_size - 5, toilet_y)],
+                      fill='white', outline='#D3D3D3', width=2)
+        
+        # Sink
+        sink_width = min(width * 0.3, 35)
+        sink_x = x + 15
+        sink_y = y + 15
+        
+        draw.ellipse([(sink_x, sink_y), (sink_x + sink_width, sink_y + sink_width * 0.7)],
+                    fill='white', outline='#C0C0C0', width=2)
+        # Faucet
+        draw.line([(sink_x + sink_width/2, sink_y - 5), (sink_x + sink_width/2, sink_y)],
+                 fill='#C0C0C0', width=3)
+        
+        # Shower/Bathtub
+        if height > 80:
+            tub_width = min(width * 0.5, 50)
+            tub_height = min(height * 0.4, 70)
+            tub_x = x + 15
+            tub_y = y + height - tub_height - 15
+            
+            draw.rectangle([(tub_x, tub_y), (tub_x + tub_width, tub_y + tub_height)],
+                          fill='#F0F8FF', outline='#B0C4DE', width=2)
+            # Shower head
+            draw.ellipse([(tub_x + 5, tub_y + 5), (tub_x + 15, tub_y + 15)],
+                        fill='#C0C0C0', outline='#808080', width=1)
+    
+    @staticmethod
+    def draw_furniture_dining_room(draw, x, y, width, height):
+        """Draw dining room furniture (table, chairs)"""
+        # Dining table (centered)
+        table_width = min(width * 0.6, 100)
+        table_height = min(height * 0.5, 80)
+        table_x = x + (width - table_width) / 2
+        table_y = y + (height - table_height) / 2
+        
+        draw.rectangle([(table_x, table_y), (table_x + table_width, table_y + table_height)],
+                      fill='#8B4513', outline='#654321', width=2)
+        
+        # Chairs around table
+        chair_size = 15
+        # Top chairs
+        for i in range(2):
+            chair_x = table_x + table_width * 0.25 * (i + 1)
+            draw.rectangle([(chair_x - chair_size/2, table_y - chair_size - 5),
+                          (chair_x + chair_size/2, table_y - 5)],
+                         fill='#654321', outline='#4A3728', width=1)
+        # Bottom chairs
+        for i in range(2):
+            chair_x = table_x + table_width * 0.25 * (i + 1)
+            draw.rectangle([(chair_x - chair_size/2, table_y + table_height + 5),
+                          (chair_x + chair_size/2, table_y + table_height + chair_size + 5)],
+                         fill='#654321', outline='#4A3728', width=1)
+        # Side chairs if room is wide enough
+        if width > 150:
+            # Left chair
+            draw.rectangle([(table_x - chair_size - 5, table_y + table_height/2 - chair_size/2),
+                          (table_x - 5, table_y + table_height/2 + chair_size/2)],
+                         fill='#654321', outline='#4A3728', width=1)
+            # Right chair
+            draw.rectangle([(table_x + table_width + 5, table_y + table_height/2 - chair_size/2),
+                          (table_x + table_width + chair_size + 5, table_y + table_height/2 + chair_size/2)],
+                         fill='#654321', outline='#4A3728', width=1)
+    
+    @staticmethod
+    def draw_room_furniture(draw, room_type, x, y, width, height):
+        """Draw appropriate furniture based on room type"""
+        if width < 60 or height < 60:  # Room too small for furniture
+            return
+        
+        if room_type == 'bedroom':
+            FloorPlanGenerator.draw_furniture_bedroom(draw, x, y, width, height)
+        elif room_type == 'living_room':
+            FloorPlanGenerator.draw_furniture_living_room(draw, x, y, width, height)
+        elif room_type == 'kitchen':
+            FloorPlanGenerator.draw_furniture_kitchen(draw, x, y, width, height)
+        elif room_type == 'bathroom':
+            FloorPlanGenerator.draw_furniture_bathroom(draw, x, y, width, height)
+        elif room_type == 'dining_room':
+            FloorPlanGenerator.draw_furniture_dining_room(draw, x, y, width, height)
+    
+    @staticmethod
     def generate_floor_plan_image(floor: Dict, floor_number: int) -> str:
         """
         Generate a professional 2D floor plan image with realistic architectural layout.
