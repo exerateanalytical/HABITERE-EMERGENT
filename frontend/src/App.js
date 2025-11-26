@@ -399,6 +399,10 @@ function AppContent() {
 
         {/* House Plans Module Routes */}
         <Route 
+          path="/house-plans/templates" 
+          element={<HousePlanTemplates />} 
+        />
+        <Route 
           path="/house-plans/builder" 
           element={
             <ProtectedRoute>
