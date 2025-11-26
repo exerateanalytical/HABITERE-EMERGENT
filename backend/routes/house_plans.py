@@ -1440,18 +1440,42 @@ class FloorPlanGenerator:
             FloorPlanGenerator.draw_furniture_dining_room(draw, x, y, width, height)
     
     @staticmethod
-    def generate_floor_plan_image(floor: Dict, floor_number: int) -> str:
+    def generate_proper_floor_plan(floor: Dict, floor_number: int) -> str:
         """
-        Generate a professional 2D floor plan image with realistic architectural layout.
-        Returns the file path of the generated image.
+        Generate a PROPER architectural floor plan with connected rooms,
+        hallways, and following architectural standards
         """
         try:
-            # Image dimensions
-            img_width = 1600
-            img_height = 1200
-            padding = 80
+            # Image settings
+            scale = 60  # pixels per meter - increased for better detail
+            margin = 150
             
-            # Create image with white background
+            # Get all rooms
+            rooms = floor.get('rooms', [])
+            if not rooms:
+                return None
+            
+            # Step 1: Analyze room requirements and calculate building footprint
+            total_area = sum(r.get('length', 4) * r.get('width', 3) for r in rooms)
+            
+            # Calculate optimal building dimensions (rectangular footprint)
+            # Aim for roughly 1.5:1 aspect ratio for a typical bungalow
+            building_width = (total_area * 1.5) ** 0.5
+            building_length = total_area / building_width
+            
+            # Add hallway space (15% of total area)
+            building_width *= 1.15
+            building_length *= 1.15
+            
+            # Round to nearest 0.5m
+            building_width = round(building_width * 2) / 2
+            building_length = round(building_length * 2) / 2
+            
+            # Image dimensions
+            img_width = int(building_length * scale + 2 * margin)
+            img_height = int(building_width * scale + 2 * margin)
+            
+            # Create image
             img = Image.new('RGB', (img_width, img_height), 'white')
             draw = ImageDraw.Draw(img)
             
