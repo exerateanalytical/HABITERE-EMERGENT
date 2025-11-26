@@ -954,3 +954,421 @@ async def delete_house_plan(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to delete house plan"
         )
+
+
+
+# ==================== FLOOR PLAN GENERATION ====================
+
+class FloorPlanGenerator:
+    """Generate 2D floor plan images"""
+    
+    @staticmethod
+    def generate_floor_plan_image(floor: Dict, floor_number: int) -> str:
+        """
+        Generate a 2D floor plan image for a single floor.
+        Returns the file path of the generated image.
+        """
+        try:
+            # Image dimensions
+            img_width = 1200
+            img_height = 900
+            padding = 100
+            
+            # Create image
+            img = Image.new('RGB', (img_width, img_height), 'white')
+            draw = ImageDraw.Draw(img)
+            
+            # Try to load a font
+            try:
+                font_title = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 24)
+                font_label = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 16)
+                font_small = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 12)
+            except:
+                font_title = ImageFont.load_default()
+                font_label = ImageFont.load_default()
+                font_small = ImageFont.load_default()
+            
+            # Draw title
+            title = f"{floor.get('floor_name', f'Floor {floor_number}')}"
+            draw.text((padding, 30), title, fill='black', font=font_title)
+            
+            # Draw grid
+            grid_start_x = padding
+            grid_start_y = padding + 50
+            grid_width = img_width - 2 * padding
+            grid_height = img_height - 2 * padding - 50
+            
+            # Draw outer border
+            draw.rectangle(
+                [(grid_start_x, grid_start_y), (grid_start_x + grid_width, grid_start_y + grid_height)],
+                outline='black',
+                width=3
+            )
+            
+            # Calculate scale (pixels per meter)
+            rooms = floor.get('rooms', [])
+            if not rooms:
+                return None
+            
+            # Find max dimensions
+            max_length = max(room.get('length', 4) for room in rooms)
+            max_width = max(room.get('width', 3) for room in rooms)
+            total_area = sum(room.get('length', 4) * room.get('width', 3) for room in rooms)
+            
+            # Simple layout: arrange rooms in a grid
+            scale = min(grid_width / (max_length * 2), grid_height / (max_width * len(rooms)))
+            scale = scale * 0.8  # Add some padding
+            
+            # Draw rooms
+            current_y = grid_start_y + 50
+            colors_palette = [
+                '#E8F5E9', '#E3F2FD', '#FFF3E0', '#F3E5F5', '#E0F2F1',
+                '#FFF9C4', '#FFE0B2', '#F8BBD0', '#C5E1A5', '#B2DFDB'
+            ]
+            
+            for idx, room in enumerate(rooms):
+                room_length = room.get('length', 4)
+                room_width = room.get('width', 3)
+                
+                # Convert to pixels
+                room_px_width = room_length * scale
+                room_px_height = room_width * scale
+                
+                # Position
+                room_x = grid_start_x + 50
+                room_y = current_y
+                
+                # Draw room rectangle
+                room_color = colors_palette[idx % len(colors_palette)]
+                draw.rectangle(
+                    [(room_x, room_y), (room_x + room_px_width, room_y + room_px_height)],
+                    fill=room_color,
+                    outline='black',
+                    width=2
+                )
+                
+                # Draw room label
+                room_name = room.get('name', f'Room {idx+1}')
+                room_type = room.get('type', '').replace('_', ' ').title()
+                dimensions = f"{room_length}m × {room_width}m"
+                area = f"{room_length * room_width:.1f} m²"
+                
+                # Center text in room
+                text_x = room_x + room_px_width / 2
+                text_y = room_y + room_px_height / 2 - 30
+                
+                draw.text((text_x, text_y), room_name, fill='black', font=font_label, anchor='mm')
+                draw.text((text_x, text_y + 20), room_type, fill='#555', font=font_small, anchor='mm')
+                draw.text((text_x, text_y + 35), dimensions, fill='#555', font=font_small, anchor='mm')
+                draw.text((text_x, text_y + 50), area, fill='#333', font=font_label, anchor='mm')
+                
+                current_y += room_px_height + 20
+            
+            # Draw legend
+            legend_y = img_height - 80
+            draw.text((padding, legend_y), "Scale: Approximate layout", fill='#666', font=font_small)
+            draw.text((padding, legend_y + 20), f"Total Floor Area: {sum(r.get('length',4)*r.get('width',3) for r in rooms):.1f} m²", 
+                     fill='#333', font=font_label)
+            
+            # Save image
+            output_dir = "/app/backend/uploads/floor_plans"
+            os.makedirs(output_dir, exist_ok=True)
+            
+            filename = f"floor_{floor_number}_{uuid.uuid4().hex[:8]}.png"
+            filepath = os.path.join(output_dir, filename)
+            img.save(filepath)
+            
+            logger.info(f"Floor plan image generated: {filepath}")
+            return filepath
+            
+        except Exception as e:
+            logger.error(f"Error generating floor plan image: {e}")
+            return None
+
+
+# ==================== PDF GENERATION ====================
+
+class HousePlanPDFGenerator:
+    """Generate professional PDF house plans"""
+    
+    @staticmethod
+    def generate_pdf(plan: Dict) -> str:
+        """
+        Generate a comprehensive PDF house plan document.
+        Returns the file path of the generated PDF.
+        """
+        try:
+            # Create output directory
+            output_dir = "/app/backend/uploads/pdf_plans"
+            os.makedirs(output_dir, exist_ok=True)
+            
+            filename = f"house_plan_{plan['id'][:8]}.pdf"
+            filepath = os.path.join(output_dir, filename)
+            
+            # Create PDF
+            doc = SimpleDocTemplate(filepath, pagesize=A4,
+                                   rightMargin=1*cm, leftMargin=1*cm,
+                                   topMargin=1*cm, bottomMargin=1*cm)
+            
+            # Container for PDF elements
+            elements = []
+            
+            # Styles
+            styles = getSampleStyleSheet()
+            title_style = ParagraphStyle(
+                'CustomTitle',
+                parent=styles['Heading1'],
+                fontSize=24,
+                textColor=colors.HexColor('#10b981'),
+                spaceAfter=12,
+                alignment=TA_CENTER
+            )
+            heading_style = ParagraphStyle(
+                'CustomHeading',
+                parent=styles['Heading2'],
+                fontSize=16,
+                textColor=colors.HexColor('#059669'),
+                spaceAfter=10,
+                spaceBefore=10
+            )
+            
+            # Title Page
+            elements.append(Paragraph("HOUSE PLAN & COST ESTIMATE", title_style))
+            elements.append(Spacer(1, 0.3*inch))
+            elements.append(Paragraph(f"<b>Project Name:</b> {plan['name']}", styles['Normal']))
+            elements.append(Spacer(1, 0.1*inch))
+            
+            if plan.get('description'):
+                elements.append(Paragraph(f"<b>Description:</b> {plan['description']}", styles['Normal']))
+                elements.append(Spacer(1, 0.1*inch))
+            
+            # Project Summary Table
+            elements.append(Spacer(1, 0.3*inch))
+            elements.append(Paragraph("PROJECT SUMMARY", heading_style))
+            
+            summary_data = [
+                ['Item', 'Value'],
+                ['House Type', plan['house_type'].replace('_', ' ').title()],
+                ['Location', plan['location'].title()],
+                ['Total Floor Area', f"{plan['total_floor_area']:.2f} m²"],
+                ['Total Built Area', f"{plan['total_built_area']:.2f} m²"],
+                ['Number of Floors', str(len(plan['floors']))],
+                ['Foundation Type', plan['foundation_type'].title()],
+                ['Wall Type', plan['wall_type'].title()],
+                ['Roofing Type', plan['roofing_type'].title()],
+                ['Finishing Level', plan['finishing_level'].title()],
+                ['Estimated Duration', f"{plan['estimated_duration_days']} days"],
+            ]
+            
+            summary_table = Table(summary_data, colWidths=[3.5*inch, 3*inch])
+            summary_table.setStyle(TableStyle([
+                ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#10b981')),
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                ('FONTSIZE', (0, 0), (-1, 0), 12),
+                ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+                ('GRID', (0, 0), (-1, -1), 1, colors.black),
+                ('FONTNAME', (0, 1), (0, -1), 'Helvetica-Bold'),
+            ]))
+            elements.append(summary_table)
+            
+            # Cost Summary
+            elements.append(Spacer(1, 0.3*inch))
+            elements.append(Paragraph("COST SUMMARY", heading_style))
+            
+            cost_data = [
+                ['Description', 'Amount (XAF)'],
+                ['Materials Cost', f"{plan['total_materials_cost']:,.0f}"],
+                ['Labor Cost', f"{plan['labor_cost']:,.0f}"],
+                ['TOTAL PROJECT COST', f"{plan['total_project_cost']:,.0f}"],
+            ]
+            
+            cost_table = Table(cost_data, colWidths=[3.5*inch, 3*inch])
+            cost_table.setStyle(TableStyle([
+                ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#10b981')),
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+                ('ALIGN', (1, 0), (1, -1), 'RIGHT'),
+                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                ('FONTSIZE', (0, 0), (-1, 0), 12),
+                ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                ('BACKGROUND', (0, 1), (-1, -2), colors.beige),
+                ('BACKGROUND', (0, -1), (-1, -1), colors.HexColor('#059669')),
+                ('TEXTCOLOR', (0, -1), (-1, -1), colors.whitesmoke),
+                ('FONTNAME', (0, -1), (-1, -1), 'Helvetica-Bold'),
+                ('FONTSIZE', (0, -1), (-1, -1), 14),
+                ('GRID', (0, 0), (-1, -1), 1, colors.black),
+            ]))
+            elements.append(cost_table)
+            
+            elements.append(PageBreak())
+            
+            # Floor Plans
+            elements.append(Paragraph("FLOOR PLANS", heading_style))
+            
+            for idx, floor in enumerate(plan['floors']):
+                elements.append(Spacer(1, 0.2*inch))
+                elements.append(Paragraph(f"<b>{floor['floor_name']}</b>", styles['Heading3']))
+                
+                # Generate floor plan image
+                floor_image_path = FloorPlanGenerator.generate_floor_plan_image(floor, idx)
+                
+                if floor_image_path and os.path.exists(floor_image_path):
+                    # Add image to PDF
+                    img = RLImage(floor_image_path, width=6*inch, height=4.5*inch)
+                    elements.append(img)
+                
+                # Room details table
+                elements.append(Spacer(1, 0.2*inch))
+                room_data = [['Room Name', 'Type', 'Dimensions', 'Area (m²)']]
+                
+                for room in floor.get('rooms', []):
+                    room_data.append([
+                        room['name'],
+                        room['type'].replace('_', ' ').title(),
+                        f"{room['length']}m × {room['width']}m",
+                        f"{room['length'] * room['width']:.2f}"
+                    ])
+                
+                floor_area = sum(r['length'] * r['width'] for r in floor.get('rooms', []))
+                room_data.append(['TOTAL FLOOR AREA', '', '', f"{floor_area:.2f}"])
+                
+                room_table = Table(room_data, colWidths=[2*inch, 1.8*inch, 1.5*inch, 1.2*inch])
+                room_table.setStyle(TableStyle([
+                    ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#10b981')),
+                    ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                    ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+                    ('ALIGN', (-1, 0), (-1, -1), 'RIGHT'),
+                    ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                    ('FONTSIZE', (0, 0), (-1, 0), 10),
+                    ('BACKGROUND', (0, 1), (-1, -2), colors.lightgrey),
+                    ('BACKGROUND', (0, -1), (-1, -1), colors.HexColor('#059669')),
+                    ('TEXTCOLOR', (0, -1), (-1, -1), colors.whitesmoke),
+                    ('FONTNAME', (0, -1), (-1, -1), 'Helvetica-Bold'),
+                    ('GRID', (0, 0), (-1, -1), 1, colors.black),
+                ]))
+                elements.append(room_table)
+                
+                if idx < len(plan['floors']) - 1:
+                    elements.append(PageBreak())
+            
+            elements.append(PageBreak())
+            
+            # Bill of Quantities
+            elements.append(Paragraph("BILL OF QUANTITIES (BOQ)", heading_style))
+            
+            for stage in plan['construction_stages']:
+                elements.append(Spacer(1, 0.2*inch))
+                elements.append(Paragraph(
+                    f"<b>Stage {stage['stage_order']}: {stage['stage_name']}</b> - {stage['duration_days']} days",
+                    styles['Heading3']
+                ))
+                
+                # Materials table
+                boq_data = [['Item', 'Unit', 'Quantity', 'Unit Price', 'Total Price']]
+                
+                for material in stage['materials']:
+                    boq_data.append([
+                        material['item_name'],
+                        material['unit'],
+                        f"{material['quantity']:.2f}",
+                        f"{material['unit_price']:,.0f}",
+                        f"{material['total_price']:,.0f}"
+                    ])
+                
+                boq_data.append(['STAGE TOTAL', '', '', '', f"{stage['total_cost']:,.0f}"])
+                
+                boq_table = Table(boq_data, colWidths=[2.5*inch, 0.8*inch, 0.8*inch, 1.2*inch, 1.2*inch])
+                boq_table.setStyle(TableStyle([
+                    ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#10b981')),
+                    ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                    ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+                    ('ALIGN', (2, 1), (-1, -1), 'RIGHT'),
+                    ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                    ('FONTSIZE', (0, 0), (-1, 0), 9),
+                    ('FONTSIZE', (0, 1), (-1, -1), 8),
+                    ('BACKGROUND', (0, 1), (-1, -2), colors.lightgrey),
+                    ('BACKGROUND', (0, -1), (-1, -1), colors.HexColor('#059669')),
+                    ('TEXTCOLOR', (0, -1), (-1, -1), colors.whitesmoke),
+                    ('FONTNAME', (0, -1), (-1, -1), 'Helvetica-Bold'),
+                    ('GRID', (0, 0), (-1, -1), 0.5, colors.black),
+                ]))
+                elements.append(boq_table)
+            
+            # Footer
+            elements.append(Spacer(1, 0.5*inch))
+            elements.append(Paragraph(
+                f"Generated by Habitere.com on {datetime.now(timezone.utc).strftime('%B %d, %Y')}",
+                ParagraphStyle('Footer', parent=styles['Normal'], fontSize=9, textColor=colors.grey, alignment=TA_CENTER)
+            ))
+            elements.append(Paragraph(
+                "This estimate is based on current market prices and may vary.",
+                ParagraphStyle('Disclaimer', parent=styles['Normal'], fontSize=8, textColor=colors.grey, alignment=TA_CENTER)
+            ))
+            
+            # Build PDF
+            doc.build(elements)
+            
+            logger.info(f"PDF generated: {filepath}")
+            return filepath
+            
+        except Exception as e:
+            logger.error(f"Error generating PDF: {e}")
+            raise
+
+
+@router.get("/{plan_id}/download-pdf")
+async def download_house_plan_pdf(
+    plan_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Generate and download house plan as PDF with floor plans and BOQ.
+    """
+    db = get_database()
+    
+    try:
+        plan = await db.house_plans.find_one({"id": plan_id})
+        
+        if not plan:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="House plan not found"
+            )
+        
+        # Check ownership
+        if plan["user_id"] != current_user.get("id"):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="You don't have access to this plan"
+            )
+        
+        # Generate PDF
+        pdf_path = HousePlanPDFGenerator.generate_pdf(plan)
+        
+        if not pdf_path or not os.path.exists(pdf_path):
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Failed to generate PDF"
+            )
+        
+        # Return PDF file
+        return FileResponse(
+            path=pdf_path,
+            filename=f"{plan['name'].replace(' ', '_')}_House_Plan.pdf",
+            media_type="application/pdf",
+            headers={
+                "Content-Disposition": f"attachment; filename={plan['name'].replace(' ', '_')}_House_Plan.pdf"
+            }
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error downloading PDF: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to download PDF"
+        )
