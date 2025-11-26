@@ -86,6 +86,201 @@ class MaterialItem(BaseModel):
     """Individual material item in BOQ"""
     category: str
     item_name: str
+
+
+# ==================== HOUSE PLAN TEMPLATES ====================
+
+HOUSE_PLAN_TEMPLATES = {
+    "cameroon_3bed_bungalow": {
+        "name": "Standard 3-Bedroom Bungalow",
+        "description": "Popular Cameroonian 3-bedroom design with living room, kitchen, and bathroom",
+        "house_type": "bungalow",
+        "floors": [
+            {
+                "floor_number": 0,
+                "floor_name": "Ground Floor",
+                "rooms": [
+                    {"name": "Living Room", "type": "living_room", "length": 6, "width": 5, "height": 3},
+                    {"name": "Master Bedroom", "type": "bedroom", "length": 4.5, "width": 4, "height": 3},
+                    {"name": "Bedroom 2", "type": "bedroom", "length": 4, "width": 3.5, "height": 3},
+                    {"name": "Bedroom 3", "type": "bedroom", "length": 3.5, "width": 3, "height": 3},
+                    {"name": "Kitchen", "type": "kitchen", "length": 4, "width": 3.5, "height": 3},
+                    {"name": "Bathroom", "type": "bathroom", "length": 3, "width": 2.5, "height": 3},
+                    {"name": "Toilet", "type": "bathroom", "length": 2, "width": 1.5, "height": 3},
+                ]
+            }
+        ]
+    },
+    "modern_2bed_apartment": {
+        "name": "Modern 2-Bedroom Apartment",
+        "description": "Contemporary apartment design perfect for urban living",
+        "house_type": "apartment",
+        "floors": [
+            {
+                "floor_number": 0,
+                "floor_name": "Main Floor",
+                "rooms": [
+                    {"name": "Open Living/Dining", "type": "living_room", "length": 7, "width": 4, "height": 2.8},
+                    {"name": "Master Bedroom", "type": "bedroom", "length": 4, "width": 3.5, "height": 2.8},
+                    {"name": "Bedroom 2", "type": "bedroom", "length": 3.5, "width": 3, "height": 2.8},
+                    {"name": "Kitchen", "type": "kitchen", "length": 3.5, "width": 3, "height": 2.8},
+                    {"name": "Bathroom", "type": "bathroom", "length": 2.5, "width": 2, "height": 2.8},
+                    {"name": "Balcony", "type": "balcony", "length": 4, "width": 1.5, "height": 2.8},
+                ]
+            }
+        ]
+    },
+    "luxury_4bed_duplex": {
+        "name": "Luxury 4-Bedroom Duplex",
+        "description": "Spacious two-story design with en-suite bedrooms and modern amenities",
+        "house_type": "duplex",
+        "floors": [
+            {
+                "floor_number": 0,
+                "floor_name": "Ground Floor",
+                "rooms": [
+                    {"name": "Living Room", "type": "living_room", "length": 7, "width": 6, "height": 3.5},
+                    {"name": "Dining Room", "type": "dining_room", "length": 5, "width": 4, "height": 3.5},
+                    {"name": "Kitchen", "type": "kitchen", "length": 5, "width": 4, "height": 3.5},
+                    {"name": "Guest Bedroom", "type": "bedroom", "length": 4, "width": 3.5, "height": 3.5},
+                    {"name": "Guest Bathroom", "type": "bathroom", "length": 2.5, "width": 2, "height": 3.5},
+                    {"name": "Storage", "type": "store", "length": 3, "width": 2, "height": 3.5},
+                ]
+            },
+            {
+                "floor_number": 1,
+                "floor_name": "First Floor",
+                "rooms": [
+                    {"name": "Master Suite", "type": "bedroom", "length": 6, "width": 5, "height": 3},
+                    {"name": "Master Bathroom", "type": "bathroom", "length": 3.5, "width": 3, "height": 3},
+                    {"name": "Bedroom 2", "type": "bedroom", "length": 4.5, "width": 4, "height": 3},
+                    {"name": "Bedroom 3", "type": "bedroom", "length": 4, "width": 3.5, "height": 3},
+                    {"name": "Shared Bathroom", "type": "bathroom", "length": 3, "width": 2.5, "height": 3},
+                    {"name": "Family Room", "type": "living_room", "length": 5, "width": 4, "height": 3},
+                ]
+            }
+        ]
+    },
+    "compact_studio": {
+        "name": "Compact Studio Apartment",
+        "description": "Efficient single-room living space with bathroom and kitchenette",
+        "house_type": "apartment",
+        "floors": [
+            {
+                "floor_number": 0,
+                "floor_name": "Main Floor",
+                "rooms": [
+                    {"name": "Living/Sleeping Area", "type": "living_room", "length": 5, "width": 4, "height": 2.8},
+                    {"name": "Kitchenette", "type": "kitchen", "length": 3, "width": 2, "height": 2.8},
+                    {"name": "Bathroom", "type": "bathroom", "length": 2.5, "width": 2, "height": 2.8},
+                ]
+            }
+        ]
+    },
+    "family_5bed_house": {
+        "name": "Large 5-Bedroom Family House",
+        "description": "Spacious single-story house perfect for large families",
+        "house_type": "bungalow",
+        "floors": [
+            {
+                "floor_number": 0,
+                "floor_name": "Ground Floor",
+                "rooms": [
+                    {"name": "Living Room", "type": "living_room", "length": 8, "width": 6, "height": 3.5},
+                    {"name": "Dining Room", "type": "dining_room", "length": 5, "width": 4.5, "height": 3.5},
+                    {"name": "Master Bedroom", "type": "bedroom", "length": 5, "width": 4.5, "height": 3.5},
+                    {"name": "Master Bathroom", "type": "bathroom", "length": 3.5, "width": 3, "height": 3.5},
+                    {"name": "Bedroom 2", "type": "bedroom", "length": 4, "width": 3.5, "height": 3.5},
+                    {"name": "Bedroom 3", "type": "bedroom", "length": 4, "width": 3.5, "height": 3.5},
+                    {"name": "Bedroom 4", "type": "bedroom", "length": 3.5, "width": 3, "height": 3.5},
+                    {"name": "Bedroom 5", "type": "bedroom", "length": 3.5, "width": 3, "height": 3.5},
+                    {"name": "Kitchen", "type": "kitchen", "length": 5, "width": 4, "height": 3.5},
+                    {"name": "Main Bathroom", "type": "bathroom", "length": 3, "width": 2.5, "height": 3.5},
+                    {"name": "Guest Toilet", "type": "bathroom", "length": 2, "width": 1.5, "height": 3.5},
+                    {"name": "Store Room", "type": "store", "length": 3, "width": 2.5, "height": 3.5},
+                ]
+            }
+        ]
+    }
+}
+
+
+@router.get("/templates", response_model=Dict[str, Any])
+async def get_house_plan_templates():
+    """
+    Get all available house plan templates.
+    Public endpoint - no authentication required.
+    """
+    try:
+        templates_list = []
+        
+        for template_id, template in HOUSE_PLAN_TEMPLATES.items():
+            total_area = sum(
+                sum(room['length'] * room['width'] for room in floor['rooms'])
+                for floor in template['floors']
+            )
+            
+            templates_list.append({
+                "id": template_id,
+                "name": template['name'],
+                "description": template['description'],
+                "house_type": template['house_type'],
+                "floors_count": len(template['floors']),
+                "total_area": round(total_area, 2),
+                "total_rooms": sum(len(floor['rooms']) for floor in template['floors'])
+            })
+        
+        return {
+            "success": True,
+            "templates": templates_list
+        }
+        
+    except Exception as e:
+        logger.error(f"Error fetching templates: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to fetch templates"
+        )
+
+
+@router.get("/templates/{template_id}", response_model=Dict[str, Any])
+async def get_house_plan_template_detail(template_id: str):
+    """
+    Get detailed information about a specific template.
+    Public endpoint - no authentication required.
+    """
+    try:
+        if template_id not in HOUSE_PLAN_TEMPLATES:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Template not found"
+            )
+        
+        template = HOUSE_PLAN_TEMPLATES[template_id]
+        
+        total_area = sum(
+            sum(room['length'] * room['width'] for room in floor['rooms'])
+            for floor in template['floors']
+        )
+        
+        return {
+            "success": True,
+            "template": {
+                "id": template_id,
+                **template,
+                "total_area": round(total_area, 2)
+            }
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error fetching template: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to fetch template"
+        )
+
     unit: str
     quantity: float
     unit_price: float
