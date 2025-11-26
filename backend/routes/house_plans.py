@@ -1532,6 +1532,9 @@ class FloorPlanGenerator:
                         for j in range(y + 10, y + height - 10, 20):
                             draw.rectangle([(i, j), (i+15, j+15)], outline='#9E9E9E', width=1)
                 
+                # Draw furniture and fixtures for this room
+                FloorPlanGenerator.draw_room_furniture(draw, room_type, x, y, width, height)
+                
                 # Draw door (on one side)
                 door_width = min(40, width // 3)
                 door_x = x + width // 2 - door_width // 2
