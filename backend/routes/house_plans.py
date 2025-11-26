@@ -1508,18 +1508,86 @@ class FloorPlanGenerator:
                 width=wall_thickness
             )
             
-            rooms = floor.get('rooms', [])
-            if not rooms:
-                draw.text((img_width//2, img_height//2), "No rooms defined", 
-                         fill='#999', font=font_label, anchor='mm')
-                return None
+            # Step 3: Arrange rooms in a connected layout
+            # Categorize rooms
+            living_rooms = [r for r in rooms if r.get('type') in ['living_room', 'dining_room']]
+            bedrooms = [r for r in rooms if r.get('type') == 'bedroom']
+            service_rooms = [r for r in rooms if r.get('type') in ['kitchen', 'bathroom', 'store']]
+            other_rooms = [r for r in rooms if r not in living_rooms + bedrooms + service_rooms]
             
-            # Smart room arrangement
-            available_width = img_width - 2 * padding
-            available_height = img_height - 3 * padding - 70
-            placed_rooms, scale = FloorPlanGenerator.arrange_rooms_smart(
-                rooms, available_width, available_height
-            )
+            # Layout strategy: 
+            # - Living spaces at the front/entrance
+            # - Central hallway (10% of width)
+            # - Bedrooms on one side
+            # - Service rooms distributed logically
+            
+            hallway_width_m = building_length * 0.1  # 10% for hallway
+            hallway_width_px = int(hallway_width_m * scale)
+            
+            # Calculate usable space
+            left_zone_w = int((building_w - hallway_width_px) * 0.5)
+            right_zone_w = building_w - hallway_width_px - left_zone_w
+            
+            # Place rooms in zones
+            room_placements = []
+            current_y_left = building_y + wall_thickness
+            current_y_right = building_y + wall_thickness
+            
+            # Zone 1 (Left): Living spaces
+            for room in living_rooms:
+                room_w = int(room.get('length', 4) * scale)
+                room_h = int(room.get('width', 3) * scale)
+                # Fit to zone
+                room_w = min(room_w, left_zone_w - 20)
+                room_placements.append({
+                    'room': room,
+                    'x': building_x + wall_thickness,
+                    'y': current_y_left,
+                    'w': room_w,
+                    'h': room_h
+                })
+                current_y_left += room_h
+            
+            # Zone 2 (Right): Bedrooms
+            for room in bedrooms:
+                room_w = int(room.get('length', 4) * scale)
+                room_h = int(room.get('width', 3) * scale)
+                room_w = min(room_w, right_zone_w - 20)
+                room_placements.append({
+                    'room': room,
+                    'x': building_x + left_zone_w + hallway_width_px,
+                    'y': current_y_right,
+                    'w': room_w,
+                    'h': room_h
+                })
+                current_y_right += room_h
+            
+            # Zone 3: Service rooms (distribute)
+            for idx, room in enumerate(service_rooms):
+                room_w = int(room.get('length', 4) * scale)
+                room_h = int(room.get('width', 3) * scale)
+                if idx % 2 == 0:
+                    # Left zone
+                    room_w = min(room_w, left_zone_w - 20)
+                    room_placements.append({
+                        'room': room,
+                        'x': building_x + wall_thickness,
+                        'y': current_y_left,
+                        'w': room_w,
+                        'h': room_h
+                    })
+                    current_y_left += room_h
+                else:
+                    # Right zone
+                    room_w = min(room_w, right_zone_w - 20)
+                    room_placements.append({
+                        'room': room,
+                        'x': building_x + left_zone_w + hallway_width_px,
+                        'y': current_y_right,
+                        'w': room_w,
+                        'h': room_h
+                    })
+                    current_y_right += room_h
             
             # Room type colors (more professional palette)
             room_colors = {
