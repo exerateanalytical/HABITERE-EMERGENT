@@ -393,6 +393,16 @@ function AppContent() {
             </ProtectedRoute>
           } 
         />
+
+        {/* House Plans Module Routes */}
+        <Route 
+          path="/house-plans/builder" 
+          element={
+            <ProtectedRoute>
+              <HousePlanBuilder />
+            </ProtectedRoute>
+          } 
+        />
         
         {/* Protected Routes */}
         <Route 
