@@ -241,6 +241,20 @@ const Dashboard = () => {
             </div>
           </div>
 
+          <div className="card hover-lift" data-testid="house-plans-stat">
+            <div className="card-body">
+              <div className="flex items-center">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <FileText className="w-5 h-5 sm:w-6 sm:h-6 text-orange-600" />
+                </div>
+                <div className="ml-3 sm:ml-4 min-w-0">
+                  <p className="text-xs sm:text-sm font-medium text-gray-600 truncate">House Plans</p>
+                  <p className="text-xl sm:text-2xl font-bold text-gray-900">{stats.housePlans}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div className="card hover-lift" data-testid="messages-stat">
             <div className="card-body">
               <div className="flex items-center">
